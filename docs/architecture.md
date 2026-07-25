@@ -83,6 +83,8 @@ npm run db:seed
 npm run dev
 ```
 
+Die Entwicklungsseite ist unter `http://localhost:3000` und `http://127.0.0.1:3000` erreichbar. `127.0.0.1` ist in `next.config.ts` als zusaetzliche lokale Entwicklungs-Origin freigegeben, damit Next.js die Client-Bundles und Dialoginteraktionen unter beiden Adressen laden kann.
+
 Weitere Befehle:
 
 ```bash

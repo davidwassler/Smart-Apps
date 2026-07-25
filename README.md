@@ -30,6 +30,14 @@ Danach lokal oeffnen:
 http://localhost:3000
 ```
 
+Alternativ funktioniert auch:
+
+```text
+http://127.0.0.1:3000
+```
+
+Beide lokalen Adressen werden im Entwicklungsmodus unterstuetzt, damit clientseitige Dialoge und Buttons korrekt geladen werden.
+
 ## Test
 
 ```bash
@@ -69,6 +77,7 @@ npm run db:reset-demo
 - Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, Betrag und Freigabestatus erfasst werden.
 - Ab mindestens 1.500 Euro wird eine schriftliche Freigabe erzwungen; fehlende Freigaben erscheinen als Ausfuehrungssperre.
 - Zusatzarbeiten werden im Auftragsverlauf angezeigt; die Demo-Daten enthalten freigabefreie, angefragte und schriftlich freigegebene Beispiele.
+- Clientseitige Dialoge und Buttons funktionieren im lokalen Entwicklungsmodus sowohl ueber `localhost` als auch ueber `127.0.0.1`.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.

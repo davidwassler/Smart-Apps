@@ -131,3 +131,9 @@ Suche, Bereich, Status, Prioritaet, Mitarbeiter und Sortierung werden als Query-
 Status: entschieden
 
 Zusatzarbeiten werden als eigene 1:n-Entitaet unterhalb eines Auftrags gespeichert, weil ein Auftrag mehrere Nachtraege mit eigener Beschreibung, eigenem Betrag und eigenem Freigabestatus haben kann. Die fruehen einzelnen Platzhalterfelder am Auftrag werden im Prisma-Modell nicht weiter verwendet. Ab mindestens 1.500 Euro lehnen Server Actions den Status `NICHT_ERFORDERLICH` ab. Als Ausfuehrungsfreigabe gilt in diesem Fall ausschliesslich `SCHRIFTLICH_FREIGEGEBEN`; angefragte oder abgelehnte Zusatzarbeiten bleiben im Auftrag sichtbar gesperrt.
+
+## ADR-0023: Beide lokalen Entwicklungsadressen unterstuetzen
+
+Status: entschieden
+
+Die App kann lokal ueber `localhost` und `127.0.0.1` geoeffnet werden. Next.js blockiert unbekannte Entwicklungs-Origins fuer seine Client-Ressourcen; dadurch kann die HTML-Seite zwar erscheinen, clientseitige Buttons und Dialoge bleiben aber ohne Funktion. Deshalb wird ausschliesslich `127.0.0.1` als zusaetzliche lokale Entwicklungs-Origin in `next.config.ts` zugelassen. Die Einstellung erweitert weder das Netzwerk noch fuehrt sie ein Deployment ein.

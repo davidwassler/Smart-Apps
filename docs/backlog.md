@@ -22,12 +22,13 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind visuell getrennt; der letzte Rueckmeldungsstand ist hervorgehoben und Einsaetze bilden eine Zeitleiste vom neuesten Eintrag bis zur Auftragserfassung.
 - Die Auftragsuebersicht kann nach Nummer, Kunde und Beschreibung durchsucht, nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert sowie nach Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
 - Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst werden; ab 1.500 Euro wird eine schriftliche Freigabe serverseitig erzwungen und fehlende Freigabe sichtbar gesperrt.
+- Der lokale Entwicklungszugriff unterstuetzt `localhost` und `127.0.0.1`, sodass die clientseitigen Buttons und Seitenfenster unter beiden Adressen korrekt funktionieren.
 
 ## Phase 0: Projektfundament
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0001 | Lokales Next.js-Projekt einrichten | fertig | Next.js mit TypeScript ist installiert; `npm run dev` startet lokal; keine Cloud-, Docker- oder Deployment-Abhaengigkeit. |
+| F-0001 | Lokales Next.js-Projekt einrichten | fertig | Next.js mit TypeScript ist installiert; `npm run dev` startet lokal; die Bedienung funktioniert ueber `localhost` und `127.0.0.1`; keine Cloud-, Docker- oder Deployment-Abhaengigkeit. |
 | F-0002 | Prisma/SQLite-Datenmodell anlegen | fertig | Prisma-Schema bildet Kunden, Auftraege, Einsaetze, Mitarbeiter, Material, Materialverbrauch, Zusatzarbeiten, Werkzeuge und Rechnungen ab; Beziehungen aus der Spec sind modelliert. |
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt alle Auftraege als kompakte Liste sowie kleine Kennzahlen fuer offene, geplante, laufende und wartende Auftraege; ein Auftrag kann aus der Liste geoeffnet werden. |
