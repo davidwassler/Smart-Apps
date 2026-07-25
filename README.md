@@ -42,10 +42,11 @@ Beide lokalen Adressen werden im Entwicklungsmodus unterstuetzt, damit clientsei
 
 ```bash
 npm run lint
+npm test
 npm run build
 ```
 
-`npm test` fuehrt aktuell ebenfalls den Linter aus.
+`npm test` fuehrt den Linter und die isolierten Business-Rule-Tests aus.
 
 ## Demo-Daten
 
@@ -79,6 +80,8 @@ npm run db:reset-demo
 - Zusatzarbeiten werden im Auftragsverlauf angezeigt; die Demo-Daten enthalten freigabefreie, angefragte und schriftlich freigegebene Beispiele.
 - Clientseitige Dialoge und Buttons funktionieren im lokalen Entwicklungsmodus sowohl ueber `localhost` als auch ueber `127.0.0.1`.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
+- Notdienst-Auftraege sind deutlich markiert; ihre geplanten Einsaetze koennen nur mit Begruendung und bestaetigter Ersatzbesetzung oder sofortiger Neuplanung verschoben werden.
+- Terminverschiebungen bleiben mit altem und neuem Datum sowie Begruendung im Auftragsverlauf sichtbar.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.

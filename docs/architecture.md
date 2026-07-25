@@ -21,6 +21,7 @@ Kernmodelle:
 - `Auftrag`: zentrale Arbeitseinheit mit Status, Prioritaet und Grund bei offenem Ergebnis
 - `Zusatzarbeit`: Nachtrag zu einem Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus
 - `Einsatz`: konkreter Termin oder Arbeitstag innerhalb eines Auftrags
+- `EinsatzVerschiebung`: unveraenderlicher Terminwechsel mit altem und neuem Datum, Begruendung und Notdienst-Bestaetigung
 - `Mitarbeiter`: Personen mit Rolle und Aktivstatus
 - `Material`: Lagerbestand und Lagerort
 - `Materialverbrauch`: verbautes Material je Auftrag, inklusive erfassendem Mitarbeiter
@@ -32,6 +33,7 @@ Wichtige Beziehungen:
 
 - Kunde zu Auftrag: 1:n
 - Auftrag zu Einsatz: 1:n
+- Einsatz zu EinsatzVerschiebung: 1:n
 - Auftrag zu Rechnung: 1:1
 - Auftrag zu Mitarbeiter: n:m ueber `AuftragMitarbeiter`
 - Einsatz zu Mitarbeiter: n:m ueber `EinsatzMitarbeiter`
@@ -48,6 +50,7 @@ Wichtige Beziehungen:
 |   |-- additional-work-approval-panel.tsx
 |   |-- additional-work-form.tsx
 |   |-- assignment-feedback-panel.tsx
+|   |-- assignment-reschedule-panel.tsx
 |   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
@@ -64,8 +67,10 @@ Wichtige Beziehungen:
 |   |-- decisions.md
 |   `-- spec.md
 |-- lib/                  # Geteilte Server-Hilfen
+|   |-- notdienst.ts      # Isolierte Notdienst-Business-Rule
 |   `-- prisma.ts         # Prisma Client mit libSQL Adapter
 |-- prisma/               # Prisma Schema und Migrationen
+|-- tests/                # Kleine isolierte Business-Rule-Tests
 |-- AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
 |-- README.md             # Einstieg fuer Menschen
 |-- package.json
@@ -104,6 +109,7 @@ npm run db:studio
 Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codebasis sind sie im Datenmodell vorbereitet:
 
 - Notdienst-Auftraege haben eine eigene Prioritaet.
+- Notdienst-Einsaetze brauchen bei Terminverschiebung eine Begruendung und die explizite Bestaetigung, dass Ersatzbesetzung oder sofortige Neuplanung geklaert ist.
 - Lehrlinge haben eine eigene Mitarbeiterrolle.
 - Nicht fertige Auftraege haben ein Feld fuer den Grund.
 - Zusatzarbeiten ab mindestens 1.500 Euro koennen serverseitig nicht ohne schriftliche Freigabe als freigabefrei gespeichert werden.
@@ -124,6 +130,7 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Den naechsten geplanten Einsatz im oberen Informationsbereich des Auftrags anzeigen
 - Einsatzplanung und Materialverbrauch ueber kompakte Aktionen in getrennten Seitenfenstern oeffnen
 - Einsaetze im Kontext des geoeffneten Auftrags mit Datum, Status und Mitarbeiterzuordnung anlegen
+- Geplante Einsaetze verschieben und jeden Terminwechsel mit Begruendung im Auftragsverlauf anzeigen
 - Den letzten Rueckmeldungsstand hervorheben und Einsaetze als Auftragszeitleiste anzeigen
 - Offene Einsatzrueckmeldungen in einem eigenen Seitenfenster erfassen
 - Mehrere Zusatzarbeiten im Auftrag erfassen, Freigaben pflegen und fehlende schriftliche Freigaben sichtbar sperren

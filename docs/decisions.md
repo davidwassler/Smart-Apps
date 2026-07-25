@@ -137,3 +137,9 @@ Zusatzarbeiten werden als eigene 1:n-Entitaet unterhalb eines Auftrags gespeiche
 Status: entschieden
 
 Die App kann lokal ueber `localhost` und `127.0.0.1` geoeffnet werden. Next.js blockiert unbekannte Entwicklungs-Origins fuer seine Client-Ressourcen; dadurch kann die HTML-Seite zwar erscheinen, clientseitige Buttons und Dialoge bleiben aber ohne Funktion. Deshalb wird ausschliesslich `127.0.0.1` als zusaetzliche lokale Entwicklungs-Origin in `next.config.ts` zugelassen. Die Einstellung erweitert weder das Netzwerk noch fuehrt sie ein Deployment ein.
+
+## ADR-0024: Notdienst-Verschiebungen als eigene Historie sichern
+
+Status: entschieden
+
+Ein geplanter Einsatz behaelt beim Verschieben seine Identitaet und sein Team; nur sein aktuelles Datum wird geaendert. Jeder Terminwechsel wird zusaetzlich als eigener `EinsatzVerschiebung`-Datensatz mit vorherigem Datum, neuem Datum, Begruendung und Notdienst-Bestaetigung gespeichert. Bei Prioritaet `NOTDIENST` lehnt die Server Action eine Verschiebung ohne explizite Bestaetigung der Ersatzbesetzung oder sofortigen Neuplanung ab. Dadurch ist die Regel nicht nur ein Hinweis in der UI und wiederholte Verschiebungen bleiben im Auftragsverlauf nachvollziehbar.

@@ -1,4 +1,4 @@
-import { AuftragStatus, EinsatzStatus } from "@prisma/client";
+import { AuftragStatus, EinsatzStatus, Prioritaet } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -13,6 +13,7 @@ import {
 } from "../../labels";
 import { AdditionalWorkApprovalPanel } from "../../additional-work-approval-panel";
 import { AssignmentFeedbackPanel } from "../../assignment-feedback-panel";
+import { AssignmentReschedulePanel } from "../../assignment-reschedule-panel";
 import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
@@ -56,6 +57,11 @@ export default async function OrderDetailPage({
             mitarbeiter: {
               include: {
                 mitarbeiter: true,
+              },
+            },
+            verschiebungen: {
+              orderBy: {
+                createdAt: "desc",
               },
             },
           },
@@ -115,6 +121,15 @@ export default async function OrderDetailPage({
       zeitpunkt: einsatz.datum,
       einsatz,
     })),
+    ...auftrag.einsaetze.flatMap((einsatz) =>
+      einsatz.verschiebungen.map((verschiebung) => ({
+        typ: "verschiebung" as const,
+        id: `verschiebung-${verschiebung.id}`,
+        zeitpunkt: verschiebung.createdAt,
+        einsatz,
+        verschiebung,
+      })),
+    ),
     ...auftrag.zusatzarbeiten.map((zusatzarbeit) => ({
       typ: "zusatzarbeit" as const,
       id: `zusatzarbeit-${zusatzarbeit.id}`,
@@ -139,6 +154,9 @@ export default async function OrderDetailPage({
           <p className="pageIntro">{auftrag.beschreibung}</p>
         </div>
         <div className="detailHeaderActions">
+          {auftrag.prioritaet === Prioritaet.NOTDIENST ? (
+            <span className="priorityBadge priority-notdienst">Notdienst</span>
+          ) : null}
           <span className={`statusBadge status-${auftrag.status.toLowerCase()}`}>
             {auftragStatusLabels[auftrag.status]}
           </span>
@@ -268,6 +286,15 @@ export default async function OrderDetailPage({
             <strong>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</strong>
           </div>
         ) : null}
+        {auftrag.prioritaet === Prioritaet.NOTDIENST ? (
+          <div className="emergencyNotice">
+            <strong>Notdienst hat Vorrang</strong>
+            <p>
+              Geplante Einsaetze duerfen nur mit Begruendung und bestaetigter
+              Ersatzbesetzung oder sofortiger Neuplanung verschoben werden.
+            </p>
+          </div>
+        ) : null}
         {nichtFreigegebeneZusatzarbeiten.length > 0 ? (
           <div className="blockWarning">
             <span>Ausfuehrung gesperrt</span>
@@ -302,6 +329,7 @@ export default async function OrderDetailPage({
           freigabeStatusOptionen={Object.entries(freigabeStatusLabels).map(
             ([value, label]) => ({ value, label }),
           )}
+          istNotdienst={auftrag.prioritaet === Prioritaet.NOTDIENST}
         />
       ) : (
         <p className="closedNotice">
@@ -378,7 +406,11 @@ export default async function OrderDetailPage({
             <h2 id="assignments-heading">Auftragsverlauf</h2>
             <p>
               {auftrag.einsaetze.length} Einsaetze,{" "}
-              {auftrag.zusatzarbeiten.length} Zusatzarbeiten
+              {auftrag.einsaetze.reduce(
+                (summe, einsatz) => summe + einsatz.verschiebungen.length,
+                0,
+              )}{" "}
+              Verschiebungen, {auftrag.zusatzarbeiten.length} Zusatzarbeiten
             </p>
           </div>
         </div>
@@ -416,23 +448,74 @@ export default async function OrderDetailPage({
                   ) : (
                     <div className="timelinePending">
                       <span>Rueckmeldung offen</span>
-                      <AssignmentFeedbackPanel
-                        auftragId={auftrag.id}
-                        einsatzId={eintrag.einsatz.id}
-                        einsatzDatum={new Intl.DateTimeFormat("de-DE").format(
-                          eintrag.einsatz.datum,
-                        )}
-                        statusOptionen={rueckmeldeStatus.map((status) => ({
-                          value: status,
-                          label: auftragStatusLabels[status],
-                        }))}
-                        grundOptionen={Object.entries(
-                          nichtFertigGrundLabels,
-                        ).map(([value, label]) => ({ value, label }))}
-                        defaultStatus={AuftragStatus.TECHNISCH_FERTIG}
-                      />
+                      <div className="timelineActions">
+                        {eintrag.einsatz.status === EinsatzStatus.GEPLANT ? (
+                          <AssignmentReschedulePanel
+                            key={`${eintrag.einsatz.id}-${eintrag.einsatz.updatedAt.toISOString()}`}
+                            einsatzId={eintrag.einsatz.id}
+                            einsatzDatum={new Intl.DateTimeFormat(
+                              "de-DE",
+                            ).format(eintrag.einsatz.datum)}
+                            istNotdienst={
+                              auftrag.prioritaet === Prioritaet.NOTDIENST
+                            }
+                          />
+                        ) : null}
+                        <AssignmentFeedbackPanel
+                          auftragId={auftrag.id}
+                          einsatzId={eintrag.einsatz.id}
+                          einsatzDatum={new Intl.DateTimeFormat("de-DE").format(
+                            eintrag.einsatz.datum,
+                          )}
+                          statusOptionen={rueckmeldeStatus.map((status) => ({
+                            value: status,
+                            label: auftragStatusLabels[status],
+                          }))}
+                          grundOptionen={Object.entries(
+                            nichtFertigGrundLabels,
+                          ).map(([value, label]) => ({ value, label }))}
+                          defaultStatus={AuftragStatus.TECHNISCH_FERTIG}
+                        />
+                      </div>
                     </div>
                   )}
+                </div>
+              </li>
+            ) : eintrag.typ === "verschiebung" ? (
+              <li className="timelineItem timelineReschedule" key={eintrag.id}>
+                <span className="timelineMarker" aria-hidden="true" />
+                <div className="timelineContent">
+                  <div className="recordHeader">
+                    <div>
+                      <strong>Einsatz verschoben</strong>
+                      <p>
+                        Dokumentiert am{" "}
+                        {new Intl.DateTimeFormat("de-DE").format(
+                          eintrag.verschiebung.createdAt,
+                        )}
+                      </p>
+                    </div>
+                    {eintrag.verschiebung.notdienstBestaetigt ? (
+                      <span className="priorityBadge priority-notdienst">
+                        Notdienst bestaetigt
+                      </span>
+                    ) : (
+                      <span className="statusBadge">Termin geaendert</span>
+                    )}
+                  </div>
+                  <div className="timelineFeedback rescheduleDetails">
+                    <span>Terminwechsel</span>
+                    <p>
+                      {new Intl.DateTimeFormat("de-DE").format(
+                        eintrag.verschiebung.vorherigesDatum,
+                      )}{" "}
+                      auf{" "}
+                      {new Intl.DateTimeFormat("de-DE").format(
+                        eintrag.verschiebung.neuesDatum,
+                      )}
+                    </p>
+                    <small>{eintrag.verschiebung.begruendung}</small>
+                  </div>
                 </div>
               </li>
             ) : (

@@ -372,7 +372,11 @@ export default async function Home({ searchParams }: HomeProps) {
 
                 return (
                   <Link
-                    className="orderRow"
+                    className={`orderRow ${
+                      auftrag.prioritaet === Prioritaet.NOTDIENST
+                        ? "orderRowNotdienst"
+                        : ""
+                    }`}
                     href={`/auftraege/${auftrag.id}?${detailParams.toString()}`}
                     key={auftrag.id}
                   >
@@ -398,7 +402,11 @@ export default async function Home({ searchParams }: HomeProps) {
                       </span>
                     </span>
                     <span data-label="Prioritaet">
-                      {prioritaetLabels[auftrag.prioritaet]}
+                      <span
+                        className={`priorityBadge priority-${auftrag.prioritaet.toLowerCase()}`}
+                      >
+                        {prioritaetLabels[auftrag.prioritaet]}
+                      </span>
                     </span>
                     <span data-label="Team">
                       {auftrag.mitarbeiter.length === 0

@@ -12,6 +12,7 @@ import {
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { assertNotdienstVerschiebungBestaetigt } from "@/lib/notdienst";
 import { prisma } from "@/lib/prisma";
 
 function requireText(formData: FormData, name: string) {
@@ -345,14 +346,36 @@ export async function updateAuftragKunde(formData: FormData) {
 export async function createEinsatz(formData: FormData) {
   const auftragId = Number(requireText(formData, "auftragId"));
   const mitarbeiterIds = selectedIds(formData, "mitarbeiterIds");
+  const status = requireText(formData, "status") as EinsatzStatus;
 
   await assertEinsatzTeamAllowed(mitarbeiterIds);
+
+  if (status === EinsatzStatus.VERSCHOBEN) {
+    const auftrag = await prisma.auftrag.findUnique({
+      where: {
+        id: auftragId,
+      },
+      select: {
+        prioritaet: true,
+      },
+    });
+
+    if (!auftrag) {
+      throw new Error("Auftrag wurde nicht gefunden.");
+    }
+
+    if (auftrag.prioritaet === Prioritaet.NOTDIENST) {
+      throw new Error(
+        "Ein Notdienst kann nicht als bereits verschobener Einsatz angelegt werden.",
+      );
+    }
+  }
 
   await prisma.einsatz.create({
     data: {
       auftragId,
       datum: new Date(requireText(formData, "datum")),
-      status: requireText(formData, "status") as EinsatzStatus,
+      status,
       mitarbeiter: {
         create: mitarbeiterIds.map((mitarbeiterId) => ({
           mitarbeiterId,
@@ -372,6 +395,102 @@ export async function createEinsatz(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function verschiebeEinsatz(formData: FormData) {
+  const einsatzId = Number(requireText(formData, "einsatzId"));
+  const begruendung = requireText(formData, "begruendung");
+  const neuesDatumText = requireText(formData, "neuesDatum");
+  const neuesDatum = new Date(neuesDatumText);
+  const notdienstBestaetigt =
+    formData.get("notdienstBestaetigt") === "on";
+
+  if (!Number.isInteger(einsatzId) || einsatzId <= 0) {
+    throw new Error("Ungueltiger Einsatz.");
+  }
+
+  if (Number.isNaN(neuesDatum.getTime())) {
+    throw new Error("Ungueltiges neues Einsatzdatum.");
+  }
+
+  const heute = new Date();
+  heute.setHours(0, 0, 0, 0);
+  if (neuesDatum < heute) {
+    throw new Error("Das neue Einsatzdatum darf nicht in der Vergangenheit liegen.");
+  }
+
+  const einsatz = await prisma.einsatz.findUnique({
+    where: {
+      id: einsatzId,
+    },
+    include: {
+      auftrag: {
+        select: {
+          id: true,
+          prioritaet: true,
+          status: true,
+        },
+      },
+    },
+  });
+
+  if (!einsatz) {
+    throw new Error("Einsatz wurde nicht gefunden.");
+  }
+
+  if (einsatz.status !== EinsatzStatus.GEPLANT) {
+    throw new Error("Nur geplante Einsaetze koennen verschoben werden.");
+  }
+
+  if (
+    einsatz.auftrag.status === AuftragStatus.BEZAHLT ||
+    einsatz.auftrag.status === AuftragStatus.ESKALIERT
+  ) {
+    throw new Error("Abgeschlossene Auftraege koennen nicht verschoben werden.");
+  }
+
+  if (
+    einsatz.datum.toISOString().slice(0, 10) ===
+    neuesDatum.toISOString().slice(0, 10)
+  ) {
+    throw new Error("Das neue Einsatzdatum muss sich vom bisherigen Datum unterscheiden.");
+  }
+
+  assertNotdienstVerschiebungBestaetigt(
+    einsatz.auftrag.prioritaet,
+    notdienstBestaetigt,
+  );
+
+  await prisma.$transaction([
+    prisma.einsatzVerschiebung.create({
+      data: {
+        einsatzId,
+        vorherigesDatum: einsatz.datum,
+        neuesDatum,
+        begruendung,
+        notdienstBestaetigt,
+      },
+    }),
+    prisma.einsatz.update({
+      where: {
+        id: einsatzId,
+      },
+      data: {
+        datum: neuesDatum,
+      },
+    }),
+    prisma.auftrag.update({
+      where: {
+        id: einsatz.auftrag.id,
+      },
+      data: {
+        updatedAt: new Date(),
+      },
+    }),
+  ]);
+
+  revalidatePath("/");
+  revalidatePath(`/auftraege/${einsatz.auftrag.id}`);
 }
 
 export async function saveEinsatzRueckmeldung(formData: FormData) {

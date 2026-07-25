@@ -86,6 +86,19 @@ async function clearDemoData() {
       },
     },
   });
+  await prisma.einsatzVerschiebung.deleteMany({
+    where: {
+      einsatz: {
+        auftrag: {
+          kunde: {
+            name: {
+              in: demoNames.kunden,
+            },
+          },
+        },
+      },
+    },
+  });
   await prisma.einsatzMitarbeiter.deleteMany({
     where: {
       einsatz: {
@@ -286,19 +299,40 @@ async function main() {
       kundeId: baeckerei.id,
       beschreibung: "Notdienst: Sicherung fliegt im Backofenbereich regelmaessig raus.",
       prioritaet: Prioritaet.NOTDIENST,
-      status: AuftragStatus.TECHNISCH_FERTIG,
+      status: AuftragStatus.GEPLANT,
       mitarbeiter: {
         create: [{ mitarbeiterId: martin.id }, { mitarbeiterId: lukas.id }],
       },
       einsaetze: {
-        create: {
-          datum: new Date("2026-07-22T07:30:00"),
-          status: EinsatzStatus.DURCHGEFUEHRT,
-          rueckmeldung: "Defekten LS-Schalter getauscht, Anlage geprueft.",
-          mitarbeiter: {
-            create: [{ mitarbeiterId: martin.id }, { mitarbeiterId: lukas.id }],
+        create: [
+          {
+            datum: new Date("2026-07-22T07:30:00"),
+            status: EinsatzStatus.DURCHGEFUEHRT,
+            rueckmeldung: "Defekten LS-Schalter getauscht, Anlage geprueft.",
+            mitarbeiter: {
+              create: [
+                { mitarbeiterId: martin.id },
+                { mitarbeiterId: lukas.id },
+              ],
+            },
           },
-        },
+          {
+            datum: new Date("2026-07-27T07:00:00"),
+            status: EinsatzStatus.GEPLANT,
+            mitarbeiter: {
+              create: [{ mitarbeiterId: martin.id }],
+            },
+            verschiebungen: {
+              create: {
+                vorherigesDatum: new Date("2026-07-26T07:00:00"),
+                neuesDatum: new Date("2026-07-27T07:00:00"),
+                begruendung:
+                  "Martin uebernimmt den fruehen Ersatztermin verbindlich.",
+                notdienstBestaetigt: true,
+              },
+            },
+          },
+        ],
       },
     },
   });

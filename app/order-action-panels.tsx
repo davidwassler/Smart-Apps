@@ -26,6 +26,7 @@ type OrderActionPanelsProps = {
     lagerbestand: string;
   }>;
   freigabeStatusOptionen: Option[];
+  istNotdienst: boolean;
 };
 
 type ActivePanel = "einsatz" | "material" | "zusatzarbeit" | null;
@@ -37,6 +38,7 @@ export function OrderActionPanels({
   defaultEinsatzStatus,
   materialien,
   freigabeStatusOptionen,
+  istNotdienst,
 }: OrderActionPanelsProps) {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
@@ -135,11 +137,16 @@ export function OrderActionPanels({
                   <label>
                     Status
                     <select name="status" defaultValue={defaultEinsatzStatus}>
-                      {einsatzStatusOptionen.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
+                      {einsatzStatusOptionen
+                        .filter(
+                          (option) =>
+                            !istNotdienst || option.value !== "VERSCHOBEN",
+                        )
+                        .map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
                     </select>
                   </label>
                 </div>

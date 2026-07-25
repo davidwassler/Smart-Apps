@@ -446,6 +446,10 @@ button:disabled {
   padding: 12px 14px;
 }
 
+.orderRowNotdienst {
+  box-shadow: inset 4px 0 0 var(--danger);
+}
+
 .orderRow:last-child {
   border-bottom: 0;
 }
@@ -502,6 +506,31 @@ button:disabled {
   justify-self: start;
   padding: 5px 8px;
   white-space: nowrap;
+}
+
+.priorityBadge {
+  background: #f0f3ef;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--foreground);
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 700;
+  justify-self: start;
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+
+.priority-dringend {
+  background: #fff7e8;
+  border-color: #e0c58f;
+  color: #70531f;
+}
+
+.priority-notdienst {
+  background: #fff0eb;
+  border-color: #d69a86;
+  color: var(--danger);
 }
 
 .status-aufgenommen {
@@ -758,6 +787,39 @@ button:disabled {
   color: #70531f;
 }
 
+.emergencyNotice {
+  background: #fff0eb;
+  border: 1px solid #d69a86;
+  border-left: 4px solid var(--danger);
+  border-radius: 6px;
+  display: grid;
+  gap: 5px;
+  margin-top: 14px;
+  padding: 11px 12px;
+}
+
+.drawerForm > .emergencyNotice {
+  margin-top: 0;
+}
+
+.emergencyNotice strong {
+  color: var(--danger);
+}
+
+.emergencyNotice p {
+  color: #713824;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.emergencyConfirmation {
+  background: #fff8f5;
+  border: 1px solid #d69a86;
+  border-radius: 6px;
+  color: #713824;
+  padding: 10px 12px;
+}
+
 .closedNotice {
   background: #f0f3ef;
   border: 1px solid var(--line);
@@ -842,6 +904,11 @@ button:disabled {
   box-shadow: 0 0 0 1px #bf8517;
 }
 
+.timelineReschedule .timelineMarker {
+  background: #b4552f;
+  box-shadow: 0 0 0 1px #b4552f;
+}
+
 .timelineContent {
   border-bottom: 1px solid var(--line);
   min-width: 0;
@@ -893,6 +960,20 @@ button:disabled {
 .timelineAction {
   min-height: 36px;
   padding: 7px 10px;
+}
+
+.timelineActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.rescheduleDetails small {
+  color: var(--muted);
+  display: block;
+  line-height: 1.45;
+  margin-top: 5px;
 }
 
 .additionalWorkList {

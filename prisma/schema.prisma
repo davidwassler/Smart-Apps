@@ -48,15 +48,29 @@ model Zusatzarbeit {
 }
 
 model Einsatz {
-  id            Int                 @id @default(autoincrement())
-  auftragId     Int
-  datum         DateTime
-  status        EinsatzStatus       @default(GEPLANT)
-  rueckmeldung  String?
-  auftrag       Auftrag             @relation(fields: [auftragId], references: [id])
-  mitarbeiter   EinsatzMitarbeiter[]
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  id              Int                   @id @default(autoincrement())
+  auftragId       Int
+  datum           DateTime
+  status          EinsatzStatus         @default(GEPLANT)
+  rueckmeldung    String?
+  auftrag         Auftrag               @relation(fields: [auftragId], references: [id])
+  mitarbeiter     EinsatzMitarbeiter[]
+  verschiebungen  EinsatzVerschiebung[]
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model EinsatzVerschiebung {
+  id                     Int      @id @default(autoincrement())
+  einsatzId              Int
+  vorherigesDatum        DateTime
+  neuesDatum             DateTime
+  begruendung            String
+  notdienstBestaetigt    Boolean  @default(false)
+  einsatz                Einsatz  @relation(fields: [einsatzId], references: [id], onDelete: Cascade)
+  createdAt              DateTime @default(now())
+
+  @@index([einsatzId])
 }
 
 model Mitarbeiter {

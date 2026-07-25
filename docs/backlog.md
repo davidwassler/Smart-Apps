@@ -23,6 +23,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Die Auftragsuebersicht kann nach Nummer, Kunde und Beschreibung durchsucht, nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert sowie nach Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
 - Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst werden; ab 1.500 Euro wird eine schriftliche Freigabe serverseitig erzwungen und fehlende Freigabe sichtbar gesperrt.
 - Der lokale Entwicklungszugriff unterstuetzt `localhost` und `127.0.0.1`, sodass die clientseitigen Buttons und Seitenfenster unter beiden Adressen korrekt funktionieren.
+- Notdienst-Auftraege sind in Uebersicht und Detail hervorgehoben; Terminverschiebungen brauchen eine Begruendung und eine bestaetigte Ersatzbesetzung oder sofortige Neuplanung und erscheinen im Auftragsverlauf.
 
 ## Phase 0: Projektfundament
 
@@ -65,7 +66,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0201 | Notdienst-Vorrang beachten | offen | Notdienst-Auftraege koennen nicht beilaufig verschoben werden; eine Verschiebung braucht eine bewusste Bestaetigung oder Eskalationsnotiz. |
+| F-0201 | Notdienst-Vorrang beachten | fertig | Notdienst-Auftraege sind deutlich markiert; ein geplanter Notdienst-Einsatz kann nur mit Begruendung und expliziter Bestaetigung der Ersatzbesetzung oder sofortigen Neuplanung verschoben werden; die Server Action erzwingt die Regel und der Terminwechsel bleibt im Auftragsverlauf nachvollziehbar. |
 | F-0202 | Lehrlinge nicht allein einplanen | fertig | Ein Lehrling kann keinem Einsatz allein zugeordnet werden; mindestens ein Geselle oder Meister muss ebenfalls zugeordnet sein. |
 | F-0203 | Technisch fertig von kaufmaennisch abgeschlossen trennen | fertig | Technisch fertig, Rechnung erstellt und bezahlt sind getrennte Zustaende und werden nicht als ein einzelnes `fertig` vermischt. |
 | F-0204 | Zusatzarbeiten erfassen | fertig | Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst, im eigenen Detailblock angezeigt und im Auftragsverlauf dokumentiert werden. |
