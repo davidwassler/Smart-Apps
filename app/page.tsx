@@ -1,4 +1,5 @@
 import { AuftragStatus, EinsatzStatus, Kundentyp, Prioritaet } from "@prisma/client";
+import { CustomerPicker } from "./customer-picker";
 import {
   createAuftrag,
   createEinsatz,
@@ -85,52 +86,14 @@ export default async function Home() {
       <section className="formsGrid" aria-label="Auftragsarbeit">
         <form action={createAuftrag} className="panel wide">
           <h2>Auftrag erfassen</h2>
-          <fieldset className="formSection">
-            <legend>Kunde</legend>
-            <label>
-              Bestehender Kunde
-              <select name="kundeId" defaultValue="">
-                <option value="">Neuen Schnellkunden anlegen</option>
-                {kunden.map((kunde) => (
-                  <option key={kunde.id} value={kunde.id}>
-                    {kunde.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="quickCustomer">
-              <p className="helpText">
-                Wenn kein bestehender Kunde ausgewaehlt ist, wird mit diesen Angaben direkt ein
-                neuer Kunde angelegt.
-              </p>
-              <div className="fieldRow">
-                <label>
-                  Neuer Kunde
-                  <input name="neuerKundeName" placeholder="Name oder Firma" />
-                </label>
-                <label>
-                  Telefonnummer
-                  <input name="neuerKundeTelefonnummer" placeholder="Rueckrufnummer" />
-                </label>
-              </div>
-              <div className="fieldRow">
-                <label>
-                  Adresse
-                  <input name="neuerKundeAdresse" placeholder="Kann spaeter ergaenzt werden" />
-                </label>
-                <label>
-                  Kundentyp
-                  <select name="neuerKundeKundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
-                    {Object.entries(kundentypLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            </div>
-          </fieldset>
+          <CustomerPicker
+            kunden={kunden.map((kunde) => ({ id: kunde.id, name: kunde.name }))}
+            kundentypen={Object.entries(kundentypLabels).map(([value, label]) => ({
+              value,
+              label,
+            }))}
+            defaultKundentyp={Kundentyp.PRIVATKUNDE}
+          />
           <label>
             Beschreibung
             <textarea name="beschreibung" required rows={4} />

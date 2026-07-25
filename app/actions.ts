@@ -162,7 +162,8 @@ export async function createMaterial(formData: FormData) {
 
 export async function createAuftrag(formData: FormData) {
   const kundeIdValue = optionalText(formData, "kundeId");
-  const kundeId = kundeIdValue === "" ? null : Number(kundeIdValue);
+  const kundeId =
+    kundeIdValue === "" || kundeIdValue === "__new" ? null : Number(kundeIdValue);
   const mitarbeiterIds = selectedIds(formData, "mitarbeiterIds");
   const beschreibung = requireText(formData, "beschreibung");
   const prioritaet = requireText(formData, "prioritaet") as Prioritaet;
