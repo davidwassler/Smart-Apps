@@ -27,6 +27,15 @@ function selectedIds(formData: FormData, name: string) {
     .filter((value) => Number.isInteger(value) && value > 0);
 }
 
+function requirePositiveNumber(formData: FormData, name: string) {
+  const value = Number(requireText(formData, name));
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new Error(`Wert muss groesser als 0 sein: ${name}`);
+  }
+
+  return value;
+}
+
 async function assertEinsatzTeamAllowed(mitarbeiterIds: number[]) {
   if (mitarbeiterIds.length === 0) {
     throw new Error("Ein Einsatz braucht mindestens einen Mitarbeiter.");
@@ -180,6 +189,55 @@ export async function saveEinsatzRueckmeldung(formData: FormData) {
         status: auftragStatus,
         nichtFertigGrund:
           auftragStatus === AuftragStatus.TECHNISCH_FERTIG ? null : nichtFertigGrund,
+      },
+    }),
+  ]);
+
+  revalidatePath("/");
+}
+
+export async function createMaterialverbrauch(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const materialId = Number(requireText(formData, "materialId"));
+  const erfasstVonId = Number(requireText(formData, "erfasstVonId"));
+  const menge = requirePositiveNumber(formData, "menge");
+
+  const material = await prisma.material.findUnique({
+    where: {
+      id: materialId,
+    },
+    select: {
+      lagerbestand: true,
+      name: true,
+    },
+  });
+
+  if (!material) {
+    throw new Error("Material wurde nicht gefunden.");
+  }
+
+  const lagerbestand = material.lagerbestand.toNumber();
+  if (menge > lagerbestand) {
+    throw new Error(`Nicht genug Bestand fuer ${material.name}.`);
+  }
+
+  await prisma.$transaction([
+    prisma.materialverbrauch.create({
+      data: {
+        auftragId,
+        materialId,
+        erfasstVonId,
+        menge,
+      },
+    }),
+    prisma.material.update({
+      where: {
+        id: materialId,
+      },
+      data: {
+        lagerbestand: {
+          decrement: menge,
+        },
       },
     }),
   ]);

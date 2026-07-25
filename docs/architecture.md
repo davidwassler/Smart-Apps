@@ -96,3 +96,5 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Einsaetze mit Datum, Status und Mitarbeiterzuordnung anlegen und anzeigen
 - Rueckmeldungen zu Einsaetzen speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
+- Materialverbrauch mit Auftrag, Material, Menge und erfassendem Mitarbeiter speichern
+- Lagerbestand beim Materialverbrauch reduzieren und Verbrauch am Auftrag anzeigen

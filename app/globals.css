@@ -251,6 +251,21 @@ button:disabled {
   padding: 4px 8px;
 }
 
+.subList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.subList span {
+  background: #fbfcfa;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.83rem;
+  padding: 6px 8px;
+}
+
 .emptyText {
   color: var(--muted);
   line-height: 1.45;

@@ -53,3 +53,9 @@ Prisma 7 erwartet beim Prisma Client einen Driver Adapter. Der zunaechst nahelie
 Status: entschieden
 
 Die Lehrlingsregel und der Pflichtgrund fuer nicht fertige Auftraege werden in Server Actions validiert. Damit gelten die Regeln unabhaengig davon, wie das Formular spaeter visuell erweitert wird, und sie sind nicht nur eine UI-Empfehlung.
+
+## ADR-0010: Materialverbrauch reduziert Lagerbestand sofort
+
+Status: entschieden
+
+Beim Erfassen von Materialverbrauch wird der Lagerbestand in derselben Datenbanktransaktion reduziert. Die Server Action prueft, dass die Menge groesser als 0 ist und den verfuegbaren Bestand nicht ueberschreitet, damit Rechnungsvorbereitung und Nachbestellung auf konsistenteren Daten beruhen.

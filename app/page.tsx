@@ -11,6 +11,7 @@ import {
   createEinsatz,
   createKunde,
   createMaterial,
+  createMaterialverbrauch,
   createMitarbeiter,
   saveEinsatzRueckmeldung,
 } from "./actions";
@@ -80,6 +81,15 @@ export default async function Home() {
     prisma.auftrag.findMany({
       include: {
         kunde: true,
+        materialverbraeuche: {
+          include: {
+            erfasstVon: true,
+            material: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
         mitarbeiter: {
           include: {
             mitarbeiter: true,
@@ -305,6 +315,65 @@ export default async function Home() {
             Einsatz speichern
           </button>
         </form>
+
+        <form action={createMaterialverbrauch} className="panel wide">
+          <h2>Materialverbrauch erfassen</h2>
+          <label>
+            Auftrag
+            <select name="auftragId" required defaultValue="">
+              <option value="" disabled>
+                Auftrag auswaehlen
+              </option>
+              {offeneAuftraege.map((auftrag) => (
+                <option key={auftrag.id} value={auftrag.id}>
+                  #{auftrag.id} - {auftrag.kunde.name}: {auftrag.beschreibung}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="fieldRow">
+            <label>
+              Material
+              <select name="materialId" required defaultValue="">
+                <option value="" disabled>
+                  Material auswaehlen
+                </option>
+                {materialien.map((material) => (
+                  <option key={material.id} value={material.id}>
+                    {material.name} ({material.lagerbestand.toString()} {material.einheit})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Menge
+              <input name="menge" type="number" step="0.01" min="0.01" required />
+            </label>
+          </div>
+          <label>
+            Erfasst von
+            <select name="erfasstVonId" required defaultValue="">
+              <option value="" disabled>
+                Mitarbeiter auswaehlen
+              </option>
+              {aktiveMitarbeiter.map((person) => (
+                <option key={person.id} value={person.id}>
+                  {person.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="submit"
+            disabled={
+              offeneAuftraege.length === 0 ||
+              materialien.length === 0 ||
+              aktiveMitarbeiter.length === 0
+            }
+          >
+            Verbrauch speichern
+          </button>
+        </form>
       </section>
 
       <section className="listPanel fullWidth" aria-label="Einsaetze und Rueckmeldungen">
@@ -400,6 +469,16 @@ export default async function Home() {
                             .join(", ")}
                     </span>
                   </div>
+                  {auftrag.materialverbraeuche.length > 0 ? (
+                    <div className="subList" aria-label="Materialverbrauch">
+                      {auftrag.materialverbraeuche.map((verbrauch) => (
+                        <span key={verbrauch.id}>
+                          {verbrauch.material.name}: {verbrauch.menge.toString()}{" "}
+                          {verbrauch.material.einheit} ({verbrauch.erfasstVon.name})
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>

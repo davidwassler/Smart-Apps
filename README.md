@@ -47,6 +47,7 @@ npm run build
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
 - Einsaetze koennen geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
+- Materialverbrauch kann erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:

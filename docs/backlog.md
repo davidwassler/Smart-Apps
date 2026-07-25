@@ -10,7 +10,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Die Phasen sind nach Nutzwert sortiert: Kernprozess zuerst, danach Stammdaten, Regeln, kaufmaennische Erweiterungen, nichtfunktionale Anforderungen und Nicht-Ziele.
 - Die ersten fachlichen Formulare fuer Kunden, Mitarbeiter, Material und Auftraege wurden umgesetzt.
 - Einsatzplanung, Einsatz-Mitarbeiterzuordnung und Rueckmeldungen wurden ergaenzt.
-- Umgesetzte Features sind als `fertig` markiert; der Materialverbrauchs-Workflow bleibt `offen`.
+- Materialverbrauch kann erfasst werden, reduziert den Lagerbestand und ist am Auftrag sichtbar.
 
 ## Phase 0: Projektfundament
 
@@ -38,8 +38,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0111 | Grund bei nicht fertigem Auftrag erfassen | fertig | Wenn ein Auftrag nach einem Einsatz nicht fertig ist, muss ein Grund gespeichert werden. |
 | F-0112 | Nicht-fertig-Gruende standardisieren | fertig | Fehlendes Material, fehlendes Ersatzteil, offene Kundenentscheidung und Folgeeinsatz sind als Gruende verfuegbar. |
 | F-0113 | Material erfassen | fertig | Material kann mit Name, Einheit, Lagerbestand und Lagerort gespeichert werden. |
-| F-0114 | Materialverbrauch erfassen | offen | Material, Menge, Auftrag und erfassender Mitarbeiter koennen gespeichert werden. |
-| F-0115 | Materialverbrauch am Auftrag anzeigen | offen | Am Auftrag ist sichtbar, welches Material in welcher Menge verbaut wurde. |
+| F-0114 | Materialverbrauch erfassen | fertig | Material, Menge, Auftrag und erfassender Mitarbeiter koennen gespeichert werden. |
+| F-0115 | Materialverbrauch am Auftrag anzeigen | fertig | Am Auftrag ist sichtbar, welches Material in welcher Menge verbaut wurde. |
 
 ## Phase 2: Regeln und einfache Absicherung
 
@@ -59,7 +59,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0302 | Werkzeugstandort anzeigen | offen | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
 | F-0303 | Werkzeugbewegungen nachvollziehen | offen | Uebergaben oder Standortwechsel koennen als Historie gespeichert werden. |
 | F-0304 | Rechnung vorbereiten | offen | Fuer technisch fertige Auftraege koennen Rechnungsdaten vorbereitet werden. |
-| F-0305 | Rechnungsgrundlagen anzeigen | offen | Materialverbrauch und Rueckmeldungen sind fuer die Rechnungsvorbereitung sichtbar. |
+| F-0305 | Rechnungsgrundlagen anzeigen | fertig | Materialverbrauch und Rueckmeldungen sind fuer die Rechnungsvorbereitung sichtbar. |
 
 ## Phase 4: Kann-Funktionen
 
