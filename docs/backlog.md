@@ -29,6 +29,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Alle fachlichen Schreibformulare zeigen verstaendliche Fehler und sichtbare Erfolgsmeldungen, sperren Mehrfachklicks waehrend des Speicherns und erhalten Eingaben nach serverseitigen Fehlern.
 - Seitenfenster fokussieren beim Oeffnen das erste Eingabefeld, lassen sich per Escape schliessen und geben den Fokus danach an den Ausloeser zurueck.
 - Playwright prueft die Kernablaeufe Auftrag, Einsatz, Rueckmeldung, Materialverbrauch, Notdienst-Verschiebung, Rechnung und Zahlung sowie das mobile Dialogverhalten automatisiert.
+- Der Chronologieeintrag zur Rechnungserstellung zeigt dauerhaft den damaligen Startstatus `Offen`; spaetere Zahlungs- und Mahnstatus erscheinen ausschliesslich in ihren eigenen Statuswechsel-Eintraegen.
+- Browserpruefungen verwenden eine eigene SQLite-Testdatei und einen eigenen lokalen Port, damit manuell angelegte Daten und die laufende App beim Testlauf unberuehrt bleiben.
 
 ## Phase 0: Projektfundament
 

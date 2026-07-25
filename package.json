@@ -10,12 +10,13 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "npm run lint && npm run test:rules",
-    "test:e2e": "npm run db:reset-demo && playwright test",
+    "test:e2e": "npm run db:reset-e2e && playwright test",
     "test:rules": "tsx tests/notdienst-rule.ts && tsx tests/rechnung-rule.ts",
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma db execute --file prisma/migrations/20260725000100_init/migration.sql && prisma db execute --file prisma/migrations/20260725000200_add_zusatzarbeit/migration.sql && prisma db execute --file prisma/migrations/20260725000300_add_einsatz_verschiebung/migration.sql && prisma db execute --file prisma/migrations/20260725000400_add_rechnung_statuswechsel/migration.sql && prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset-demo": "npm run db:migrate && npm run db:seed",
+    "db:reset-e2e": "cross-env DATABASE_URL=file:./test-e2e.db npm run db:reset-demo",
     "db:studio": "prisma studio"
   },
   "repository": {
@@ -47,6 +48,7 @@
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.11",
     "prisma": "^7.9.0",

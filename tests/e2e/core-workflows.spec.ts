@@ -88,6 +88,15 @@ test("Kernablaeufe vom Auftrag bis zur bezahlten Rechnung", async ({
   await dialog.getByRole("button", { name: "Rechnung speichern" }).click();
   await expect(page.getByText("129,90").first()).toBeVisible();
   await expect(page.getByText("Offen").first()).toBeVisible();
+  const auftragsverlauf = page.getByRole("region", {
+    name: "Auftragsverlauf",
+  });
+  const rechnungErstellt = auftragsverlauf
+    .getByRole("listitem")
+    .filter({ hasText: "Rechnung erstellt" });
+  await expect(
+    rechnungErstellt.getByText("Offen", { exact: true }),
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Status aktualisieren" }).click();
   dialog = page.getByRole("dialog", {
@@ -101,6 +110,15 @@ test("Kernablaeufe vom Auftrag bis zur bezahlten Rechnung", async ({
   await expect(page.getByText("Bezahlt").first()).toBeVisible();
   await expect(
     page.getByText("E2E-Zahlung vollstaendig eingegangen."),
+  ).toBeVisible();
+  await expect(
+    rechnungErstellt.getByText("Offen", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    auftragsverlauf
+      .getByRole("listitem")
+      .filter({ hasText: "Rechnungsstatus aktualisiert" })
+      .getByText("Bezahlt", { exact: true }),
   ).toBeVisible();
 });
 

@@ -1,4 +1,9 @@
-import { AuftragStatus, EinsatzStatus, Prioritaet } from "@prisma/client";
+import {
+  AuftragStatus,
+  EinsatzStatus,
+  Prioritaet,
+  RechnungStatus,
+} from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -706,9 +711,9 @@ export default async function OrderDetailPage({
                       </p>
                     </div>
                     <span
-                      className={`invoiceBadge invoice-${eintrag.rechnung.status.toLowerCase()}`}
+                      className={`invoiceBadge invoice-${RechnungStatus.OFFEN.toLowerCase()}`}
                     >
-                      {rechnungStatusLabels[eintrag.rechnung.status]}
+                      {rechnungStatusLabels[RechnungStatus.OFFEN]}
                     </span>
                   </div>
                   <div className="timelineFeedback invoiceTimelineDetails">

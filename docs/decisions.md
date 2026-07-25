@@ -161,3 +161,15 @@ Rechnungsstatus werden nicht frei ueberschrieben, sondern folgen erlaubten Ueber
 Status: entschieden
 
 Fachliche Server Actions bleiben die zentrale Schreiblogik und werden fuer die Oberflaeche durch gemeinsame Form-Action-Wrapper ergaenzt. Diese liefern strukturierte Erfolgs- und Fehlerzustaende; das gemeinsame `ActionForm` zeigt sie barrierearm an und stellt Eingaben nach einem Serverfehler wieder her. `SubmitButton` sperrt Mehrfachabsenden und zeigt den laufenden Vorgang. Dialoge verwalten ihren Tastaturfokus gemeinsam. Die wichtigsten zusammenhaengenden Arbeitsablaeufe werden mit Playwright gegen die lokale Anwendung und reproduzierbare Demo-Daten geprueft, waehrend isolierte Business Rules weiterhin schnelle TypeScript-Tests behalten.
+
+## ADR-0028: Chronologie zeigt den Status zum Ereigniszeitpunkt
+
+Status: entschieden
+
+Chronologieeintraege stellen den Zustand zum jeweiligen Ereigniszeitpunkt dar. Eine neu angelegte Rechnung startet fachlich immer mit `OFFEN`; deshalb bleibt der Eintrag `Rechnung erstellt` auch nach einer Zahlung oder Mahnung mit `Offen` gekennzeichnet. Der aktuelle und jeder spaetere Rechnungsstatus wird ueber die getrennten Statuswechsel-Eintraege dargestellt. Dadurch entsteht keine scheinbare doppelte Zahlung in der Historie.
+
+## ADR-0029: Browserpruefungen nutzen eine isolierte SQLite-Datei
+
+Status: entschieden
+
+Playwright arbeitet mit `test-e2e.db`, dem Next.js-Build-Verzeichnis `.next-e2e` und einem eigenen Entwicklungsserver auf Port 3100. Das vorbereitende Seed setzt nur diese Testdatei zurueck. Die normale lokale Datenbank kann manuell erfasste Auftraege mit Demo-Stammdaten verknuepfen und darf deshalb nicht durch automatisierte Tests bereinigt oder veraendert werden. Die Trennung verhindert Datenverlust, Fremdschluesselkonflikte und Wechselwirkungen mit einer auf Port 3000 laufenden App.

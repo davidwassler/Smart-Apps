@@ -116,7 +116,7 @@ npm run db:studio
 
 `npm run db:seed` entfernt die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
 
-`npm run test:e2e` setzt die festen Demo-Daten zurueck und prueft die zusammenhaengenden Kernablaeufe in Chromium. Ein bereits laufender lokaler Entwicklungsserver auf Port 3000 wird wiederverwendet; andernfalls startet Playwright ihn fuer den Test.
+`npm run test:e2e` setzt ausschliesslich die separate, ignorierte SQLite-Datei `test-e2e.db` zurueck und prueft die zusammenhaengenden Kernablaeufe in Chromium. Playwright startet dafuer einen eigenen Entwicklungsserver auf Port 3100 mit dem getrennten Build-Verzeichnis `.next-e2e`. Die normale lokale Datenbank, das regulaere `.next`-Verzeichnis und ein laufender Server auf Port 3000 bleiben unberuehrt.
 
 ## Formular- und Dialogverhalten
 

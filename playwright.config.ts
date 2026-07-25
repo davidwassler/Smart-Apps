@@ -6,7 +6,7 @@ export default defineConfig({
   workers: 1,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://127.0.0.1:3100",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -17,9 +17,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm.cmd run dev -- --hostname 127.0.0.1 --port 3000",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: true,
+    command: "npm.cmd run dev -- --hostname 127.0.0.1 --port 3100",
+    env: {
+      DATABASE_URL: "file:./test-e2e.db",
+      NEXT_DIST_DIR: ".next-e2e",
+    },
+    url: "http://127.0.0.1:3100",
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

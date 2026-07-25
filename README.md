@@ -48,7 +48,7 @@ npm run build
 ```
 
 `npm test` fuehrt den Linter und die isolierten Business-Rule-Tests aus.
-`npm run test:e2e` setzt die Demo-Daten zurueck und prueft die Kernablaeufe automatisiert in Chromium.
+`npm run test:e2e` setzt nur die separate Datei `test-e2e.db` zurueck und prueft die Kernablaeufe automatisiert in Chromium auf Port 3100. Die normale lokale Datenbank bleibt unveraendert.
 
 ## Demo-Daten
 
