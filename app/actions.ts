@@ -46,12 +46,25 @@ function requireNonNegativeNumber(formData: FormData, name: string) {
 }
 
 function requireMaterialEinheit(formData: FormData) {
-  const einheit = requireText(formData, "einheit");
-  if (einheit !== "Stueck" && einheit !== "Laenge") {
+  const einheitTyp = requireText(formData, "einheitTyp");
+  if (einheitTyp === "Stueck") {
+    return "Stueck";
+  }
+
+  if (einheitTyp !== "Laenge") {
     throw new Error("Materialeinheit muss Stueck oder Laenge sein.");
   }
 
-  return einheit;
+  const laengenEinheit = requireText(formData, "laengenEinheit");
+  if (
+    laengenEinheit !== "mm" &&
+    laengenEinheit !== "cm" &&
+    laengenEinheit !== "m"
+  ) {
+    throw new Error("Laengeneinheit muss mm, cm oder m sein.");
+  }
+
+  return laengenEinheit;
 }
 
 function assertWholeNumber(value: number, fieldName: string) {

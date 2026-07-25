@@ -60,8 +60,8 @@ Status: entschieden
 
 Beim Erfassen von Materialverbrauch wird der Lagerbestand in derselben Datenbanktransaktion reduziert. Die Server Action prueft, dass die Menge groesser als 0 ist und den verfuegbaren Bestand nicht ueberschreitet, damit Rechnungsvorbereitung und Nachbestellung auf konsistenteren Daten beruhen.
 
-## ADR-0011: Materialeinheiten auf Stueck und Laenge begrenzen
+## ADR-0011: Materialeinheiten auf Stueck und konkrete Laengeneinheiten begrenzen
 
 Status: entschieden
 
-Materialeinheiten werden in der UI als Dropdown mit `Stueck` und `Laenge` gefuehrt. Bei `Stueck` muessen Lagerbestand und Verbrauchsmengen ganzzahlig sein; bei `Laenge` sind Dezimalwerte erlaubt. Die Regel wird serverseitig validiert, damit der Datenbestand auch bei spaeteren UI-Aenderungen konsistent bleibt.
+Materialeinheiten werden in der UI als Dropdown mit `Stueck` und `Laenge` gefuehrt. Wenn `Laenge` gewaehlt wird, muss zusaetzlich `mm`, `cm` oder `m` gewaehlt werden; gespeichert wird die konkrete Einheit. Bei `Stueck` muessen Lagerbestand und Verbrauchsmengen ganzzahlig sein; bei Laengeneinheiten sind Dezimalwerte erlaubt. Die Regel wird serverseitig validiert, damit der Datenbestand auch bei spaeteren UI-Aenderungen konsistent bleibt.

@@ -98,4 +98,4 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch mit Auftrag, Material, Menge und erfassendem Mitarbeiter speichern
 - Lagerbestand beim Materialverbrauch reduzieren und Verbrauch am Auftrag anzeigen
-- Materialeinheit als `Stueck` oder `Laenge` erfassen; ganzzahlige Mengen fuer `Stueck`, Dezimalmengen fuer `Laenge`
+- Materialeinheit als `Stueck` oder konkrete Laengeneinheit `mm`, `cm` oder `m` erfassen; ganzzahlige Mengen fuer `Stueck`, Dezimalmengen fuer Laengeneinheiten

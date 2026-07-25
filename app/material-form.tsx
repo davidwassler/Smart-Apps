@@ -4,8 +4,8 @@ import { useState } from "react";
 import { createMaterial } from "./actions";
 
 export function MaterialForm() {
-  const [einheit, setEinheit] = useState("Stueck");
-  const isStueck = einheit === "Stueck";
+  const [einheitTyp, setEinheitTyp] = useState("Stueck");
+  const isStueck = einheitTyp === "Stueck";
 
   return (
     <form action={createMaterial} className="panel">
@@ -17,14 +17,24 @@ export function MaterialForm() {
       <label>
         Einheit
         <select
-          name="einheit"
-          value={einheit}
-          onChange={(event) => setEinheit(event.target.value)}
+          name="einheitTyp"
+          value={einheitTyp}
+          onChange={(event) => setEinheitTyp(event.target.value)}
         >
           <option value="Stueck">Stueck</option>
           <option value="Laenge">Laenge</option>
         </select>
       </label>
+      {!isStueck ? (
+        <label>
+          Laengeneinheit
+          <select name="laengenEinheit" defaultValue="m">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+          </select>
+        </label>
+      ) : null}
       <label>
         Lagerbestand
         <input
