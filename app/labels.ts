@@ -5,6 +5,7 @@ import {
   MitarbeiterRolle,
   NichtFertigGrund,
   Prioritaet,
+  WerkzeugStatus,
 } from "@prisma/client";
 
 export const kundentypLabels: Record<Kundentyp, string> = {
@@ -59,4 +60,11 @@ export const nichtFertigGrundLabels: Record<NichtFertigGrund, string> = {
   FEHLENDES_ERSATZTEIL: "Fehlendes Ersatzteil",
   OFFENE_KUNDENENTSCHEIDUNG: "Offene Kundenentscheidung",
   FOLGEEINSATZ_NOETIG: "Folgeeinsatz noetig",
+};
+
+export const werkzeugStatusLabels: Record<WerkzeugStatus, string> = {
+  VERFUEGBAR: "Verfuegbar",
+  BEI_MITARBEITER: "Bei Mitarbeiter",
+  WERKSTATT: "Werkstatt",
+  UNBEKANNT: "Unbekannt",
 };

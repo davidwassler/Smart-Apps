@@ -71,3 +71,9 @@ Materialeinheiten werden in der UI als Dropdown mit `Stueck` und `Laenge` gefueh
 Status: entschieden
 
 Die Startseite wird als taegliche Auftragsuebersicht gefuehrt. Kunden, Mitarbeiter und Material sind Stammdaten und bekommen eigene Seiten. Dadurch bleibt der Kernprozess sichtbar, waehrend Pflegeformulare nicht mehr die Auftragsarbeit ueberladen.
+
+## ADR-0013: Werkzeugstandort als eigener Screen
+
+Status: entschieden
+
+Werkzeuge bekommen eine eigene Seite, weil sie nicht zum taeglichen Auftragsformular gehoeren, aber schnell auffindbar sein muessen. Die Ersterfassung speichert Status, Ort und optionalen Besitzer und legt direkt einen Historieneintrag an; ein spaeterer Standortwechsel-Workflow kann darauf aufbauen.

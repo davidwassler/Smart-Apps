@@ -46,7 +46,8 @@ Wichtige Beziehungen:
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
 |   |-- material/         # Materialseite
-|   `-- mitarbeiter/      # Mitarbeiterseite
+|   |-- mitarbeiter/      # Mitarbeiterseite
+|   `-- werkzeuge/        # Werkzeugseite
 |-- docs/                 # Fachliche und technische Dokumentation
 |   |-- architecture.md
 |   |-- backlog.md
@@ -110,3 +111,4 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen
+- `/werkzeuge`: Werkzeuge erfassen und Standort anzeigen

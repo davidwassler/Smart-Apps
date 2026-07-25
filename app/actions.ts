@@ -7,6 +7,7 @@ import {
   MitarbeiterRolle,
   NichtFertigGrund,
   Prioritaet,
+  WerkzeugStatus,
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
@@ -296,4 +297,35 @@ export async function createMaterialverbrauch(formData: FormData) {
   ]);
 
   revalidatePath("/");
+}
+
+export async function createWerkzeug(formData: FormData) {
+  const status = requireText(formData, "status") as WerkzeugStatus;
+  const aktuellerBesitzerValue = formData.get("aktuellerBesitzerId");
+  const aktuellerBesitzerId =
+    typeof aktuellerBesitzerValue === "string" && aktuellerBesitzerValue !== ""
+      ? Number(aktuellerBesitzerValue)
+      : null;
+
+  if (status === WerkzeugStatus.BEI_MITARBEITER && !aktuellerBesitzerId) {
+    throw new Error("Werkzeug bei Mitarbeiter braucht einen Besitzer.");
+  }
+
+  await prisma.werkzeug.create({
+    data: {
+      name: requireText(formData, "name"),
+      status,
+      aktuellerOrt: requireText(formData, "aktuellerOrt"),
+      aktuellerBesitzerId,
+      uebergaben: {
+        create: {
+          mitarbeiterId: aktuellerBesitzerId,
+          ort: requireText(formData, "aktuellerOrt"),
+          notiz: "Ersterfasster Standort",
+        },
+      },
+    },
+  });
+
+  revalidatePath("/werkzeuge");
 }

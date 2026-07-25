@@ -13,6 +13,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Materialverbrauch kann erfasst werden, reduziert den Lagerbestand und ist am Auftrag sichtbar.
 - Materialeinheiten sind auf `Stueck` sowie Laengeneinheiten `mm`, `cm` und `m` begrenzt; Stueck-Bestaende und Stueck-Verbrauch muessen ganzzahlig sein.
 - Die App ist in mehrere Screens aufgeteilt: Auftragsuebersicht als Startseite sowie eigene Seiten fuer Kunden, Mitarbeiter und Material.
+- Werkzeuge koennen auf einer eigenen Seite mit Status, Ort und optionalem Besitzer erfasst werden.
 
 ## Phase 0: Projektfundament
 
@@ -23,6 +24,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt Auftraege, Einsaetze, Rueckmeldungen und Materialverbrauch als taeglichen Arbeitsbereich ohne Dashboard-Ballast. |
 | F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen und Listen. |
+| F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit Formular und Liste. |
 
 ## Phase 1: Kernprozess erste Version
 
@@ -58,9 +60,9 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0301 | Werkzeug erfassen | offen | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert werden. |
-| F-0302 | Werkzeugstandort anzeigen | offen | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
-| F-0303 | Werkzeugbewegungen nachvollziehen | offen | Uebergaben oder Standortwechsel koennen als Historie gespeichert werden. |
+| F-0301 | Werkzeug erfassen | fertig | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert werden. |
+| F-0302 | Werkzeugstandort anzeigen | fertig | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
+| F-0303 | Werkzeugbewegungen nachvollziehen | in arbeit | Die Ersterfassung legt einen Historieneintrag an; spaetere Standortwechsel als eigener Workflow fehlen noch. |
 | F-0304 | Rechnung vorbereiten | offen | Fuer technisch fertige Auftraege koennen Rechnungsdaten vorbereitet werden. |
 | F-0305 | Rechnungsgrundlagen anzeigen | fertig | Materialverbrauch und Rueckmeldungen sind fuer die Rechnungsvorbereitung sichtbar. |
 
