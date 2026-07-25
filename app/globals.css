@@ -288,6 +288,20 @@ button:disabled {
   gap: 6px;
 }
 
+.historyList {
+  display: grid;
+  gap: 6px;
+}
+
+.historyList span {
+  background: #fbfcfa;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.83rem;
+  padding: 6px 8px;
+}
+
 .subList span {
   background: #fbfcfa;
   border: 1px solid var(--line);

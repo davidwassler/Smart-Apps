@@ -77,3 +77,9 @@ Die Startseite wird als taegliche Auftragsuebersicht gefuehrt. Kunden, Mitarbeit
 Status: entschieden
 
 Werkzeuge bekommen eine eigene Seite, weil sie nicht zum taeglichen Auftragsformular gehoeren, aber schnell auffindbar sein muessen. Die Ersterfassung speichert Status, Ort und optionalen Besitzer und legt direkt einen Historieneintrag an; ein spaeterer Standortwechsel-Workflow kann darauf aufbauen.
+
+## ADR-0014: Werkzeugstandort und Historie gemeinsam aktualisieren
+
+Status: entschieden
+
+Ein Standortwechsel aktualisiert immer den aktuellen Werkzeugdatensatz und legt zugleich einen `WerkzeugUebergabe`-Eintrag an. Dadurch bleibt die Liste schnell lesbar, waehrend Bewegungen weiterhin nachvollziehbar sind.

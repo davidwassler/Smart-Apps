@@ -1,5 +1,5 @@
 import { WerkzeugStatus } from "@prisma/client";
-import { createWerkzeug } from "../actions";
+import { createWerkzeug, updateWerkzeugStandort } from "../actions";
 import { werkzeugStatusLabels } from "../labels";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +10,14 @@ export default async function WerkzeugePage() {
     prisma.werkzeug.findMany({
       include: {
         aktuellerBesitzer: true,
+        uebergaben: {
+          include: {
+            mitarbeiter: true,
+          },
+          orderBy: {
+            uebergebenAm: "desc",
+          },
+        },
       },
       orderBy: [{ status: "asc" }, { name: "asc" }],
     }),
@@ -70,6 +78,55 @@ export default async function WerkzeugePage() {
           <button type="submit">Werkzeug speichern</button>
         </form>
 
+        <form action={updateWerkzeugStandort} className="panel">
+          <h2>Standort wechseln</h2>
+          <label>
+            Werkzeug
+            <select name="werkzeugId" required defaultValue="">
+              <option value="" disabled>
+                Werkzeug auswaehlen
+              </option>
+              {werkzeuge.map((werkzeug) => (
+                <option key={werkzeug.id} value={werkzeug.id}>
+                  {werkzeug.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Neuer Status
+            <select name="status" defaultValue={WerkzeugStatus.BEI_MITARBEITER}>
+              {Object.entries(werkzeugStatusLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Neuer Ort
+            <input name="aktuellerOrt" placeholder="Werkstatt, Fahrzeug, Baustelle ..." required />
+          </label>
+          <label>
+            Neuer Besitzer
+            <select name="aktuellerBesitzerId" defaultValue="">
+              <option value="">Kein Besitzer</option>
+              {mitarbeiter.map((person) => (
+                <option key={person.id} value={person.id}>
+                  {person.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Notiz
+            <textarea name="notiz" rows={3} />
+          </label>
+          <button type="submit" disabled={werkzeuge.length === 0}>
+            Standort speichern
+          </button>
+        </form>
+
         <div className="listPanel wide">
           <h2>Werkzeugliste</h2>
           {werkzeuge.length === 0 ? (
@@ -86,6 +143,21 @@ export default async function WerkzeugePage() {
                       ? werkzeug.aktuellerBesitzer.name
                       : "kein Besitzer"}
                   </span>
+                  {werkzeug.uebergaben.length > 0 ? (
+                    <div className="historyList">
+                      {werkzeug.uebergaben.map((uebergabe) => (
+                        <span key={uebergabe.id}>
+                          {new Intl.DateTimeFormat("de-DE", {
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          }).format(uebergabe.uebergebenAm)}
+                          : {uebergabe.ort}
+                          {uebergabe.mitarbeiter ? ` / ${uebergabe.mitarbeiter.name}` : ""}
+                          {uebergabe.notiz ? ` / ${uebergabe.notiz}` : ""}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>

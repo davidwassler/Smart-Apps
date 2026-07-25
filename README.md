@@ -51,6 +51,7 @@ npm run build
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.
 - Werkzeuge haben eine eigene Seite mit Status, aktuellem Ort und optionalem Besitzer.
+- Werkzeugstandortwechsel werden mit Historie gespeichert.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:

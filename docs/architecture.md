@@ -112,3 +112,4 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen
 - `/werkzeuge`: Werkzeuge erfassen und Standort anzeigen
+- Werkzeugstandortwechsel aktualisieren den aktuellen Standort und schreiben einen Historieneintrag.
