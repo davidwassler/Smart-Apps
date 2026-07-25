@@ -6,6 +6,7 @@ import {
   MitarbeiterRolle,
   NichtFertigGrund,
   Prioritaet,
+  RechnungStatus,
   WerkzeugStatus,
 } from "@prisma/client";
 
@@ -68,6 +69,14 @@ export const freigabeStatusLabels: Record<FreigabeStatus, string> = {
   ANGEFRAGT: "Freigabe angefragt",
   SCHRIFTLICH_FREIGEGEBEN: "Schriftlich freigegeben",
   ABGELEHNT: "Abgelehnt",
+};
+
+export const rechnungStatusLabels: Record<RechnungStatus, string> = {
+  OFFEN: "Offen",
+  BEZAHLT: "Bezahlt",
+  MAHNUNG_1: "Mahnung 1",
+  MAHNUNG_2: "Mahnung 2",
+  ANWALT: "Anwalt",
 };
 
 export const werkzeugStatusLabels: Record<WerkzeugStatus, string> = {

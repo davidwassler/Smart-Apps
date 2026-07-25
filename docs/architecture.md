@@ -51,6 +51,7 @@ Wichtige Beziehungen:
 |   |-- additional-work-form.tsx
 |   |-- assignment-feedback-panel.tsx
 |   |-- assignment-reschedule-panel.tsx
+|   |-- invoice-preparation-panel.tsx
 |   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
@@ -68,7 +69,8 @@ Wichtige Beziehungen:
 |   `-- spec.md
 |-- lib/                  # Geteilte Server-Hilfen
 |   |-- notdienst.ts      # Isolierte Notdienst-Business-Rule
-|   `-- prisma.ts         # Prisma Client mit libSQL Adapter
+|   |-- prisma.ts         # Prisma Client mit libSQL Adapter
+|   `-- rechnung.ts       # Isolierte Rechnungsvorbereitungs-Regel
 |-- prisma/               # Prisma Schema und Migrationen
 |-- tests/                # Kleine isolierte Business-Rule-Tests
 |-- AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
@@ -113,6 +115,9 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Lehrlinge haben eine eigene Mitarbeiterrolle.
 - Nicht fertige Auftraege haben ein Feld fuer den Grund.
 - Zusatzarbeiten ab mindestens 1.500 Euro koennen serverseitig nicht ohne schriftliche Freigabe als freigabefrei gespeichert werden.
+- Rechnungen koennen nur fuer technisch fertige Auftraege ohne vorhandene Rechnung und ohne blockierende Zusatzarbeit vorbereitet werden.
+- Rechnung und Auftragsstatus werden gemeinsam in einer Datenbanktransaktion gespeichert.
+- Kaufmaennische Auftragsstatus koennen nicht am allgemeinen Auftragsformular an einer fehlenden oder vorhandenen Rechnung vorbei geaendert werden.
 - Technische Fertigstellung, Rechnung und Zahlung sind getrennte Status.
 
 ## Aktuelle UI-Flows
@@ -135,6 +140,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Offene Einsatzrueckmeldungen in einem eigenen Seitenfenster erfassen
 - Mehrere Zusatzarbeiten im Auftrag erfassen, Freigaben pflegen und fehlende schriftliche Freigaben sichtbar sperren
 - Zusatzarbeiten als eigene Ereignisse in den Auftragsverlauf aufnehmen
+- Rechnungsgrundlagen aus Rueckmeldungen, Materialverbrauch und Zusatzarbeiten zusammenfassen
+- Eine offene Rechnung mit Datum und Betrag anlegen, den Auftrag auf `Rechnung erstellt` setzen und die Rechnung im Verlauf anzeigen
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern
@@ -144,7 +151,7 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 ## Screens
 
 - `/`: Auftragsuebersicht mit Status-KPIs, Suche, Filtern, Sortierung, kompakter Auftragsliste und Seitenpanel zur Auftragserfassung
-- `/auftraege/[id]`: Auftragsdetail mit Einsatzplanung, Rueckmeldungen und Materialverbrauch
+- `/auftraege/[id]`: Auftragsdetail mit Einsatzplanung, Rueckmeldungen, Materialverbrauch, Zusatzarbeiten und Rechnungsvorbereitung
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen

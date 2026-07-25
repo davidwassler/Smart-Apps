@@ -8,12 +8,17 @@ import {
   MitarbeiterRolle,
   NichtFertigGrund,
   Prioritaet,
+  RechnungStatus,
   WerkzeugStatus,
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertNotdienstVerschiebungBestaetigt } from "@/lib/notdienst";
 import { prisma } from "@/lib/prisma";
+import {
+  assertAuftragStatusPasstZurRechnung,
+  assertRechnungVorbereitbar,
+} from "@/lib/rechnung";
 
 function requireText(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -278,6 +283,30 @@ export async function updateAuftrag(formData: FormData) {
   if (statusBrauchtGrund && !nichtFertigGrund) {
     throw new Error("Wartende oder pausierte Auftraege brauchen einen Grund.");
   }
+
+  const bisherigerAuftrag = await prisma.auftrag.findUnique({
+    where: {
+      id: auftragId,
+    },
+    select: {
+      status: true,
+      rechnung: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  if (!bisherigerAuftrag) {
+    throw new Error("Auftrag wurde nicht gefunden.");
+  }
+
+  assertAuftragStatusPasstZurRechnung(
+    bisherigerAuftrag.status,
+    status,
+    Boolean(bisherigerAuftrag.rechnung),
+  );
 
   await prisma.$transaction([
     prisma.auftragMitarbeiter.deleteMany({
@@ -639,6 +668,85 @@ export async function updateZusatzarbeitFreigabe(formData: FormData) {
       freigabeStatus,
     },
   });
+
+  revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function createRechnung(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const betrag = requireMoney(formData, "betrag");
+  const erstelltAm = new Date(requireText(formData, "erstelltAm"));
+
+  if (!Number.isInteger(auftragId) || auftragId <= 0) {
+    throw new Error("Ungueltiger Auftrag.");
+  }
+
+  if (Number.isNaN(erstelltAm.getTime())) {
+    throw new Error("Ungueltiges Rechnungsdatum.");
+  }
+
+  const morgen = new Date();
+  morgen.setHours(24, 0, 0, 0);
+  if (erstelltAm >= morgen) {
+    throw new Error("Das Rechnungsdatum darf nicht in der Zukunft liegen.");
+  }
+
+  const auftrag = await prisma.auftrag.findUnique({
+    where: {
+      id: auftragId,
+    },
+    select: {
+      status: true,
+      rechnung: {
+        select: {
+          id: true,
+        },
+      },
+      zusatzarbeiten: {
+        select: {
+          geschaetzterBetrag: true,
+          freigabeStatus: true,
+        },
+      },
+    },
+  });
+
+  if (!auftrag) {
+    throw new Error("Auftrag wurde nicht gefunden.");
+  }
+
+  const blockierendeZusatzarbeiten = auftrag.zusatzarbeiten.filter(
+    (zusatzarbeit) =>
+      zusatzarbeit.geschaetzterBetrag.toNumber() >= 1500 &&
+      zusatzarbeit.freigabeStatus !== FreigabeStatus.SCHRIFTLICH_FREIGEGEBEN,
+  ).length;
+
+  assertRechnungVorbereitbar(
+    auftrag.status,
+    Boolean(auftrag.rechnung),
+    blockierendeZusatzarbeiten,
+  );
+
+  await prisma.$transaction([
+    prisma.rechnung.create({
+      data: {
+        auftragId,
+        erstelltAm,
+        betrag,
+        status: RechnungStatus.OFFEN,
+      },
+    }),
+    prisma.auftrag.update({
+      where: {
+        id: auftragId,
+      },
+      data: {
+        status: AuftragStatus.RECHNUNG_ERSTELLT,
+        nichtFertigGrund: null,
+      },
+    }),
+  ]);
 
   revalidatePath("/");
   revalidatePath(`/auftraege/${auftragId}`);

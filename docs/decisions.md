@@ -143,3 +143,9 @@ Die App kann lokal ueber `localhost` und `127.0.0.1` geoeffnet werden. Next.js b
 Status: entschieden
 
 Ein geplanter Einsatz behaelt beim Verschieben seine Identitaet und sein Team; nur sein aktuelles Datum wird geaendert. Jeder Terminwechsel wird zusaetzlich als eigener `EinsatzVerschiebung`-Datensatz mit vorherigem Datum, neuem Datum, Begruendung und Notdienst-Bestaetigung gespeichert. Bei Prioritaet `NOTDIENST` lehnt die Server Action eine Verschiebung ohne explizite Bestaetigung der Ersatzbesetzung oder sofortigen Neuplanung ab. Dadurch ist die Regel nicht nur ein Hinweis in der UI und wiederholte Verschiebungen bleiben im Auftragsverlauf nachvollziehbar.
+
+## ADR-0025: Rechnung und Auftragsstatus atomar erstellen
+
+Status: entschieden
+
+Die Rechnungsvorbereitung nutzt das bereits in der Spec definierte 1:1-Modell `Rechnung`. Sie ist nur fuer Auftraege im Status `TECHNISCH_FERTIG` ohne vorhandene Rechnung zulaessig; unfreigegebene Zusatzarbeiten ab 1.500 Euro blockieren den Vorgang. Rechnung mit Startstatus `OFFEN` und Auftragsstatus `RECHNUNG_ERSTELLT` werden in derselben Transaktion gespeichert. Kaufmaennische Auftragsstatus sind im allgemeinen Auftragsformular nicht frei waehlbar, damit sie nicht an der Rechnung vorbei geaendert werden. Materialpreise und Arbeitsstunden sind in der Spec nicht als Datenfelder modelliert, deshalb werden vorhandene Rueckmeldungen, Mengen und Zusatzarbeiten als Grundlage angezeigt, der endgueltige Rechnungsbetrag aber bewusst manuell erfasst.

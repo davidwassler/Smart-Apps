@@ -8,12 +8,14 @@ import {
   kundentypLabels,
   nichtFertigGrundLabels,
   prioritaetLabels,
+  rechnungStatusLabels,
   rollenLabels,
   rueckmeldeStatus,
 } from "../../labels";
 import { AdditionalWorkApprovalPanel } from "../../additional-work-approval-panel";
 import { AssignmentFeedbackPanel } from "../../assignment-feedback-panel";
 import { AssignmentReschedulePanel } from "../../assignment-reschedule-panel";
+import { InvoicePreparationPanel } from "../../invoice-preparation-panel";
 import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
@@ -77,6 +79,7 @@ export default async function OrderDetailPage({
         zusatzarbeiten: {
           orderBy: { createdAt: "desc" },
         },
+        rechnung: true,
       },
     }),
     prisma.mitarbeiter.findMany({
@@ -89,8 +92,10 @@ export default async function OrderDetailPage({
     notFound();
   }
 
-  const istAbgeschlossen =
+  const istOperativGesperrt =
+    auftrag.status === AuftragStatus.RECHNUNG_ERSTELLT ||
     auftrag.status === AuftragStatus.BEZAHLT ||
+    auftrag.status === AuftragStatus.GEMAHNT ||
     auftrag.status === AuftragStatus.ESKALIERT;
   const kundenDatenUnvollstaendig =
     auftrag.kunde.telefonnummer.trim() === "" ||
@@ -114,6 +119,16 @@ export default async function OrderDetailPage({
       zusatzarbeit.geschaetzterBetrag.toNumber() >= 1500 &&
       zusatzarbeit.freigabeStatus !== "SCHRIFTLICH_FREIGEGEBEN",
   );
+  const heuteAlsEingabewert = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Berlin",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  const kannRechnungVorbereiten =
+    auftrag.status === AuftragStatus.TECHNISCH_FERTIG &&
+    !auftrag.rechnung &&
+    nichtFreigegebeneZusatzarbeiten.length === 0;
   const verlaufEintraege = [
     ...auftrag.einsaetze.map((einsatz) => ({
       typ: "einsatz" as const,
@@ -136,6 +151,16 @@ export default async function OrderDetailPage({
       zeitpunkt: zusatzarbeit.createdAt,
       zusatzarbeit,
     })),
+    ...(auftrag.rechnung
+      ? [
+          {
+            typ: "rechnung" as const,
+            id: `rechnung-${auftrag.rechnung.id}`,
+            zeitpunkt: auftrag.rechnung.createdAt,
+            rechnung: auftrag.rechnung,
+          },
+        ]
+      : []),
   ].sort(
     (links, rechts) =>
       rechts.zeitpunkt.getTime() - links.zeitpunkt.getTime(),
@@ -184,9 +209,16 @@ export default async function OrderDetailPage({
               name: person.name,
               aktiv: person.aktiv,
             }))}
-            statusOptionen={Object.entries(auftragStatusLabels).map(
-              ([value, label]) => ({ value, label }),
-            )}
+            statusOptionen={Object.entries(auftragStatusLabels)
+              .filter(([value]) =>
+                auftrag.rechnung
+                  ? value === auftrag.status
+                  : value !== AuftragStatus.RECHNUNG_ERSTELLT &&
+                    value !== AuftragStatus.BEZAHLT &&
+                    value !== AuftragStatus.GEMAHNT &&
+                    value !== AuftragStatus.ESKALIERT,
+              )
+              .map(([value, label]) => ({ value, label }))}
             prioritaetOptionen={Object.entries(prioritaetLabels).map(
               ([value, label]) => ({ value, label }),
             )}
@@ -307,7 +339,7 @@ export default async function OrderDetailPage({
         ) : null}
       </section>
 
-      {!istAbgeschlossen ? (
+      {!istOperativGesperrt ? (
         <OrderActionPanels
           key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
           auftragId={auftrag.id}
@@ -333,8 +365,9 @@ export default async function OrderDetailPage({
         />
       ) : (
         <p className="closedNotice">
-          Dieser Auftrag ist abgeschlossen. Neue Planungen, Verbraeuche und
-          Zusatzarbeiten koennen daher nicht mehr erfasst werden.
+          Fuer diesen Auftrag wurde der kaufmaennische Ablauf begonnen. Neue
+          Planungen, Verbraeuche und Zusatzarbeiten koennen daher nicht mehr
+          erfasst werden.
         </p>
       )}
 
@@ -399,6 +432,105 @@ export default async function OrderDetailPage({
         )}
       </section>
 
+      <section className="detailBlock" aria-labelledby="invoice-heading">
+        <div className="sectionHeading">
+          <div>
+            <p className="eyebrow">Kaufmaennischer Abschluss</p>
+            <h2 id="invoice-heading">Rechnung</h2>
+            <p>
+              {auftrag.rechnung
+                ? rechnungStatusLabels[auftrag.rechnung.status]
+                : "Noch nicht vorbereitet"}
+            </p>
+          </div>
+          {kannRechnungVorbereiten ? (
+            <InvoicePreparationPanel
+              key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
+              auftragId={auftrag.id}
+              kundeName={auftrag.kunde.name}
+              beschreibung={auftrag.beschreibung}
+              defaultDatum={heuteAlsEingabewert}
+              einsaetze={auftrag.einsaetze
+                .filter((einsatz) => einsatz.rueckmeldung)
+                .map((einsatz) => ({
+                  id: einsatz.id,
+                  datum: new Intl.DateTimeFormat("de-DE").format(einsatz.datum),
+                  team:
+                    einsatz.mitarbeiter.length === 0
+                      ? "Kein Einsatzteam hinterlegt"
+                      : einsatz.mitarbeiter
+                          .map((entry) => entry.mitarbeiter.name)
+                          .join(", "),
+                  rueckmeldung: einsatz.rueckmeldung ?? "",
+                }))}
+              materialien={auftrag.materialverbraeuche.map((verbrauch) => ({
+                id: verbrauch.id,
+                name: verbrauch.material.name,
+                menge: new Intl.NumberFormat("de-DE").format(
+                  verbrauch.menge.toNumber(),
+                ),
+                einheit: verbrauch.material.einheit,
+              }))}
+              zusatzarbeiten={auftrag.zusatzarbeiten.map((zusatzarbeit) => ({
+                id: zusatzarbeit.id,
+                beschreibung: zusatzarbeit.beschreibung,
+                betrag: new Intl.NumberFormat("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(zusatzarbeit.geschaetzterBetrag.toNumber()),
+                freigabe: freigabeStatusLabels[zusatzarbeit.freigabeStatus],
+              }))}
+            />
+          ) : null}
+        </div>
+
+        {auftrag.rechnung ? (
+          <div className="invoiceFacts">
+            <div>
+              <span>Rechnungsdatum</span>
+              <strong>
+                {new Intl.DateTimeFormat("de-DE").format(
+                  auftrag.rechnung.erstelltAm,
+                )}
+              </strong>
+            </div>
+            <div>
+              <span>Rechnungsbetrag</span>
+              <strong>
+                {new Intl.NumberFormat("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(auftrag.rechnung.betrag.toNumber())}
+              </strong>
+            </div>
+            <div>
+              <span>Rechnungsstatus</span>
+              <strong>{rechnungStatusLabels[auftrag.rechnung.status]}</strong>
+            </div>
+          </div>
+        ) : auftrag.status === AuftragStatus.TECHNISCH_FERTIG &&
+          nichtFreigegebeneZusatzarbeiten.length > 0 ? (
+          <div className="blockWarning">
+            <span>Rechnung blockiert</span>
+            <strong>
+              Zuerst muessen alle Zusatzarbeiten ab 1.500 Euro schriftlich
+              freigegeben werden.
+            </strong>
+          </div>
+        ) : !kannRechnungVorbereiten ? (
+          <p className="emptyText">
+            Die Rechnung kann vorbereitet werden, sobald der Auftrag technisch
+            fertig ist.
+          </p>
+        ) : (
+          <div className="invoiceReadiness">
+            <span>{auftrag.einsaetze.length} Einsaetze</span>
+            <span>{auftrag.materialverbraeuche.length} Materialpositionen</span>
+            <span>{auftrag.zusatzarbeiten.length} Zusatzarbeiten</span>
+          </div>
+        )}
+      </section>
+
       <section className="detailBlock" aria-labelledby="assignments-heading">
         <div className="sectionHeading">
           <div>
@@ -411,6 +543,7 @@ export default async function OrderDetailPage({
                 0,
               )}{" "}
               Verschiebungen, {auftrag.zusatzarbeiten.length} Zusatzarbeiten
+              {auftrag.rechnung ? ", 1 Rechnung" : ""}
             </p>
           </div>
         </div>
@@ -515,6 +648,35 @@ export default async function OrderDetailPage({
                       )}
                     </p>
                     <small>{eintrag.verschiebung.begruendung}</small>
+                  </div>
+                </div>
+              </li>
+            ) : eintrag.typ === "rechnung" ? (
+              <li className="timelineItem timelineInvoice" key={eintrag.id}>
+                <span className="timelineMarker" aria-hidden="true" />
+                <div className="timelineContent">
+                  <div className="recordHeader">
+                    <div>
+                      <strong>Rechnung erstellt</strong>
+                      <p>
+                        Rechnungsdatum{" "}
+                        {new Intl.DateTimeFormat("de-DE").format(
+                          eintrag.rechnung.erstelltAm,
+                        )}
+                      </p>
+                    </div>
+                    <span className="statusBadge">
+                      {rechnungStatusLabels[eintrag.rechnung.status]}
+                    </span>
+                  </div>
+                  <div className="timelineFeedback invoiceTimelineDetails">
+                    <span>Rechnungsbetrag</span>
+                    <p>
+                      {new Intl.NumberFormat("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(eintrag.rechnung.betrag.toNumber())}
+                    </p>
                   </div>
                 </div>
               </li>

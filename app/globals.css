@@ -649,8 +649,94 @@ button:disabled {
 
 .drawerFooter {
   display: flex;
+  gap: 10px;
   justify-content: flex-end;
   padding-top: 18px;
+}
+
+.invoiceFacts {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 16px;
+}
+
+.invoiceFacts > div {
+  display: grid;
+  gap: 5px;
+}
+
+.invoiceFacts > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: 18px;
+}
+
+.invoiceFacts span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.invoiceReadiness {
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-top: 14px;
+}
+
+.invoiceReadiness span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.invoiceBasisList,
+.invoiceCompactList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.invoiceBasisList li,
+.invoiceCompactList li {
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+}
+
+.invoiceBasisList li:first-child,
+.invoiceCompactList li:first-child {
+  padding-top: 0;
+}
+
+.invoiceBasisList li:last-child,
+.invoiceCompactList li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.invoiceBasisList li > div,
+.invoiceCompactList li {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.invoiceBasisList span,
+.invoiceCompactList span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.invoiceBasisList p {
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 5px 0 0;
+}
+
+.invoiceOrderSummary {
+  padding-top: 0;
 }
 
 .approvalWarning {
@@ -907,6 +993,15 @@ button:disabled {
 .timelineReschedule .timelineMarker {
   background: #b4552f;
   box-shadow: 0 0 0 1px #b4552f;
+}
+
+.timelineInvoice .timelineMarker {
+  background: #3269a0;
+  box-shadow: 0 0 0 1px #3269a0;
+}
+
+.invoiceTimelineDetails {
+  border-left-color: #3269a0;
 }
 
 .timelineContent {
@@ -1256,7 +1351,8 @@ button:disabled {
   .counters,
   .fieldRow,
   .kpiGrid,
-  .detailFacts {
+  .detailFacts,
+  .invoiceFacts {
     grid-template-columns: 1fr;
   }
 
@@ -1314,6 +1410,23 @@ button:disabled {
   .drawerActions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .drawerFooter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .invoiceFacts > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 12px;
+  }
+
+  .invoiceBasisList li > div,
+  .invoiceCompactList li {
+    align-items: flex-start;
   }
 
   .detailHeader {

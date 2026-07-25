@@ -83,6 +83,9 @@ npm run db:reset-demo
 - Notdienst-Auftraege sind deutlich markiert; ihre geplanten Einsaetze koennen nur mit Begruendung und bestaetigter Ersatzbesetzung oder sofortiger Neuplanung verschoben werden.
 - Terminverschiebungen bleiben mit altem und neuem Datum sowie Begruendung im Auftragsverlauf sichtbar.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
+- Technisch fertige Auftraege koennen aus der Detailseite heraus als offene Rechnung mit Datum und Betrag gespeichert werden.
+- Der Rechnungsdialog buendelt Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten; die fertige Rechnung erscheint als eigener Block und im Auftragsverlauf.
+- Die Demo-Daten enthalten einen rechnungsbereiten Auftrag und einen Auftrag mit bereits offener Rechnung.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.
@@ -97,5 +100,6 @@ Bekannt:
 - Die fachliche Spec wurde nur nach `docs/spec.md` verschoben und nicht inhaltlich korrigiert.
 - `npm run db:migrate` fuehrt aktuell die eingecheckten SQLite-SQL-Migrationen nacheinander per Prisma aus. `prisma migrate dev` zeigte in dieser Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei frischer SQLite-Datei.
 - Prisma 7 nutzt fuer den lokalen SQLite-Zugriff den libSQL Driver Adapter.
+- Arbeitsstunden und Materialpreise sind in der fachlichen Spec nicht modelliert; der Rechnungsbetrag wird daher manuell erfasst.
 - npm meldet aktuell Vulnerabilities im Dependency-Baum. Vor produktiver Nutzung sollte `npm audit` bewertet werden.
 - Fachliche Formulare und Persistenz-Workflows sind noch Backlog-Arbeit.

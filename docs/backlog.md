@@ -24,6 +24,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst werden; ab 1.500 Euro wird eine schriftliche Freigabe serverseitig erzwungen und fehlende Freigabe sichtbar gesperrt.
 - Der lokale Entwicklungszugriff unterstuetzt `localhost` und `127.0.0.1`, sodass die clientseitigen Buttons und Seitenfenster unter beiden Adressen korrekt funktionieren.
 - Notdienst-Auftraege sind in Uebersicht und Detail hervorgehoben; Terminverschiebungen brauchen eine Begruendung und eine bestaetigte Ersatzbesetzung oder sofortige Neuplanung und erscheinen im Auftragsverlauf.
+- Technisch fertige Auftraege koennen aus ihren Einsatzrueckmeldungen, Materialverbraeuchen und Zusatzarbeiten heraus als offene Rechnung mit Datum und Betrag gespeichert werden; Auftrag und Verlauf werden dabei gemeinsam aktualisiert.
 
 ## Phase 0: Projektfundament
 
@@ -79,14 +80,14 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0301 | Werkzeug erfassen | fertig | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert werden. |
 | F-0302 | Werkzeugstandort anzeigen | fertig | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
 | F-0303 | Werkzeugbewegungen nachvollziehen | fertig | Die Ersterfassung und spaetere Standortwechsel legen Historieneintraege mit Ort, optionalem Besitzer, Zeitpunkt und Notiz an. |
-| F-0304 | Rechnung vorbereiten | offen | Fuer technisch fertige Auftraege koennen Rechnungsdaten vorbereitet werden. |
+| F-0304 | Rechnung vorbereiten | fertig | Fuer technisch fertige Auftraege zeigt ein fokussierter Dialog Kunde, Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten als Rechnungsgrundlagen; Rechnungsdatum und Betrag koennen gespeichert werden; unfreigegebene Zusatzarbeiten ab 1.500 Euro blockieren den Vorgang. |
 | F-0305 | Rechnungsgrundlagen anzeigen | fertig | Materialverbrauch und Rueckmeldungen sind fuer die Rechnungsvorbereitung sichtbar. |
 
 ## Phase 4: Kann-Funktionen
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0401 | Rechnung erfassen | offen | Eine Rechnung kann mit Auftrag, Erstellungsdatum, Betrag und Status gespeichert werden. |
+| F-0401 | Rechnung erfassen | fertig | Eine Rechnung wird eindeutig einem Auftrag zugeordnet und mit Erstellungsdatum, Betrag und Startstatus `offen` gespeichert; gleichzeitig wechselt der Auftrag atomar auf `Rechnung erstellt` und der Vorgang erscheint im Auftragsverlauf. |
 | F-0402 | Mahnstatus anzeigen | offen | Offene Rechnungen koennen als offen, bezahlt, Mahnung 1, Mahnung 2 oder Anwalt markiert werden. |
 | F-0403 | Eskalation bei Zahlungsausfall abbilden | offen | Nach ausbleibender Zahlung kann der Weg von erster Mahnung bis Anwalt nachvollzogen werden. |
 | F-0404 | Einfache Suche und Filter anbieten | fertig | Auftraege koennen nach Nummer, Kunde und Beschreibung durchsucht, nach offen oder abgeschlossen, Status, Prioritaet und Mitarbeiter gefiltert sowie nach letzter Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; Such- und Filterauswahl stehen in der URL und bleiben beim Ruecksprung aus dem Auftragsdetail erhalten. |

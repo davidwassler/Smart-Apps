@@ -5,6 +5,7 @@ import {
   Kundentyp,
   MitarbeiterRolle,
   Prioritaet,
+  RechnungStatus,
   WerkzeugStatus,
 } from "@prisma/client";
 import { prisma } from "../lib/prisma";
@@ -381,6 +382,61 @@ async function main() {
     },
   });
 
+  const technischFertig = await prisma.auftrag.create({
+    data: {
+      kundeId: neumann.id,
+      beschreibung:
+        "Defekte Aussenleuchte am Carport ersetzt und geprueft.",
+      prioritaet: Prioritaet.NORMAL,
+      status: AuftragStatus.TECHNISCH_FERTIG,
+      mitarbeiter: {
+        create: [{ mitarbeiterId: jana.id }],
+      },
+      einsaetze: {
+        create: {
+          datum: new Date("2026-07-23T10:00:00"),
+          status: EinsatzStatus.DURCHGEFUEHRT,
+          rueckmeldung:
+            "Leuchte ersetzt, Anschluss und Schutzleiter erfolgreich geprueft.",
+          mitarbeiter: {
+            create: [{ mitarbeiterId: jana.id }],
+          },
+        },
+      },
+    },
+  });
+
+  const rechnungErstellt = await prisma.auftrag.create({
+    data: {
+      kundeId: lindenhof.id,
+      beschreibung:
+        "Steckdosen und Schutzleiter im Keller geprueft.",
+      prioritaet: Prioritaet.NORMAL,
+      status: AuftragStatus.RECHNUNG_ERSTELLT,
+      mitarbeiter: {
+        create: [{ mitarbeiterId: thomas.id }, { mitarbeiterId: martin.id }],
+      },
+      einsaetze: {
+        create: {
+          datum: new Date("2026-07-21T08:30:00"),
+          status: EinsatzStatus.DURCHGEFUEHRT,
+          rueckmeldung:
+            "Alle Steckdosen geprueft und zwei lockere Anschluesse nachgezogen.",
+          mitarbeiter: {
+            create: [{ mitarbeiterId: thomas.id }, { mitarbeiterId: martin.id }],
+          },
+        },
+      },
+      rechnung: {
+        create: {
+          erstelltAm: new Date("2026-07-24T00:00:00"),
+          status: RechnungStatus.OFFEN,
+          betrag: 642.5,
+        },
+      },
+    },
+  });
+
   await prisma.zusatzarbeit.createMany({
     data: [
       {
@@ -439,6 +495,18 @@ async function main() {
         menge: 3.25,
         erfasstVonId: martin.id,
       },
+      {
+        auftragId: technischFertig.id,
+        materialId: kabel15.id,
+        menge: 4.5,
+        erfasstVonId: jana.id,
+      },
+      {
+        auftragId: rechnungErstellt.id,
+        materialId: huelsen.id,
+        menge: 12,
+        erfasstVonId: martin.id,
+      },
     ],
   });
 
@@ -459,7 +527,7 @@ async function main() {
       },
       data: {
         lagerbestand: {
-          decrement: 6,
+          decrement: 18,
         },
       },
     }),
@@ -469,7 +537,7 @@ async function main() {
       },
       data: {
         lagerbestand: {
-          decrement: 8.5,
+          decrement: 13,
         },
       },
     }),
