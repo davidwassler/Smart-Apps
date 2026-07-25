@@ -33,7 +33,7 @@ export function CustomerPicker({
     <fieldset className="formSection">
       <legend>Kunde</legend>
       <label>
-        Kunde
+        Auswahl
         <select
           name="kundeId"
           required
