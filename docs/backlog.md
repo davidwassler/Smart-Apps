@@ -33,6 +33,9 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Browserpruefungen verwenden eine eigene SQLite-Testdatei und einen eigenen lokalen Port, damit manuell angelegte Daten und die laufende App beim Testlauf unberuehrt bleiben.
 - Das Demo-Seed verwendet bereits vorhandene Demo-Mitarbeiter weiter, damit manuell angelegte Auftraege mit diesen Zuordnungen keinen Fremdschluesselkonflikt ausloesen.
 - Bezahlte Auftraege sind in der Auftragsuebersicht als hellgruene, abgeschlossene Zeilen erkennbar; dieser aktuelle Zustand ersetzt auch bei ehemaligen Notdiensten die rote Randmarkierung.
+- Bezahlte Rechnungen sind in der Rechnungsuebersicht mit demselben hellgruenen Abschlusszustand markiert.
+- Kundenadressen werden in den Formularen als `Strasse + Nr.`, fuenfstellige `PLZ` und `Ort` erfasst und weiterhin kompatibel im vorhandenen Adressfeld gespeichert.
+- Kunden, Mitarbeiter, Material und Werkzeuge koennen durch Klick auf ihre Listenzeile in einem fokussierten Seitenfenster bearbeitet werden.
 
 ## Phase 0: Projektfundament
 
@@ -42,19 +45,19 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0002 | Prisma/SQLite-Datenmodell anlegen | fertig | Prisma-Schema bildet Kunden, Auftraege, Einsaetze, Mitarbeiter, Material, Materialverbrauch, Zusatzarbeiten, Werkzeuge und Rechnungen ab; Beziehungen aus der Spec sind modelliert. |
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt alle Auftraege als kompakte Liste sowie kleine Kennzahlen fuer offene, geplante, laufende und wartende Auftraege; ein Auftrag kann aus der Liste geoeffnet werden. |
-| F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen und Listen. |
-| F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit Formular und Liste. |
+| F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen, Listen und direkter Bearbeitung per Klick auf einen Eintrag. |
+| F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit Formular, Liste und direkter Stammdatenbearbeitung. |
 | F-0007 | Demo-Daten bereitstellen | fertig | Ein Seed-Script legt realistische Demo-Daten fuer die vorhandenen Kernfunktionen an und kann wiederholt ausgefuehrt werden. |
 
 ## Phase 1: Kernprozess erste Version
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0101 | Kunde erfassen | fertig | Name, Telefonnummer, Adresse und Kundentyp koennen gespeichert werden; Kundentyp ist Privatkunde oder Firmenkunde. |
+| F-0101 | Kunde erfassen | fertig | Name, Telefonnummer, Strasse mit Hausnummer, fuenfstellige PLZ, Ort und Kundentyp koennen gespeichert und spaeter bearbeitet werden; Kundentyp ist Privatkunde oder Firmenkunde. |
 | F-0102 | Auftrag erfassen | fertig | Ein Auftrag kann mit Kunde, Beschreibung, Prioritaet und Startstatus `aufgenommen` gespeichert werden. |
 | F-0103 | Auftragsstatus pflegen | fertig | Alle Statuswerte aus der Spec sind verfuegbar und koennen am Auftrag gepflegt werden: aufgenommen, geplant, in Bearbeitung, pausiert, wartet auf Material, wartet auf Kundenentscheidung, technisch fertig, Rechnung erstellt, bezahlt, gemahnt, eskaliert. |
 | F-0104 | Prioritaet setzen | fertig | Ein Auftrag kann als normal, dringend oder Notdienst markiert werden. |
-| F-0105 | Mitarbeiter erfassen | fertig | Name, Rolle, Telefonnummer und Aktivstatus koennen gespeichert werden. |
+| F-0105 | Mitarbeiter erfassen | fertig | Name, Rolle, Telefonnummer und Aktivstatus koennen gespeichert und aus der Mitarbeiterliste bearbeitet werden. |
 | F-0106 | Mitarbeiter zu Auftrag zuordnen | fertig | Ein Auftrag kann einem oder mehreren aktiven Mitarbeitern zugeordnet werden; Thomas sieht, wer zu welchem Auftrag faehrt. |
 | F-0107 | Einsatz anlegen | fertig | Zu einem Auftrag koennen konkrete Einsaetze mit Datum und Status geplant, durchgefuehrt oder verschoben angelegt werden. |
 | F-0108 | Mitarbeiter zu Einsatz zuordnen | fertig | Ein Einsatz kann einem oder mehreren Mitarbeitern zugeordnet werden; die Zuordnung ist am Einsatz sichtbar. |
@@ -62,7 +65,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0110 | Status nach Einsatz aktualisieren | fertig | Das Buero kann nach einer Rueckmeldung sehen, ob ein Auftrag fertig ist oder erneut angefahren werden muss. |
 | F-0111 | Grund bei nicht fertigem Auftrag erfassen | fertig | Wenn ein Auftrag nach einem Einsatz nicht fertig ist, muss ein Grund gespeichert werden. |
 | F-0112 | Nicht-fertig-Gruende standardisieren | fertig | Fehlendes Material, fehlendes Ersatzteil, offene Kundenentscheidung und Folgeeinsatz sind als Gruende verfuegbar. |
-| F-0113 | Material erfassen | fertig | Material kann mit Name, Einheit, Lagerbestand und Lagerort gespeichert werden; Einheit ist `Stueck` oder eine Laengeneinheit `mm`, `cm` oder `m`; bei `Stueck` ist der Lagerbestand ganzzahlig. |
+| F-0113 | Material erfassen | fertig | Material kann mit Name, Einheit, Lagerbestand und Lagerort gespeichert und aus der Materialliste bearbeitet werden; Einheit ist `Stueck` oder eine Laengeneinheit `mm`, `cm` oder `m`; bei `Stueck` ist der Lagerbestand ganzzahlig. |
 | F-0114 | Materialverbrauch erfassen | fertig | Material, Menge, Auftrag und erfassender Mitarbeiter koennen gespeichert werden; bei `Stueck` ist die Verbrauchsmenge ganzzahlig. |
 | F-0115 | Materialverbrauch am Auftrag anzeigen | fertig | Am Auftrag ist sichtbar, welches Material in welcher Menge verbaut wurde. |
 | F-0116 | Schnellkunde beim Auftrag anlegen | fertig | Ein Auftrag kann entweder mit einem bestehenden Kunden oder mit Name, Telefonnummer, optionaler Adresse und Kundentyp fuer einen neuen Schnellkunden gespeichert werden; fehlende Kundendaten sind am Auftrag sichtbar. |
@@ -85,7 +88,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0301 | Werkzeug erfassen | fertig | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert werden. |
+| F-0301 | Werkzeug erfassen | fertig | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert und aus der Werkzeugliste bearbeitet werden. |
 | F-0302 | Werkzeugstandort anzeigen | fertig | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
 | F-0303 | Werkzeugbewegungen nachvollziehen | fertig | Die Ersterfassung und spaetere Standortwechsel legen Historieneintraege mit Ort, optionalem Besitzer, Zeitpunkt und Notiz an. |
 | F-0304 | Rechnung vorbereiten | fertig | Fuer technisch fertige Auftraege zeigt ein fokussierter Dialog Kunde, Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten als Rechnungsgrundlagen; Rechnungsdatum und Betrag koennen gespeichert werden; unfreigegebene Zusatzarbeiten ab 1.500 Euro blockieren den Vorgang. |
@@ -96,7 +99,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
 | F-0401 | Rechnung erfassen | fertig | Eine Rechnung wird eindeutig einem Auftrag zugeordnet und mit Erstellungsdatum, Betrag und Startstatus `offen` gespeichert; gleichzeitig wechselt der Auftrag atomar auf `Rechnung erstellt` und der Vorgang erscheint im Auftragsverlauf. |
-| F-0402 | Mahnstatus anzeigen | fertig | Die Rechnungsuebersicht kann nach offen, bezahlt, Mahnung 1, Mahnung 2 und Anwalt gefiltert werden; im Auftrag stehen nur die fachlich erlaubten naechsten Status zur Auswahl; jeder Wechsel braucht eine Notiz und synchronisiert den Auftragsstatus. |
+| F-0402 | Mahnstatus anzeigen | fertig | Die Rechnungsuebersicht kann nach offen, bezahlt, Mahnung 1, Mahnung 2 und Anwalt gefiltert werden; bezahlte Zeilen sind hellgruen als abgeschlossen markiert; im Auftrag stehen nur die fachlich erlaubten naechsten Status zur Auswahl; jeder Wechsel braucht eine Notiz und synchronisiert den Auftragsstatus. |
 | F-0403 | Eskalation bei Zahlungsausfall abbilden | fertig | Der Weg von offen ueber Mahnung 1 und Mahnung 2 bis Anwalt ist als gepruefte Statusfolge umgesetzt; eine spaetere Zahlung bleibt aus jedem offenen Eskalationsschritt moeglich; alle Wechsel erscheinen mit Datum und Notiz im Auftragsverlauf. |
 | F-0404 | Einfache Suche und Filter anbieten | fertig | Auftraege koennen nach Nummer, Kunde und Beschreibung durchsucht, nach offen oder abgeschlossen, Status, Prioritaet und Mitarbeiter gefiltert sowie nach letzter Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; Such- und Filterauswahl stehen in der URL und bleiben beim Ruecksprung aus dem Auftragsdetail erhalten. |
 

@@ -52,6 +52,7 @@ Wichtige Beziehungen:
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
 |   |-- action-form.tsx   # Einheitliche Fehler- und Erfolgsausgabe
 |   |-- form-actions.ts   # Rueckmeldende Wrapper um fachliche Server Actions
+|   |-- master-data-edit-drawer.tsx # Gemeinsames Bearbeitungsfenster
 |   |-- submit-button.tsx # Ladezustand und Schutz vor Mehrfachabsenden
 |   |-- additional-work-approval-panel.tsx
 |   |-- additional-work-form.tsx
@@ -76,6 +77,7 @@ Wichtige Beziehungen:
 |   |-- decisions.md
 |   `-- spec.md
 |-- lib/                  # Geteilte Server-Hilfen
+|   |-- address.ts        # Adresse formatieren und bestehende Werte aufteilen
 |   |-- notdienst.ts      # Isolierte Notdienst-Business-Rule
 |   |-- prisma.ts         # Prisma Client mit libSQL Adapter
 |   `-- rechnung.ts       # Isolierte Rechnungsvorbereitungs-Regel
@@ -116,7 +118,7 @@ npm run db:studio
 
 `npm run db:seed` entfernt die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
 
-`npm run test:e2e` setzt ausschliesslich die separate, ignorierte SQLite-Datei `test-e2e.db` zurueck und prueft die zusammenhaengenden Kernablaeufe in Chromium. Playwright startet dafuer einen eigenen Entwicklungsserver auf Port 3100 mit dem getrennten Build-Verzeichnis `.next-e2e`. Die normale lokale Datenbank, das regulaere `.next`-Verzeichnis und ein laufender Server auf Port 3000 bleiben unberuehrt.
+`npm run test:e2e` loescht und erstellt ausschliesslich die separate, ignorierte SQLite-Datei `test-e2e.db` neu und prueft die zusammenhaengenden Kernablaeufe in Chromium. Playwright startet dafuer einen eigenen Entwicklungsserver auf Port 3100 mit dem getrennten Build-Verzeichnis `.next-e2e`. Die normale lokale Datenbank, das regulaere `.next`-Verzeichnis und ein laufender Server auf Port 3000 bleiben unberuehrt.
 
 ## Formular- und Dialogverhalten
 
@@ -140,12 +142,13 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Rechnungsstatus folgen einer festen Reihenfolge; unzulaessige Spruenge und Aenderungen an bezahlten Rechnungen werden serverseitig abgelehnt.
 - Jeder Rechnungsstatuswechsel braucht eine Notiz und aktualisiert Rechnung, Historie und Auftrag in einer Transaktion.
 - Technische Fertigstellung, Rechnung und Zahlung sind getrennte Status.
+- Kundenadressen brauchen Strasse mit Hausnummer, eine fuenfstellige PLZ und Ort; die drei Eingaben werden kompatibel als formatierte Adresse gespeichert.
 
 ## Aktuelle UI-Flows
 
-- Kunden anlegen und anzeigen
-- Mitarbeiter mit Rolle und Aktivstatus anlegen und anzeigen
-- Material mit Einheit, Lagerbestand und Lagerort anlegen und anzeigen
+- Kunden mit getrennten Feldern fuer Strasse, PLZ und Ort anlegen, anzeigen und per Klick bearbeiten
+- Mitarbeiter mit Rolle und Aktivstatus anlegen, anzeigen und per Klick bearbeiten
+- Material mit Einheit, Lagerbestand und Lagerort anlegen, anzeigen und per Klick bearbeiten
 - Auftraege aus einem Seitenpanel mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen
 - Alle Auftraege mit kompaktem Status und kleinen KPIs auf der Startseite anzeigen
 - Auftraege ueber URL-Parameter nach Nummer, Kunde oder Beschreibung suchen, filtern und fachlich sortieren
@@ -165,11 +168,13 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Eine offene Rechnung mit Datum und Betrag anlegen, den Auftrag auf `Rechnung erstellt` setzen und die Rechnung im Verlauf anzeigen
 - Rechnungen in einer eigenen Uebersicht nach Status filtern und aus der Liste zum zugehoerigen Auftrag wechseln
 - Zahlung, Mahnungen und Anwalt ueber erlaubte Statusfolgen pflegen und jeden Schritt im Auftragsverlauf dokumentieren
+- Bezahlte Auftraege und Rechnungen in ihren Uebersichten hellgruen als abgeschlossen erkennen
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern
 - Lagerbestand beim Materialverbrauch reduzieren und Verbrauch am Auftrag anzeigen
 - Materialeinheit als `Stueck` oder konkrete Laengeneinheit `mm`, `cm` oder `m` erfassen; ganzzahlige Mengen fuer `Stueck`, Dezimalmengen fuer Laengeneinheiten
+- Werkzeuge aus ihrer Liste heraus bearbeiten; Standort- oder Besitzerwechsel erzeugen dabei weiterhin einen Historieneintrag
 
 ## Screens
 

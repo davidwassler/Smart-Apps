@@ -1,6 +1,7 @@
 import { MitarbeiterRolle } from "@prisma/client";
 import { ActionForm } from "../action-form";
 import { createMitarbeiterFormAction } from "../form-actions";
+import { EmployeeEditPanel } from "../employee-edit-panel";
 import { rollenLabels } from "../labels";
 import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
@@ -63,11 +64,20 @@ export default async function MitarbeiterPage() {
           ) : (
             <ul className="compactList">
               {mitarbeiter.map((person) => (
-                <li key={person.id}>
-                  <strong>{person.name}</strong>
-                  <span>{rollenLabels[person.rolle]}</span>
-                  <span>{person.telefonnummer}</span>
-                  <span>{person.aktiv ? "aktiv" : "inaktiv"}</span>
+                <li className="editableListItem" key={person.id}>
+                  <EmployeeEditPanel
+                    mitarbeiter={{
+                      id: person.id,
+                      name: person.name,
+                      rolle: person.rolle,
+                      telefonnummer: person.telefonnummer,
+                      aktiv: person.aktiv,
+                    }}
+                    rolleLabel={rollenLabels[person.rolle]}
+                    rolleOptionen={Object.entries(rollenLabels).map(
+                      ([value, label]) => ({ value, label }),
+                    )}
+                  />
                 </li>
               ))}
             </ul>

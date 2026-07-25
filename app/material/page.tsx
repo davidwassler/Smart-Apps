@@ -1,4 +1,5 @@
 import { MaterialForm } from "../material-form";
+import { MaterialEditPanel } from "../material-edit-panel";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -28,12 +29,16 @@ export default async function MaterialPage() {
           ) : (
             <ul className="compactList">
               {materialien.map((material) => (
-                <li key={material.id}>
-                  <strong>{material.name}</strong>
-                  <span>
-                    {material.lagerbestand.toString()} {material.einheit}
-                  </span>
-                  <span>{material.lagerort}</span>
+                <li className="editableListItem" key={material.id}>
+                  <MaterialEditPanel
+                    material={{
+                      id: material.id,
+                      name: material.name,
+                      einheit: material.einheit,
+                      lagerbestand: material.lagerbestand.toString(),
+                      lagerort: material.lagerort,
+                    }}
+                  />
                 </li>
               ))}
             </ul>

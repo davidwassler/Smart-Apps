@@ -69,6 +69,8 @@ npm run db:reset-demo
 - Die Auftragsliste kann nach Nummer, Kunde und Beschreibung durchsucht sowie nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert werden.
 - Sortierungen nach letzter Aenderung, naechstem Einsatz und Prioritaet sind verfuegbar; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
+- Kundenadressen werden mit getrennten Feldern fuer Strasse und Hausnummer, PLZ und Ort erfasst.
+- Kunden, Mitarbeiter, Material und Werkzeuge lassen sich durch Klick auf den jeweiligen Listeneintrag bearbeiten.
 - Ein neuer Auftrag wird ueber ein seitliches Panel angelegt und danach direkt geoeffnet.
 - Jeder Auftrag hat eine eigene Detailseite mit Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen im Auftragsdetail bearbeitet werden.
@@ -89,6 +91,7 @@ npm run db:reset-demo
 - Technisch fertige Auftraege koennen aus der Detailseite heraus als offene Rechnung mit Datum und Betrag gespeichert werden.
 - Der Rechnungsdialog buendelt Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten; die fertige Rechnung erscheint als eigener Block und im Auftragsverlauf.
 - Rechnungen haben eine eigene Uebersicht mit Statusfilter und direktem Ruecksprung aus dem zugehoerigen Auftrag.
+- Bezahlte Rechnungen sind in der Rechnungsuebersicht hellgruen als abgeschlossen markiert.
 - Zahlung, Mahnung 1, Mahnung 2 und Anwalt werden ueber fachlich erlaubte Statusfolgen gepflegt; jeder Schritt braucht eine Notiz und erscheint im Verlauf.
 - Rechnungs- und Auftragsstatus werden gemeinsam aktualisiert; bezahlte Rechnungen sind abgeschlossen.
 - Die Demo-Daten enthalten einen rechnungsbereiten Auftrag sowie offene, bezahlte und gemahnte Rechnungen.

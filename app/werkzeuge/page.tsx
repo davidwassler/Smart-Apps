@@ -6,6 +6,7 @@ import {
 } from "../form-actions";
 import { werkzeugStatusLabels } from "../labels";
 import { SubmitButton } from "../submit-button";
+import { ToolEditPanel } from "../tool-edit-panel";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -144,15 +145,29 @@ export default async function WerkzeugePage() {
           ) : (
             <ul className="compactList">
               {werkzeuge.map((werkzeug) => (
-                <li key={werkzeug.id}>
-                  <strong>{werkzeug.name}</strong>
-                  <span>{werkzeugStatusLabels[werkzeug.status]}</span>
-                  <span>{werkzeug.aktuellerOrt}</span>
-                  <span>
-                    {werkzeug.aktuellerBesitzer
-                      ? werkzeug.aktuellerBesitzer.name
-                      : "kein Besitzer"}
-                  </span>
+                <li className="editableListItem" key={werkzeug.id}>
+                  <ToolEditPanel
+                    besitzerName={
+                      werkzeug.aktuellerBesitzer
+                        ? werkzeug.aktuellerBesitzer.name
+                        : "kein Besitzer"
+                    }
+                    mitarbeiter={mitarbeiter.map((person) => ({
+                      id: person.id,
+                      name: person.name,
+                    }))}
+                    statusLabel={werkzeugStatusLabels[werkzeug.status]}
+                    statusOptionen={Object.entries(werkzeugStatusLabels).map(
+                      ([value, label]) => ({ value, label }),
+                    )}
+                    werkzeug={{
+                      id: werkzeug.id,
+                      name: werkzeug.name,
+                      status: werkzeug.status,
+                      aktuellerOrt: werkzeug.aktuellerOrt,
+                      aktuellerBesitzerId: werkzeug.aktuellerBesitzerId,
+                    }}
+                  />
                   {werkzeug.uebergaben.length > 0 ? (
                     <div className="historyList">
                       {werkzeug.uebergaben.map((uebergabe) => (

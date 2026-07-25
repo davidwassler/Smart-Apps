@@ -75,12 +75,38 @@ export function CustomerPicker({
           </div>
           <div className="fieldRow">
             <label>
-              Adresse
-              <input name="neuerKundeAdresse" placeholder="Kann spaeter ergaenzt werden" />
+              Strasse + Nr.
+              <input
+                name="neuerKundeStrasse"
+                placeholder="Kann spaeter ergaenzt werden"
+              />
+            </label>
+            <label>
+              PLZ
+              <input
+                inputMode="numeric"
+                maxLength={5}
+                minLength={5}
+                name="neuerKundePlz"
+                pattern="[0-9]{5}"
+                placeholder="Kann spaeter ergaenzt werden"
+              />
+            </label>
+          </div>
+          <div className="fieldRow">
+            <label>
+              Ort
+              <input
+                name="neuerKundeOrt"
+                placeholder="Kann spaeter ergaenzt werden"
+              />
             </label>
             <label>
               Kundentyp
-              <select name="neuerKundeKundentyp" defaultValue={defaultKundentyp}>
+              <select
+                name="neuerKundeKundentyp"
+                defaultValue={defaultKundentyp}
+              >
                 {kundentypen.map((kundentyp) => (
                   <option key={kundentyp.value} value={kundentyp.value}>
                     {kundentyp.label}

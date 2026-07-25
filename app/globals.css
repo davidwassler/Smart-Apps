@@ -588,12 +588,21 @@ button:disabled {
   padding: 12px 14px;
 }
 
+.invoiceRowPaid {
+  background: #edf7eb;
+  box-shadow: inset 4px 0 0 #5e9853;
+}
+
 .invoiceRow:last-child {
   border-bottom: 0;
 }
 
 .invoiceRow:hover {
   background: #f8faf7;
+}
+
+.invoiceRowPaid:hover {
+  background: #e4f1e1;
 }
 
 .invoiceRow:focus-visible {
@@ -1370,6 +1379,48 @@ button:disabled {
   display: grid;
   gap: 8px;
   padding: 12px;
+}
+
+.compactList li.editableListItem {
+  overflow: hidden;
+  padding: 0;
+}
+
+.recordEditButton {
+  align-items: center;
+  background: transparent;
+  color: var(--foreground);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  min-height: 0;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.recordEditButton:hover:not(:disabled) {
+  background: #e7ede6;
+}
+
+.recordEditSummary {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.recordEditSummary strong {
+  color: var(--foreground);
+}
+
+.recordEditHint {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.editableListItem > .historyList {
+  padding: 0 12px 12px;
 }
 
 .itemList p {

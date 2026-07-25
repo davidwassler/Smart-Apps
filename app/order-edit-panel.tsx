@@ -8,6 +8,7 @@ import {
 } from "./form-actions";
 import { SubmitButton } from "./submit-button";
 import { useDialogFocus } from "./use-dialog-focus";
+import { parseAddress } from "@/lib/address";
 
 type Option = {
   value: string;
@@ -60,6 +61,7 @@ export function OrderEditPanel({
   const dialogRef = useDialogFocus(isOpen);
   const [status, setStatus] = useState(auftrag.status);
   const brauchtGrund = statusMitGrund.has(status);
+  const kundenAdresse = parseAddress(kunde.adresse);
 
   useEffect(() => {
     if (!isOpen) {
@@ -255,9 +257,37 @@ export function OrderEditPanel({
                   </label>
                 </div>
                 <label>
-                  Adresse
-                  <input name="adresse" defaultValue={kunde.adresse} required />
+                  Strasse + Nr.
+                  <input
+                    name="strasse"
+                    defaultValue={kundenAdresse.strasse}
+                    required
+                  />
                 </label>
+                <div className="fieldRow">
+                  <label>
+                    PLZ
+                    <input
+                      autoComplete="postal-code"
+                      defaultValue={kundenAdresse.plz}
+                      inputMode="numeric"
+                      maxLength={5}
+                      minLength={5}
+                      name="plz"
+                      pattern="[0-9]{5}"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Ort
+                    <input
+                      autoComplete="address-level2"
+                      defaultValue={kundenAdresse.ort}
+                      name="ort"
+                      required
+                    />
+                  </label>
+                </div>
                 <SubmitButton pendingLabel="Kundendaten werden gespeichert...">
                   Kundendaten speichern
                 </SubmitButton>

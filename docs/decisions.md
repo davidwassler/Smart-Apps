@@ -185,3 +185,21 @@ Demo-Mitarbeiter werden beim erneuten Seed anhand ihres festen Namens gefunden u
 Status: entschieden
 
 Die Zeilenmarkierung der Auftragsuebersicht richtet sich zuerst nach dem aktuellen Abschlusszustand. Auftraege mit Status `BEZAHLT` erhalten einen hellgruenen Hintergrund und einen gruenen Rand. Bei einem bezahlten Notdienst wird die rote Notdienst-Randmarkierung nicht mehr verwendet, weil sie faelschlich einen noch akuten Handlungsbedarf vermittelt. Die historische Prioritaet bleibt im Prioritaetsfeld sichtbar.
+
+## ADR-0032: Adresse strukturiert erfassen und kompatibel speichern
+
+Status: entschieden
+
+Kundenformulare erfassen `Strasse + Nr.`, eine fuenfstellige `PLZ` und `Ort` als getrennte Eingaben. Intern werden die Werte weiterhin im vorhandenen Feld `Kunde.adresse` im Format `Strasse, PLZ Ort` gespeichert. Dadurch werden keine riskante SQLite-Tabellenmigration und keine doppelten Adressquellen eingefuehrt. Bestehende korrekt formatierte Adressen werden beim Bearbeiten aufgeteilt; abweichende Altdaten bleiben sichtbar und koennen im Bearbeitungsfenster vervollstaendigt werden.
+
+## ADR-0033: Stammdaten direkt aus Listen bearbeiten
+
+Status: entschieden
+
+Kunden, Mitarbeiter, Material und Werkzeuge werden ueber die gesamte jeweilige Listenzeile geoeffnet und in einem gemeinsamen Seitenfenster bearbeitet. Die Update-Logik bleibt in typisierten Server Actions mit denselben Validierungen wie bei der Erfassung. Bei Werkzeugen erzeugen Aenderungen an Status, Ort oder Besitzer weiterhin einen Historieneintrag; reine Namensaenderungen erzeugen keine kuenstliche Bewegung.
+
+## ADR-0034: Abschlussmarkierung in beiden kaufmaennischen Uebersichten
+
+Status: entschieden
+
+Der hellgruene Hintergrund mit gruenem Rand kennzeichnet den aktuellen Abschlusszustand sowohl in der Auftrags- als auch in der Rechnungsuebersicht. Dadurch wird `BEZAHLT` bereits auf Zeilenebene erkennbar und nicht nur ueber einen kleinen Status-Badge vermittelt. Offene und gemahnte Rechnungen behalten den neutralen Zeilenhintergrund und ihre jeweiligen Statusfarben.

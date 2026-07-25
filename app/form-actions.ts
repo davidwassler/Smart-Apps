@@ -14,7 +14,11 @@ import {
   saveEinsatzRueckmeldung,
   updateAuftrag,
   updateAuftragKunde,
+  updateKunde,
+  updateMaterial,
+  updateMitarbeiter,
   updateRechnungStatus,
+  updateWerkzeug,
   updateWerkzeugStandort,
   updateZusatzarbeitFreigabe,
   verschiebeEinsatz,
@@ -93,6 +97,30 @@ export async function createMitarbeiterFormAction(
   );
 }
 
+export async function updateKundeFormAction(
+  _state: ActionState,
+  formData: FormData,
+) {
+  return runAction(
+    updateKunde,
+    formData,
+    "Kundendaten wurden gespeichert.",
+    "Kundendaten konnten nicht gespeichert werden.",
+  );
+}
+
+export async function updateMitarbeiterFormAction(
+  _state: ActionState,
+  formData: FormData,
+) {
+  return runAction(
+    updateMitarbeiter,
+    formData,
+    "Mitarbeiterdaten wurden gespeichert.",
+    "Mitarbeiterdaten konnten nicht gespeichert werden.",
+  );
+}
+
 export async function createMaterialFormAction(
   _state: ActionState,
   formData: FormData,
@@ -114,6 +142,18 @@ export async function createAuftragFormAction(
     formData,
     "Auftrag wurde gespeichert.",
     "Auftrag konnte nicht gespeichert werden.",
+  );
+}
+
+export async function updateMaterialFormAction(
+  _state: ActionState,
+  formData: FormData,
+) {
+  return runAction(
+    updateMaterial,
+    formData,
+    "Materialdaten wurden gespeichert.",
+    "Materialdaten konnten nicht gespeichert werden.",
   );
 }
 
@@ -258,5 +298,17 @@ export async function updateWerkzeugStandortFormAction(
     formData,
     "Werkzeugstandort wurde gespeichert.",
     "Werkzeugstandort konnte nicht gespeichert werden.",
+  );
+}
+
+export async function updateWerkzeugFormAction(
+  _state: ActionState,
+  formData: FormData,
+) {
+  return runAction(
+    updateWerkzeug,
+    formData,
+    "Werkzeugdaten wurden gespeichert.",
+    "Werkzeugdaten konnten nicht gespeichert werden.",
   );
 }

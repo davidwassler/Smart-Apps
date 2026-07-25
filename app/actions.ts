@@ -15,6 +15,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertNotdienstVerschiebungBestaetigt } from "@/lib/notdienst";
 import { prisma } from "@/lib/prisma";
+import { formatAddress } from "@/lib/address";
 import {
   assertAuftragStatusPasstZurRechnung,
   assertRechnungVorbereitbar,
@@ -134,6 +135,41 @@ function assertWholeNumber(value: number, fieldName: string) {
   }
 }
 
+function addressField(prefix: string, field: string) {
+  return prefix === ""
+    ? field
+    : `${prefix}${field[0].toUpperCase()}${field.slice(1)}`;
+}
+
+function customerAddress(formData: FormData, prefix = "", optional = false) {
+  const fieldNames = {
+    strasse: addressField(prefix, "strasse"),
+    plz: addressField(prefix, "plz"),
+    ort: addressField(prefix, "ort"),
+  };
+  const values = {
+    strasse: optionalText(formData, fieldNames.strasse),
+    plz: optionalText(formData, fieldNames.plz),
+    ort: optionalText(formData, fieldNames.ort),
+  };
+  const isEmpty =
+    values.strasse === "" && values.plz === "" && values.ort === "";
+
+  if (optional && isEmpty) {
+    return "";
+  }
+
+  if (values.strasse === "" || values.plz === "" || values.ort === "") {
+    throw new Error("Strasse, PLZ und Ort muessen vollstaendig angegeben werden.");
+  }
+
+  if (!/^\d{5}$/.test(values.plz)) {
+    throw new Error("Die PLZ muss aus genau 5 Ziffern bestehen.");
+  }
+
+  return formatAddress(values);
+}
+
 async function assertEinsatzTeamAllowed(mitarbeiterIds: number[]) {
   if (mitarbeiterIds.length === 0) {
     throw new Error("Ein Einsatz braucht mindestens einen Mitarbeiter.");
@@ -167,7 +203,7 @@ export async function createKunde(formData: FormData) {
     data: {
       name: requireText(formData, "name"),
       telefonnummer: requireText(formData, "telefonnummer"),
-      adresse: requireText(formData, "adresse"),
+      adresse: customerAddress(formData),
       kundentyp: requireText(formData, "kundentyp") as Kundentyp,
     },
   });
@@ -190,6 +226,52 @@ export async function createMitarbeiter(formData: FormData) {
   revalidatePath("/mitarbeiter");
 }
 
+export async function updateKunde(formData: FormData) {
+  const kundeId = Number(requireText(formData, "kundeId"));
+
+  if (!Number.isInteger(kundeId) || kundeId <= 0) {
+    throw new Error("Ungueltiger Kunde.");
+  }
+
+  await prisma.kunde.update({
+    where: { id: kundeId },
+    data: {
+      name: requireText(formData, "name"),
+      telefonnummer: requireText(formData, "telefonnummer"),
+      adresse: customerAddress(formData),
+      kundentyp: requireText(formData, "kundentyp") as Kundentyp,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/kunden");
+  revalidatePath("/rechnungen");
+  revalidatePath("/auftraege/[id]", "page");
+}
+
+export async function updateMitarbeiter(formData: FormData) {
+  const mitarbeiterId = Number(requireText(formData, "mitarbeiterId"));
+
+  if (!Number.isInteger(mitarbeiterId) || mitarbeiterId <= 0) {
+    throw new Error("Ungueltiger Mitarbeiter.");
+  }
+
+  await prisma.mitarbeiter.update({
+    where: { id: mitarbeiterId },
+    data: {
+      name: requireText(formData, "name"),
+      rolle: requireText(formData, "rolle") as MitarbeiterRolle,
+      telefonnummer: requireText(formData, "telefonnummer"),
+      aktiv: formData.get("aktiv") === "on",
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/mitarbeiter");
+  revalidatePath("/werkzeuge");
+  revalidatePath("/auftraege/[id]", "page");
+}
+
 export async function createMaterial(formData: FormData) {
   const einheit = requireMaterialEinheit(formData);
   const lagerbestand = requireNonNegativeNumber(formData, "lagerbestand");
@@ -209,6 +291,33 @@ export async function createMaterial(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/material");
+}
+
+export async function updateMaterial(formData: FormData) {
+  const materialId = Number(requireText(formData, "materialId"));
+  const einheit = requireMaterialEinheit(formData);
+  const lagerbestand = requireNonNegativeNumber(formData, "lagerbestand");
+
+  if (!Number.isInteger(materialId) || materialId <= 0) {
+    throw new Error("Ungueltiges Material.");
+  }
+
+  if (einheit === "Stueck") {
+    assertWholeNumber(lagerbestand, "Lagerbestand");
+  }
+
+  await prisma.material.update({
+    where: { id: materialId },
+    data: {
+      name: requireText(formData, "name"),
+      einheit,
+      lagerbestand,
+      lagerort: requireText(formData, "lagerort"),
+    },
+  });
+
+  revalidatePath("/material");
+  revalidatePath("/auftraege/[id]", "page");
 }
 
 export async function createAuftrag(formData: FormData) {
@@ -245,7 +354,7 @@ export async function createAuftrag(formData: FormData) {
         data: {
           name: requireText(formData, "neuerKundeName"),
           telefonnummer: requireText(formData, "neuerKundeTelefonnummer"),
-          adresse: optionalText(formData, "neuerKundeAdresse"),
+          adresse: customerAddress(formData, "neuerKunde", true),
           kundentyp: requireText(formData, "neuerKundeKundentyp") as Kundentyp,
         },
       });
@@ -364,7 +473,7 @@ export async function updateAuftragKunde(formData: FormData) {
     data: {
       name: requireText(formData, "name"),
       telefonnummer: requireText(formData, "telefonnummer"),
-      adresse: requireText(formData, "adresse"),
+      adresse: customerAddress(formData),
       kundentyp: requireText(formData, "kundentyp") as Kundentyp,
     },
   });
@@ -864,6 +973,64 @@ export async function createWerkzeug(formData: FormData) {
         },
       },
     },
+  });
+
+  revalidatePath("/werkzeuge");
+}
+
+export async function updateWerkzeug(formData: FormData) {
+  const werkzeugId = Number(requireText(formData, "werkzeugId"));
+  const status = requireText(formData, "status") as WerkzeugStatus;
+  const aktuellerOrt = requireText(formData, "aktuellerOrt");
+  const aktuellerBesitzerValue = optionalText(
+    formData,
+    "aktuellerBesitzerId",
+  );
+  const aktuellerBesitzerId =
+    aktuellerBesitzerValue === "" ? null : Number(aktuellerBesitzerValue);
+
+  if (!Number.isInteger(werkzeugId) || werkzeugId <= 0) {
+    throw new Error("Ungueltiges Werkzeug.");
+  }
+
+  if (status === WerkzeugStatus.BEI_MITARBEITER && !aktuellerBesitzerId) {
+    throw new Error("Werkzeug bei Mitarbeiter braucht einen Besitzer.");
+  }
+
+  const bisherigesWerkzeug = await prisma.werkzeug.findUnique({
+    where: { id: werkzeugId },
+  });
+
+  if (!bisherigesWerkzeug) {
+    throw new Error("Werkzeug wurde nicht gefunden.");
+  }
+
+  const standortGeaendert =
+    bisherigesWerkzeug.status !== status ||
+    bisherigesWerkzeug.aktuellerOrt !== aktuellerOrt ||
+    bisherigesWerkzeug.aktuellerBesitzerId !== aktuellerBesitzerId;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.werkzeug.update({
+      where: { id: werkzeugId },
+      data: {
+        name: requireText(formData, "name"),
+        status,
+        aktuellerOrt,
+        aktuellerBesitzerId,
+      },
+    });
+
+    if (standortGeaendert) {
+      await tx.werkzeugUebergabe.create({
+        data: {
+          werkzeugId,
+          mitarbeiterId: aktuellerBesitzerId,
+          ort: aktuellerOrt,
+          notiz: "Bei Stammdatenbearbeitung aktualisiert",
+        },
+      });
+    }
   });
 
   revalidatePath("/werkzeuge");

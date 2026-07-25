@@ -122,7 +122,11 @@ export default async function InvoiceOverviewPage({
             <div className="invoiceRows">
               {sichtbareRechnungen.map((rechnung) => (
                 <Link
-                  className="invoiceRow"
+                  className={`invoiceRow ${
+                    rechnung.status === RechnungStatus.BEZAHLT
+                      ? "invoiceRowPaid"
+                      : ""
+                  }`}
                   href={`/auftraege/${rechnung.auftragId}?${new URLSearchParams({
                     returnTo,
                   }).toString()}`}

@@ -1,6 +1,7 @@
 import { Kundentyp } from "@prisma/client";
 import { ActionForm } from "../action-form";
 import { createKundeFormAction } from "../form-actions";
+import { CustomerEditPanel } from "../customer-edit-panel";
 import { kundentypLabels } from "../labels";
 import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
@@ -34,9 +35,27 @@ export default async function KundenPage() {
             <input name="telefonnummer" required />
           </label>
           <label>
-            Adresse
-            <textarea name="adresse" required rows={3} />
+            Strasse + Nr.
+            <input name="strasse" required />
           </label>
+          <div className="fieldRow">
+            <label>
+              PLZ
+              <input
+                autoComplete="postal-code"
+                inputMode="numeric"
+                maxLength={5}
+                minLength={5}
+                name="plz"
+                pattern="[0-9]{5}"
+                required
+              />
+            </label>
+            <label>
+              Ort
+              <input autoComplete="address-level2" name="ort" required />
+            </label>
+          </div>
           <label>
             Kundentyp
             <select name="kundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
@@ -59,11 +78,20 @@ export default async function KundenPage() {
           ) : (
             <ul className="compactList">
               {kunden.map((kunde) => (
-                <li key={kunde.id}>
-                  <strong>{kunde.name}</strong>
-                  <span>{kundentypLabels[kunde.kundentyp]}</span>
-                  <span>{kunde.telefonnummer}</span>
-                  <span>{kunde.adresse}</span>
+                <li className="editableListItem" key={kunde.id}>
+                  <CustomerEditPanel
+                    kunde={{
+                      id: kunde.id,
+                      name: kunde.name,
+                      telefonnummer: kunde.telefonnummer,
+                      adresse: kunde.adresse,
+                      kundentyp: kunde.kundentyp,
+                    }}
+                    kundentypLabel={kundentypLabels[kunde.kundentyp]}
+                    kundentypOptionen={Object.entries(kundentypLabels).map(
+                      ([value, label]) => ({ value, label }),
+                    )}
+                  />
                 </li>
               ))}
             </ul>
