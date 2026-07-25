@@ -36,6 +36,30 @@ function requirePositiveNumber(formData: FormData, name: string) {
   return value;
 }
 
+function requireNonNegativeNumber(formData: FormData, name: string) {
+  const value = Number(requireText(formData, name));
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`Wert darf nicht negativ sein: ${name}`);
+  }
+
+  return value;
+}
+
+function requireMaterialEinheit(formData: FormData) {
+  const einheit = requireText(formData, "einheit");
+  if (einheit !== "Stueck" && einheit !== "Laenge") {
+    throw new Error("Materialeinheit muss Stueck oder Laenge sein.");
+  }
+
+  return einheit;
+}
+
+function assertWholeNumber(value: number, fieldName: string) {
+  if (!Number.isInteger(value)) {
+    throw new Error(`${fieldName} muss bei Einheit Stueck eine ganze Zahl sein.`);
+  }
+}
+
 async function assertEinsatzTeamAllowed(mitarbeiterIds: number[]) {
   if (mitarbeiterIds.length === 0) {
     throw new Error("Ein Einsatz braucht mindestens einen Mitarbeiter.");
@@ -91,11 +115,18 @@ export async function createMitarbeiter(formData: FormData) {
 }
 
 export async function createMaterial(formData: FormData) {
+  const einheit = requireMaterialEinheit(formData);
+  const lagerbestand = requireNonNegativeNumber(formData, "lagerbestand");
+
+  if (einheit === "Stueck") {
+    assertWholeNumber(lagerbestand, "Lagerbestand");
+  }
+
   await prisma.material.create({
     data: {
       name: requireText(formData, "name"),
-      einheit: requireText(formData, "einheit"),
-      lagerbestand: requireText(formData, "lagerbestand"),
+      einheit,
+      lagerbestand,
       lagerort: requireText(formData, "lagerort"),
     },
   });
@@ -207,6 +238,7 @@ export async function createMaterialverbrauch(formData: FormData) {
       id: materialId,
     },
     select: {
+      einheit: true,
       lagerbestand: true,
       name: true,
     },
@@ -214,6 +246,10 @@ export async function createMaterialverbrauch(formData: FormData) {
 
   if (!material) {
     throw new Error("Material wurde nicht gefunden.");
+  }
+
+  if (material.einheit === "Stueck") {
+    assertWholeNumber(menge, "Verbrauchsmenge");
   }
 
   const lagerbestand = material.lagerbestand.toNumber();

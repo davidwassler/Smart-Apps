@@ -59,3 +59,9 @@ Die Lehrlingsregel und der Pflichtgrund fuer nicht fertige Auftraege werden in S
 Status: entschieden
 
 Beim Erfassen von Materialverbrauch wird der Lagerbestand in derselben Datenbanktransaktion reduziert. Die Server Action prueft, dass die Menge groesser als 0 ist und den verfuegbaren Bestand nicht ueberschreitet, damit Rechnungsvorbereitung und Nachbestellung auf konsistenteren Daten beruhen.
+
+## ADR-0011: Materialeinheiten auf Stueck und Laenge begrenzen
+
+Status: entschieden
+
+Materialeinheiten werden in der UI als Dropdown mit `Stueck` und `Laenge` gefuehrt. Bei `Stueck` muessen Lagerbestand und Verbrauchsmengen ganzzahlig sein; bei `Laenge` sind Dezimalwerte erlaubt. Die Regel wird serverseitig validiert, damit der Datenbestand auch bei spaeteren UI-Aenderungen konsistent bleibt.

@@ -48,6 +48,7 @@ npm run build
 - Einsaetze koennen geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
+- Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; `Stueck` erzwingt ganze Zahlen.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:

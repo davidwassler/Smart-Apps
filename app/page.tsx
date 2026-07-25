@@ -10,11 +10,11 @@ import {
   createAuftrag,
   createEinsatz,
   createKunde,
-  createMaterial,
   createMaterialverbrauch,
   createMitarbeiter,
   saveEinsatzRueckmeldung,
 } from "./actions";
+import { MaterialForm } from "./material-form";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -192,26 +192,7 @@ export default async function Home() {
           <button type="submit">Mitarbeiter speichern</button>
         </form>
 
-        <form action={createMaterial} className="panel">
-          <h2>Material erfassen</h2>
-          <label>
-            Name
-            <input name="name" required />
-          </label>
-          <label>
-            Einheit
-            <input name="einheit" placeholder="Stueck, Meter ..." required />
-          </label>
-          <label>
-            Lagerbestand
-            <input name="lagerbestand" type="number" step="0.01" min="0" defaultValue="0" required />
-          </label>
-          <label>
-            Lagerort
-            <input name="lagerort" required />
-          </label>
-          <button type="submit">Material speichern</button>
-        </form>
+        <MaterialForm />
 
         <form action={createAuftrag} className="panel wide">
           <h2>Auftrag erfassen</h2>
