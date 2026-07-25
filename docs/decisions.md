@@ -179,3 +179,9 @@ Playwright arbeitet mit `test-e2e.db`, dem Next.js-Build-Verzeichnis `.next-e2e`
 Status: entschieden
 
 Demo-Mitarbeiter werden beim erneuten Seed anhand ihres festen Namens gefunden und auf die definierten Demowerte aktualisiert. Sie werden nicht mehr geloescht und neu angelegt, weil manuell erfasste Auftraege oder Einsaetze bereits auf diese Stammdatensaetze verweisen koennen. Die fachlichen Demo-Auftraege werden weiterhin reproduzierbar neu aufgebaut, waehrend bestehende Mitarbeiterreferenzen gueltig bleiben.
+
+## ADR-0031: Aktueller Abschlusszustand hat in der Uebersicht Vorrang
+
+Status: entschieden
+
+Die Zeilenmarkierung der Auftragsuebersicht richtet sich zuerst nach dem aktuellen Abschlusszustand. Auftraege mit Status `BEZAHLT` erhalten einen hellgruenen Hintergrund und einen gruenen Rand. Bei einem bezahlten Notdienst wird die rote Notdienst-Randmarkierung nicht mehr verwendet, weil sie faelschlich einen noch akuten Handlungsbedarf vermittelt. Die historische Prioritaet bleibt im Prioritaetsfeld sichtbar.

@@ -373,7 +373,9 @@ export default async function Home({ searchParams }: HomeProps) {
                 return (
                   <Link
                     className={`orderRow ${
-                      auftrag.prioritaet === Prioritaet.NOTDIENST
+                      auftrag.status === AuftragStatus.BEZAHLT
+                        ? "orderRowPaid"
+                        : auftrag.prioritaet === Prioritaet.NOTDIENST
                         ? "orderRowNotdienst"
                         : ""
                     }`}

@@ -493,12 +493,21 @@ button:disabled {
   box-shadow: inset 4px 0 0 var(--danger);
 }
 
+.orderRowPaid {
+  background: #edf7eb;
+  box-shadow: inset 4px 0 0 #5e9853;
+}
+
 .orderRow:last-child {
   border-bottom: 0;
 }
 
 .orderRow:hover {
   background: #f8faf7;
+}
+
+.orderRowPaid:hover {
+  background: #e4f1e1;
 }
 
 .orderRow:focus-visible {

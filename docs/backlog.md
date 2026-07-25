@@ -32,6 +32,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Der Chronologieeintrag zur Rechnungserstellung zeigt dauerhaft den damaligen Startstatus `Offen`; spaetere Zahlungs- und Mahnstatus erscheinen ausschliesslich in ihren eigenen Statuswechsel-Eintraegen.
 - Browserpruefungen verwenden eine eigene SQLite-Testdatei und einen eigenen lokalen Port, damit manuell angelegte Daten und die laufende App beim Testlauf unberuehrt bleiben.
 - Das Demo-Seed verwendet bereits vorhandene Demo-Mitarbeiter weiter, damit manuell angelegte Auftraege mit diesen Zuordnungen keinen Fremdschluesselkonflikt ausloesen.
+- Bezahlte Auftraege sind in der Auftragsuebersicht als hellgruene, abgeschlossene Zeilen erkennbar; dieser aktuelle Zustand ersetzt auch bei ehemaligen Notdiensten die rote Randmarkierung.
 
 ## Phase 0: Projektfundament
 

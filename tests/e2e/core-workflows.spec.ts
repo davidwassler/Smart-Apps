@@ -31,6 +31,7 @@ test("Kernablaeufe vom Auftrag bis zur bezahlten Rechnung", async ({
   await dialog
     .getByLabel("Beschreibung")
     .fill("E2E-Pruefauftrag fuer die Kernablaeufe.");
+  await dialog.getByLabel("Prioritaet").selectOption({ label: "Notdienst" });
   await dialog.getByLabel("Jana Keller").check();
   await dialog.getByRole("button", { name: "Auftrag speichern" }).click();
 
@@ -120,6 +121,15 @@ test("Kernablaeufe vom Auftrag bis zur bezahlten Rechnung", async ({
       .filter({ hasText: "Rechnungsstatus aktualisiert" })
       .getByText("Bezahlt", { exact: true }),
   ).toBeVisible();
+
+  await page
+    .getByRole("link", { name: "Zurueck zur Auftragsuebersicht" })
+    .click();
+  const bezahlterNotdienst = page
+    .locator(".orderRow")
+    .filter({ hasText: "E2E-Pruefauftrag fuer die Kernablaeufe." });
+  await expect(bezahlterNotdienst).toHaveClass(/orderRowPaid/);
+  await expect(bezahlterNotdienst).not.toHaveClass(/orderRowNotdienst/);
 });
 
 test("Notdienstfehler bleibt verstaendlich und erhaelt Eingaben", async ({
