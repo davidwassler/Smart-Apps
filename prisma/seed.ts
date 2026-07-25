@@ -182,11 +182,34 @@ async function clearDemoData() {
       },
     },
   });
-  await prisma.mitarbeiter.deleteMany({
-    where: {
-      name: {
-        in: demoNames.mitarbeiter,
+}
+
+async function seedMitarbeiter(
+  name: string,
+  rolle: MitarbeiterRolle,
+  telefonnummer: string,
+) {
+  const vorhandenerMitarbeiter = await prisma.mitarbeiter.findFirst({
+    where: { name },
+    orderBy: { id: "asc" },
+  });
+
+  if (vorhandenerMitarbeiter) {
+    return prisma.mitarbeiter.update({
+      where: { id: vorhandenerMitarbeiter.id },
+      data: {
+        aktiv: true,
+        rolle,
+        telefonnummer,
       },
+    });
+  }
+
+  return prisma.mitarbeiter.create({
+    data: {
+      name,
+      rolle,
+      telefonnummer,
     },
   });
 }
@@ -201,41 +224,31 @@ async function main() {
     jana,
     lukas,
   ] = await Promise.all([
-    prisma.mitarbeiter.create({
-      data: {
-        name: "Thomas Brandt",
-        rolle: MitarbeiterRolle.GESCHAEFTSFUEHRER,
-        telefonnummer: "0171 1000001",
-      },
-    }),
-    prisma.mitarbeiter.create({
-      data: {
-        name: "Sabine Brandt",
-        rolle: MitarbeiterRolle.BUERO,
-        telefonnummer: "0521 1000002",
-      },
-    }),
-    prisma.mitarbeiter.create({
-      data: {
-        name: "Martin Krueger",
-        rolle: MitarbeiterRolle.MEISTER,
-        telefonnummer: "0171 1000003",
-      },
-    }),
-    prisma.mitarbeiter.create({
-      data: {
-        name: "Jana Keller",
-        rolle: MitarbeiterRolle.GESELLE,
-        telefonnummer: "0171 1000004",
-      },
-    }),
-    prisma.mitarbeiter.create({
-      data: {
-        name: "Lukas Brandt",
-        rolle: MitarbeiterRolle.LEHRLING,
-        telefonnummer: "0171 1000005",
-      },
-    }),
+    seedMitarbeiter(
+      "Thomas Brandt",
+      MitarbeiterRolle.GESCHAEFTSFUEHRER,
+      "0171 1000001",
+    ),
+    seedMitarbeiter(
+      "Sabine Brandt",
+      MitarbeiterRolle.BUERO,
+      "0521 1000002",
+    ),
+    seedMitarbeiter(
+      "Martin Krueger",
+      MitarbeiterRolle.MEISTER,
+      "0171 1000003",
+    ),
+    seedMitarbeiter(
+      "Jana Keller",
+      MitarbeiterRolle.GESELLE,
+      "0171 1000004",
+    ),
+    seedMitarbeiter(
+      "Lukas Brandt",
+      MitarbeiterRolle.LEHRLING,
+      "0171 1000005",
+    ),
   ]);
 
   const [neumann, baeckerei, lindenhof] = await Promise.all([

@@ -173,3 +173,9 @@ Chronologieeintraege stellen den Zustand zum jeweiligen Ereigniszeitpunkt dar. E
 Status: entschieden
 
 Playwright arbeitet mit `test-e2e.db`, dem Next.js-Build-Verzeichnis `.next-e2e` und einem eigenen Entwicklungsserver auf Port 3100. Das vorbereitende Seed setzt nur diese Testdatei zurueck. Die normale lokale Datenbank kann manuell erfasste Auftraege mit Demo-Stammdaten verknuepfen und darf deshalb nicht durch automatisierte Tests bereinigt oder veraendert werden. Die Trennung verhindert Datenverlust, Fremdschluesselkonflikte und Wechselwirkungen mit einer auf Port 3000 laufenden App.
+
+## ADR-0030: Demo-Mitarbeiter beim erneuten Seed wiederverwenden
+
+Status: entschieden
+
+Demo-Mitarbeiter werden beim erneuten Seed anhand ihres festen Namens gefunden und auf die definierten Demowerte aktualisiert. Sie werden nicht mehr geloescht und neu angelegt, weil manuell erfasste Auftraege oder Einsaetze bereits auf diese Stammdatensaetze verweisen koennen. Die fachlichen Demo-Auftraege werden weiterhin reproduzierbar neu aufgebaut, waehrend bestehende Mitarbeiterreferenzen gueltig bleiben.

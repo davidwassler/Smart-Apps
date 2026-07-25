@@ -31,6 +31,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Playwright prueft die Kernablaeufe Auftrag, Einsatz, Rueckmeldung, Materialverbrauch, Notdienst-Verschiebung, Rechnung und Zahlung sowie das mobile Dialogverhalten automatisiert.
 - Der Chronologieeintrag zur Rechnungserstellung zeigt dauerhaft den damaligen Startstatus `Offen`; spaetere Zahlungs- und Mahnstatus erscheinen ausschliesslich in ihren eigenen Statuswechsel-Eintraegen.
 - Browserpruefungen verwenden eine eigene SQLite-Testdatei und einen eigenen lokalen Port, damit manuell angelegte Daten und die laufende App beim Testlauf unberuehrt bleiben.
+- Das Demo-Seed verwendet bereits vorhandene Demo-Mitarbeiter weiter, damit manuell angelegte Auftraege mit diesen Zuordnungen keinen Fremdschluesselkonflikt ausloesen.
 
 ## Phase 0: Projektfundament
 

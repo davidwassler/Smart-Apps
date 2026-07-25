@@ -57,7 +57,7 @@ npm run db:seed
 npm run db:reset-demo
 ```
 
-`db:seed` entfernt nur die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
+`db:seed` entfernt nur die festen fachlichen Demo-Daten und legt sie neu an. Bereits verwendete Demo-Mitarbeiter werden aktualisiert statt geloescht, damit manuelle Auftraege ihre Zuordnungen behalten. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
 
 ## Aktueller Stand
 
