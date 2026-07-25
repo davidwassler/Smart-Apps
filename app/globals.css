@@ -27,6 +27,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 button,
 input,
 select,
@@ -38,6 +43,32 @@ textarea {
   margin: 0 auto;
   max-width: 1320px;
   padding: 28px 20px 48px;
+}
+
+.appNav {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.appNav a {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 8px 10px;
+}
+
+.appNav a:hover {
+  background: var(--panel-soft);
+  border-color: var(--line);
+  color: var(--foreground);
 }
 
 .topbar {
@@ -315,5 +346,9 @@ button:disabled {
 
   .wide {
     grid-column: span 1;
+  }
+
+  .appNav {
+    overflow-x: auto;
   }
 }

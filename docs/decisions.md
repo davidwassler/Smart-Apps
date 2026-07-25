@@ -65,3 +65,9 @@ Beim Erfassen von Materialverbrauch wird der Lagerbestand in derselben Datenbank
 Status: entschieden
 
 Materialeinheiten werden in der UI als Dropdown mit `Stueck` und `Laenge` gefuehrt. Wenn `Laenge` gewaehlt wird, muss zusaetzlich `mm`, `cm` oder `m` gewaehlt werden; gespeichert wird die konkrete Einheit. Bei `Stueck` muessen Lagerbestand und Verbrauchsmengen ganzzahlig sein; bei Laengeneinheiten sind Dezimalwerte erlaubt. Die Regel wird serverseitig validiert, damit der Datenbestand auch bei spaeteren UI-Aenderungen konsistent bleibt.
+
+## ADR-0012: Auftragsuebersicht als Startscreen, Stammdaten getrennt
+
+Status: entschieden
+
+Die Startseite wird als taegliche Auftragsuebersicht gefuehrt. Kunden, Mitarbeiter und Material sind Stammdaten und bekommen eigene Seiten. Dadurch bleibt der Kernprozess sichtbar, waehrend Pflegeformulare nicht mehr die Auftragsarbeit ueberladen.

@@ -41,20 +41,24 @@ Wichtige Beziehungen:
 
 ```text
 .
-├── app/                  # Next.js App Router UI
-│   └── actions.ts        # Server Actions fuer einfache Schreib-Workflows
-├── docs/                 # Fachliche und technische Dokumentation
-│   ├── architecture.md
-│   ├── backlog.md
-│   ├── decisions.md
-│   └── spec.md
-├── lib/                  # Geteilte Server-Hilfen
-│   └── prisma.ts         # Prisma Client mit libSQL Adapter
-├── prisma/               # Prisma Schema und Migrationen
-├── AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
-├── README.md             # Einstieg fuer Menschen
-├── package.json
-└── prisma.config.ts
+|-- app/                  # Next.js App Router UI
+|   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
+|   |-- kunden/           # Kundenseite
+|   |-- labels.ts         # Gemeinsame fachliche Labels
+|   |-- material/         # Materialseite
+|   `-- mitarbeiter/      # Mitarbeiterseite
+|-- docs/                 # Fachliche und technische Dokumentation
+|   |-- architecture.md
+|   |-- backlog.md
+|   |-- decisions.md
+|   `-- spec.md
+|-- lib/                  # Geteilte Server-Hilfen
+|   `-- prisma.ts         # Prisma Client mit libSQL Adapter
+|-- prisma/               # Prisma Schema und Migrationen
+|-- AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
+|-- README.md             # Einstieg fuer Menschen
+|-- package.json
+`-- prisma.config.ts
 ```
 
 ## Laufbefehle
@@ -99,3 +103,10 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Materialverbrauch mit Auftrag, Material, Menge und erfassendem Mitarbeiter speichern
 - Lagerbestand beim Materialverbrauch reduzieren und Verbrauch am Auftrag anzeigen
 - Materialeinheit als `Stueck` oder konkrete Laengeneinheit `mm`, `cm` oder `m` erfassen; ganzzahlige Mengen fuer `Stueck`, Dezimalmengen fuer Laengeneinheiten
+
+## Screens
+
+- `/`: Auftragsuebersicht mit Auftragserfassung, Einsatzplanung, Rueckmeldung und Materialverbrauch
+- `/kunden`: Kunden erfassen und anzeigen
+- `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
+- `/material`: Material erfassen und anzeigen

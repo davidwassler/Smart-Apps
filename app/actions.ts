@@ -112,6 +112,7 @@ export async function createKunde(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath("/kunden");
 }
 
 export async function createMitarbeiter(formData: FormData) {
@@ -125,6 +126,7 @@ export async function createMitarbeiter(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath("/mitarbeiter");
 }
 
 export async function createMaterial(formData: FormData) {
@@ -145,6 +147,7 @@ export async function createMaterial(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath("/material");
 }
 
 export async function createAuftrag(formData: FormData) {
@@ -168,6 +171,7 @@ export async function createAuftrag(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath("/material");
 }
 
 export async function createEinsatz(formData: FormData) {

@@ -1,77 +1,21 @@
-import {
-  AuftragStatus,
-  EinsatzStatus,
-  Kundentyp,
-  MitarbeiterRolle,
-  NichtFertigGrund,
-  Prioritaet,
-} from "@prisma/client";
+import { AuftragStatus, EinsatzStatus, Prioritaet } from "@prisma/client";
 import {
   createAuftrag,
   createEinsatz,
-  createKunde,
   createMaterialverbrauch,
-  createMitarbeiter,
   saveEinsatzRueckmeldung,
 } from "./actions";
-import { MaterialForm } from "./material-form";
+import {
+  auftragStatusLabels,
+  einsatzStatusLabels,
+  nichtFertigGrundLabels,
+  prioritaetLabels,
+  rollenLabels,
+  rueckmeldeStatus,
+} from "./labels";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const kundentypLabels: Record<Kundentyp, string> = {
-  PRIVATKUNDE: "Privatkunde",
-  FIRMENKUNDE: "Firmenkunde",
-};
-
-const rollenLabels: Record<MitarbeiterRolle, string> = {
-  GESCHAEFTSFUEHRER: "Geschaeftsfuehrer",
-  BUERO: "Buero",
-  MEISTER: "Meister",
-  GESELLE: "Geselle",
-  LEHRLING: "Lehrling",
-};
-
-const prioritaetLabels: Record<Prioritaet, string> = {
-  NORMAL: "Normal",
-  DRINGEND: "Dringend",
-  NOTDIENST: "Notdienst",
-};
-
-const einsatzStatusLabels: Record<EinsatzStatus, string> = {
-  GEPLANT: "Geplant",
-  DURCHGEFUEHRT: "Durchgefuehrt",
-  VERSCHOBEN: "Verschoben",
-};
-
-const auftragStatusLabels: Record<AuftragStatus, string> = {
-  AUFGENOMMEN: "Aufgenommen",
-  GEPLANT: "Geplant",
-  IN_BEARBEITUNG: "In Bearbeitung",
-  PAUSIERT: "Pausiert",
-  WARTET_AUF_MATERIAL: "Wartet auf Material",
-  WARTET_AUF_KUNDENENTSCHEIDUNG: "Wartet auf Kundenentscheidung",
-  TECHNISCH_FERTIG: "Technisch fertig",
-  RECHNUNG_ERSTELLT: "Rechnung erstellt",
-  BEZAHLT: "Bezahlt",
-  GEMAHNT: "Gemahnt",
-  ESKALIERT: "Eskaliert",
-};
-
-const rueckmeldeStatus = [
-  AuftragStatus.IN_BEARBEITUNG,
-  AuftragStatus.PAUSIERT,
-  AuftragStatus.WARTET_AUF_MATERIAL,
-  AuftragStatus.WARTET_AUF_KUNDENENTSCHEIDUNG,
-  AuftragStatus.TECHNISCH_FERTIG,
-];
-
-const nichtFertigGrundLabels: Record<NichtFertigGrund, string> = {
-  FEHLENDES_MATERIAL: "Fehlendes Material",
-  FEHLENDES_ERSATZTEIL: "Fehlendes Ersatzteil",
-  OFFENE_KUNDENENTSCHEIDUNG: "Offene Kundenentscheidung",
-  FOLGEEINSATZ_NOETIG: "Folgeeinsatz noetig",
-};
 
 export default async function Home() {
   const [kunden, mitarbeiter, materialien, auftraege, einsaetze] = await Promise.all([
@@ -127,7 +71,7 @@ export default async function Home() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Brandt & Soehne Elektro</p>
-          <h1>Auftraege, Kunden, Mitarbeiter und Material</h1>
+          <h1>Auftragsuebersicht</h1>
         </div>
         <div className="counters" aria-label="Aktueller Datenbestand">
           <span>{auftraege.length} Auftraege</span>
@@ -137,63 +81,7 @@ export default async function Home() {
         </div>
       </header>
 
-      <section className="formsGrid" aria-label="Daten erfassen">
-        <form action={createKunde} className="panel">
-          <h2>Kunde erfassen</h2>
-          <label>
-            Name
-            <input name="name" required />
-          </label>
-          <label>
-            Telefonnummer
-            <input name="telefonnummer" required />
-          </label>
-          <label>
-            Adresse
-            <textarea name="adresse" required rows={3} />
-          </label>
-          <label>
-            Kundentyp
-            <select name="kundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
-              {Object.entries(kundentypLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button type="submit">Kunde speichern</button>
-        </form>
-
-        <form action={createMitarbeiter} className="panel">
-          <h2>Mitarbeiter erfassen</h2>
-          <label>
-            Name
-            <input name="name" required />
-          </label>
-          <label>
-            Rolle
-            <select name="rolle" defaultValue={MitarbeiterRolle.GESELLE}>
-              {Object.entries(rollenLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Telefonnummer
-            <input name="telefonnummer" required />
-          </label>
-          <label className="checkline">
-            <input name="aktiv" type="checkbox" defaultChecked />
-            Aktiv verfuegbar
-          </label>
-          <button type="submit">Mitarbeiter speichern</button>
-        </form>
-
-        <MaterialForm />
-
+      <section className="formsGrid" aria-label="Auftragsarbeit">
         <form action={createAuftrag} className="panel wide">
           <h2>Auftrag erfassen</h2>
           <label>
@@ -423,98 +311,46 @@ export default async function Home() {
         )}
       </section>
 
-      <section className="dataGrid" aria-label="Uebersichten">
-        <div className="listPanel">
-          <h2>Aktuelle Auftraege</h2>
-          {auftraege.length === 0 ? (
-            <p className="emptyText">Noch keine Auftraege erfasst.</p>
-          ) : (
-            <ul className="itemList">
-              {auftraege.map((auftrag) => (
-                <li key={auftrag.id}>
-                  <div>
-                    <strong>{auftrag.kunde.name}</strong>
-                    <p>{auftrag.beschreibung}</p>
-                  </div>
-                  <div className="metaRow">
-                    <span>{prioritaetLabels[auftrag.prioritaet]}</span>
-                    <span>{auftragStatusLabels[auftrag.status]}</span>
-                    {auftrag.nichtFertigGrund ? (
-                      <span>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</span>
-                    ) : null}
-                    <span>
-                      {auftrag.mitarbeiter.length === 0
-                        ? "nicht zugeordnet"
-                        : auftrag.mitarbeiter
-                            .map((entry) => entry.mitarbeiter.name)
-                            .join(", ")}
-                    </span>
-                  </div>
-                  {auftrag.materialverbraeuche.length > 0 ? (
-                    <div className="subList" aria-label="Materialverbrauch">
-                      {auftrag.materialverbraeuche.map((verbrauch) => (
-                        <span key={verbrauch.id}>
-                          {verbrauch.material.name}: {verbrauch.menge.toString()}{" "}
-                          {verbrauch.material.einheit} ({verbrauch.erfasstVon.name})
-                        </span>
-                      ))}
-                    </div>
+      <section className="listPanel fullWidth" aria-label="Aktuelle Auftraege">
+        <h2>Aktuelle Auftraege</h2>
+        {auftraege.length === 0 ? (
+          <p className="emptyText">Noch keine Auftraege erfasst.</p>
+        ) : (
+          <ul className="itemList">
+            {auftraege.map((auftrag) => (
+              <li key={auftrag.id}>
+                <div>
+                  <strong>{auftrag.kunde.name}</strong>
+                  <p>{auftrag.beschreibung}</p>
+                </div>
+                <div className="metaRow">
+                  <span>{prioritaetLabels[auftrag.prioritaet]}</span>
+                  <span>{auftragStatusLabels[auftrag.status]}</span>
+                  {auftrag.nichtFertigGrund ? (
+                    <span>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</span>
                   ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="listPanel">
-          <h2>Kunden</h2>
-          {kunden.length === 0 ? (
-            <p className="emptyText">Noch keine Kunden erfasst.</p>
-          ) : (
-            <ul className="compactList">
-              {kunden.map((kunde) => (
-                <li key={kunde.id}>
-                  <strong>{kunde.name}</strong>
-                  <span>{kundentypLabels[kunde.kundentyp]}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="listPanel">
-          <h2>Mitarbeiter</h2>
-          {mitarbeiter.length === 0 ? (
-            <p className="emptyText">Noch keine Mitarbeiter erfasst.</p>
-          ) : (
-            <ul className="compactList">
-              {mitarbeiter.map((person) => (
-                <li key={person.id}>
-                  <strong>{person.name}</strong>
-                  <span>{rollenLabels[person.rolle]}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="listPanel">
-          <h2>Material</h2>
-          {materialien.length === 0 ? (
-            <p className="emptyText">Noch kein Material erfasst.</p>
-          ) : (
-            <ul className="compactList">
-              {materialien.map((material) => (
-                <li key={material.id}>
-                  <strong>{material.name}</strong>
                   <span>
-                    {material.lagerbestand.toString()} {material.einheit} / {material.lagerort}
+                    {auftrag.mitarbeiter.length === 0
+                      ? "nicht zugeordnet"
+                      : auftrag.mitarbeiter
+                          .map((entry) => entry.mitarbeiter.name)
+                          .join(", ")}
                   </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                </div>
+                {auftrag.materialverbraeuche.length > 0 ? (
+                  <div className="subList" aria-label="Materialverbrauch">
+                    {auftrag.materialverbraeuche.map((verbrauch) => (
+                      <span key={verbrauch.id}>
+                        {verbrauch.material.name}: {verbrauch.menge.toString()}{" "}
+                        {verbrauch.material.einheit} ({verbrauch.erfasstVon.name})
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
