@@ -107,3 +107,9 @@ Die Startseite dient als ruhige Uebersicht mit wenigen Status-Kennzahlen und ein
 Status: entschieden
 
 Die Auftragsdetailseite bietet ein gemeinsames Bearbeiten-Panel, darin werden Auftragsdaten und Kundendaten jedoch ueber getrennte Formulare gespeichert. Dadurch kann das Buero Status, Prioritaet oder Team aendern, obwohl eine Kundenadresse noch fehlt. Teamzuordnungen werden beim Speichern des Auftrags in einer Transaktion ersetzt. Eine Kundenaenderung prueft serverseitig, dass der Kunde tatsaechlich mit dem geoeffneten Auftrag verknuepft ist.
+
+## ADR-0019: Detailinformationen vor Erfassungsformularen
+
+Status: entschieden
+
+Die Auftragsdetailseite priorisiert zuerst die Informationen, die fuer die naechste Entscheidung gebraucht werden: Kunde und Status, danach Prioritaet, naechster Einsatz, Team, Kontakt und gegebenenfalls ein Hinderungsgrund. Einsatzplanung und Materialverbrauch werden als Aktionen angeboten und erst nach einem Klick in getrennten Seitenfenstern angezeigt. Der Einsatzverlauf steht vor der Materialhistorie, weil Termin und Rueckmeldung den aktuellen Arbeitsstand staerker bestimmen.

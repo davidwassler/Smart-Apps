@@ -59,6 +59,8 @@ npm run db:reset-demo
 - Jeder Auftrag hat eine eigene Detailseite mit Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen im Auftragsdetail bearbeitet werden.
 - Fehlende Kundendaten koennen direkt am Auftrag vervollstaendigt und getrennt gespeichert werden.
+- Die Detailseite zeigt Status, naechsten Einsatz, Team und Kontakt vor den Arbeitsverlaeufen.
+- Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in einem Seitenfenster verborgen.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.

@@ -49,6 +49,7 @@ Wichtige Beziehungen:
 |   |-- material/         # Materialseite
 |   |-- material-usage-form.tsx
 |   |-- mitarbeiter/      # Mitarbeiterseite
+|   |-- order-action-panels.tsx
 |   |-- order-create-panel.tsx
 |   |-- order-edit-panel.tsx
 |   `-- werkzeuge/        # Werkzeugseite
@@ -111,6 +112,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Einen Auftrag mit Stammdaten, Einsaetzen, Rueckmeldungen und Materialverbrauch als eigene Detailseite anzeigen
 - Auftragsbeschreibung, Prioritaet, Status und Team im Auftragsdetail bearbeiten
 - Die zum Auftrag gehoerenden Kundendaten im selben Panel getrennt vervollstaendigen
+- Den naechsten geplanten Einsatz im oberen Informationsbereich des Auftrags anzeigen
+- Einsatzplanung und Materialverbrauch ueber kompakte Aktionen in getrennten Seitenfenstern oeffnen
 - Einsaetze im Kontext des geoeffneten Auftrags mit Datum, Status und Mitarbeiterzuordnung anlegen
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen

@@ -331,7 +331,6 @@ button:disabled {
 }
 
 .sectionHeading,
-.panelHeading,
 .recordHeader,
 .drawerHeader {
   align-items: flex-start;
@@ -346,7 +345,6 @@ button:disabled {
 
 .sectionHeading h2,
 .sectionHeading p,
-.panelHeading h2,
 .drawerHeader h2 {
   margin-bottom: 0;
 }
@@ -642,22 +640,24 @@ button:disabled {
   padding: 10px 12px;
 }
 
-.workGrid {
-  align-items: start;
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 20px;
-}
-
-.panelHeading {
+.orderActions {
+  align-items: center;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 14px;
-  padding-bottom: 12px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 14px 0;
 }
 
-.panelHeading .eyebrow {
-  margin-bottom: 5px;
+.orderActions h2 {
+  margin-bottom: 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
 }
 
 .detailSection {
@@ -876,7 +876,6 @@ button:disabled {
   .counters,
   .fieldRow,
   .kpiGrid,
-  .workGrid,
   .detailFacts {
     grid-template-columns: 1fr;
   }
@@ -927,6 +926,15 @@ button:disabled {
 
   .detailHeaderActions .statusBadge {
     justify-self: start;
+  }
+
+  .orderActions {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .actionButtons {
+    display: grid;
   }
 
   .materialRecords li {

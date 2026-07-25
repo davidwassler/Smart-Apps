@@ -18,6 +18,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Auftraege koennen direkt aus einem neuen Schnellkunden heraus angelegt werden; unvollstaendige Kundendaten werden am Auftrag sichtbar.
 - Die Startseite ist auf eine kompakte Auftragsliste mit Status-KPIs reduziert; Auftragserfassung liegt in einem Seitenpanel, Einsatzplanung, Rueckmeldung und Materialverbrauch in der jeweiligen Auftragsdetailseite.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen nachtraeglich im Auftragsdetail gepflegt werden; die zugehoerigen Kundendaten lassen sich dort direkt vervollstaendigen.
+- Die Auftragsdetailseite zeigt zuerst Status, naechsten Einsatz, Team und Kontakt; Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in getrennten Seitenfenstern verborgen.
 
 ## Phase 0: Projektfundament
 
@@ -53,6 +54,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0116 | Schnellkunde beim Auftrag anlegen | fertig | Ein Auftrag kann entweder mit einem bestehenden Kunden oder mit Name, Telefonnummer, optionaler Adresse und Kundentyp fuer einen neuen Schnellkunden gespeichert werden; fehlende Kundendaten sind am Auftrag sichtbar. |
 | F-0117 | Auftragsarbeit in einer Detailseite buendeln | fertig | Auftragserfassung wird aus der Uebersicht ueber ein Seitenpanel gestartet; nach dem Speichern oder beim Klick auf einen Auftrag oeffnet sich dessen Detailseite; dort sind Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch gebuendelt. |
 | F-0118 | Auftrag und zugehoerige Kundendaten bearbeiten | fertig | Beschreibung, Prioritaet, Status und Auftragsteam koennen im Auftragsdetail geaendert werden; pausierte und wartende Status brauchen einen Hinderungsgrund; Name, Telefonnummer, Adresse und Kundentyp des verknuepften Kunden koennen dort getrennt gespeichert werden. |
+| F-0119 | Auftragsaktionen bei Bedarf oeffnen | fertig | Die Detailseite zeigt zuerst Kunde, Status, Prioritaet, naechsten Einsatz, Team, Kontakt und einen moeglichen Hinderungsgrund; Einsatzplanung und Materialverbrauch sind anfangs eingeklappt und oeffnen jeweils ein eigenes Seitenfenster; Einsatz- und Materialhistorie bleiben darunter lesbar. |
 
 ## Phase 2: Regeln und einfache Absicherung
 

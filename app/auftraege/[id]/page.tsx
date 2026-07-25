@@ -1,10 +1,7 @@
 import { AuftragStatus, EinsatzStatus } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  createEinsatz,
-  saveEinsatzRueckmeldung,
-} from "../../actions";
+import { saveEinsatzRueckmeldung } from "../../actions";
 import {
   auftragStatusLabels,
   einsatzStatusLabels,
@@ -14,7 +11,7 @@ import {
   rollenLabels,
   rueckmeldeStatus,
 } from "../../labels";
-import { MaterialUsageForm } from "../../material-usage-form";
+import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
 
@@ -78,6 +75,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     auftrag.kunde.telefonnummer.trim() === "" ||
     auftrag.kunde.adresse.trim() === "";
   const aktiveMitarbeiter = mitarbeiter.filter((person) => person.aktiv);
+  const heute = new Date();
+  heute.setHours(0, 0, 0, 0);
+  const naechsterEinsatz = auftrag.einsaetze
+    .filter(
+      (einsatz) =>
+        einsatz.status === EinsatzStatus.GEPLANT && einsatz.datum >= heute,
+    )
+    .sort((links, rechts) => links.datum.getTime() - rechts.datum.getTime())[0];
 
   return (
     <main className="page">
@@ -141,6 +146,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           <strong>{prioritaetLabels[auftrag.prioritaet]}</strong>
         </div>
         <div>
+          <span>Naechster Einsatz</span>
+          <strong>
+            {naechsterEinsatz
+              ? new Intl.DateTimeFormat("de-DE").format(naechsterEinsatz.datum)
+              : "Noch nicht geplant"}
+          </strong>
+        </div>
+        <div>
           <span>Auftragsteam</span>
           <strong>
             {auftrag.mitarbeiter.length === 0
@@ -156,12 +169,6 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             {auftrag.kunde.telefonnummer || "Telefonnummer fehlt"}
           </strong>
           <small>{auftrag.kunde.adresse || "Adresse fehlt"}</small>
-        </div>
-        <div>
-          <span>Letzte Aenderung</span>
-          <strong>
-            {new Intl.DateTimeFormat("de-DE").format(auftrag.updatedAt)}
-          </strong>
           {kundenDatenUnvollstaendig ? (
             <small className="warningText">Kundendaten ergaenzen</small>
           ) : null}
@@ -176,81 +183,25 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       ) : null}
 
       {!istAbgeschlossen ? (
-        <section className="workGrid" aria-label="Arbeit am Auftrag">
-          <div className="panel">
-            <div className="panelHeading">
-              <div>
-                <p className="eyebrow">Termin</p>
-                <h2>Einsatz planen</h2>
-              </div>
-            </div>
-            <form action={createEinsatz}>
-              <input name="auftragId" type="hidden" value={auftrag.id} />
-              <div className="fieldRow">
-                <label>
-                  Datum
-                  <input name="datum" type="date" required />
-                </label>
-                <label>
-                  Status
-                  <select name="status" defaultValue={EinsatzStatus.GEPLANT}>
-                    {Object.entries(einsatzStatusLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <fieldset>
-                <legend>Mitarbeiter fuer Einsatz</legend>
-                <div className="checkboxGrid">
-                  {aktiveMitarbeiter.length === 0 ? (
-                    <p className="emptyText">
-                      Noch keine aktiven Mitarbeiter erfasst.
-                    </p>
-                  ) : (
-                    aktiveMitarbeiter.map((person) => (
-                      <label className="checkline" key={person.id}>
-                        <input
-                          name="mitarbeiterIds"
-                          type="checkbox"
-                          value={person.id}
-                        />
-                        {person.name} ({rollenLabels[person.rolle]})
-                      </label>
-                    ))
-                  )}
-                </div>
-              </fieldset>
-              <button type="submit" disabled={aktiveMitarbeiter.length === 0}>
-                Einsatz speichern
-              </button>
-            </form>
-          </div>
-
-          <div className="panel">
-            <div className="panelHeading">
-              <div>
-                <p className="eyebrow">Lager</p>
-                <h2>Materialverbrauch erfassen</h2>
-              </div>
-            </div>
-            <MaterialUsageForm
-              auftragId={auftrag.id}
-              materialien={materialien.map((material) => ({
-                id: material.id,
-                name: material.name,
-                einheit: material.einheit,
-                lagerbestand: material.lagerbestand.toString(),
-              }))}
-              mitarbeiter={aktiveMitarbeiter.map((person) => ({
-                id: person.id,
-                name: person.name,
-              }))}
-            />
-          </div>
-        </section>
+        <OrderActionPanels
+          key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
+          auftragId={auftrag.id}
+          mitarbeiter={aktiveMitarbeiter.map((person) => ({
+            id: person.id,
+            name: person.name,
+            rolle: rollenLabels[person.rolle],
+          }))}
+          einsatzStatusOptionen={Object.entries(einsatzStatusLabels).map(
+            ([value, label]) => ({ value, label }),
+          )}
+          defaultEinsatzStatus={EinsatzStatus.GEPLANT}
+          materialien={materialien.map((material) => ({
+            id: material.id,
+            name: material.name,
+            einheit: material.einheit,
+            lagerbestand: material.lagerbestand.toString(),
+          }))}
+        />
       ) : (
         <p className="attentionNote">
           Dieser Auftrag ist abgeschlossen. Planung und Verbrauchserfassung sind
