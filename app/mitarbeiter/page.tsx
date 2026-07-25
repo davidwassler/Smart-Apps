@@ -1,9 +1,6 @@
-import { MitarbeiterRolle } from "@prisma/client";
-import { ActionForm } from "../action-form";
-import { createMitarbeiterFormAction } from "../form-actions";
+import { EmployeeCreatePanel } from "../employee-create-panel";
 import { EmployeeEditPanel } from "../employee-edit-panel";
 import { rollenLabels } from "../labels";
-import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -21,43 +18,21 @@ export default async function MitarbeiterPage() {
           <p className="eyebrow">Stammdaten</p>
           <h1>Mitarbeiter</h1>
         </div>
-        <div className="counters">
-          <span>{mitarbeiter.length} gesamt</span>
-          <span>{aktiveMitarbeiter.length} aktiv</span>
+        <div className="topbarActions">
+          <div className="counters">
+            <span>{mitarbeiter.length} gesamt</span>
+            <span>{aktiveMitarbeiter.length} aktiv</span>
+          </div>
+          <EmployeeCreatePanel
+            rolleOptionen={Object.entries(rollenLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+          />
         </div>
       </header>
 
-      <section className="formsGrid">
-        <ActionForm action={createMitarbeiterFormAction} className="panel">
-          <h2>Mitarbeiter erfassen</h2>
-          <label>
-            Name
-            <input name="name" required />
-          </label>
-          <label>
-            Rolle
-            <select name="rolle" defaultValue={MitarbeiterRolle.GESELLE}>
-              {Object.entries(rollenLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Telefonnummer
-            <input name="telefonnummer" required />
-          </label>
-          <label className="checkline">
-            <input name="aktiv" type="checkbox" defaultChecked />
-            Aktiv verfuegbar
-          </label>
-          <SubmitButton pendingLabel="Mitarbeiter wird gespeichert...">
-            Mitarbeiter speichern
-          </SubmitButton>
-        </ActionForm>
-
-        <div className="listPanel wide">
+      <section className="listSection">
+        <div className="listPanel">
           <h2>Mitarbeiterliste</h2>
           {mitarbeiter.length === 0 ? (
             <p className="emptyText">Noch keine Mitarbeiter erfasst.</p>

@@ -1,16 +1,26 @@
 "use client";
 
+import { Kundentyp } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ActionForm } from "./action-form";
-import { createMaterialFormAction } from "./form-actions";
+import { createKundeFormAction } from "./form-actions";
 import { SubmitButton } from "./submit-button";
 import { useDialogFocus } from "./use-dialog-focus";
 
-export function MaterialForm() {
-  const [einheitTyp, setEinheitTyp] = useState("Stueck");
+type Option = {
+  value: string;
+  label: string;
+};
+
+type CustomerCreatePanelProps = {
+  kundentypOptionen: Option[];
+};
+
+export function CustomerCreatePanel({
+  kundentypOptionen,
+}: CustomerCreatePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dialogRef = useDialogFocus(isOpen);
-  const isStueck = einheitTyp === "Stueck";
 
   useEffect(() => {
     if (!isOpen) {
@@ -34,7 +44,7 @@ export function MaterialForm() {
         type="button"
         onClick={() => setIsOpen(true)}
       >
-        Material hinzufuegen
+        Kunde hinzufuegen
       </button>
 
       {isOpen ? (
@@ -48,7 +58,7 @@ export function MaterialForm() {
           }}
         >
           <aside
-            aria-labelledby="create-material-heading"
+            aria-labelledby="create-customer-heading"
             aria-modal="true"
             className="drawer"
             ref={dialogRef}
@@ -56,8 +66,8 @@ export function MaterialForm() {
           >
             <div className="drawerHeader">
               <div>
-                <p className="eyebrow">Neues Material</p>
-                <h2 id="create-material-heading">Material erfassen</h2>
+                <p className="eyebrow">Neuer Kunde</p>
+                <h2 id="create-customer-heading">Kunde erfassen</h2>
               </div>
               <button
                 aria-label="Fenster schliessen"
@@ -70,49 +80,46 @@ export function MaterialForm() {
               </button>
             </div>
 
-            <ActionForm
-              action={createMaterialFormAction}
-              className="drawerForm"
-            >
+            <ActionForm action={createKundeFormAction} className="drawerForm">
               <label>
                 Name
                 <input name="name" required />
               </label>
               <label>
-                Einheit
-                <select
-                  name="einheitTyp"
-                  value={einheitTyp}
-                  onChange={(event) => setEinheitTyp(event.target.value)}
-                >
-                  <option value="Stueck">Stueck</option>
-                  <option value="Laenge">Laenge</option>
-                </select>
+                Telefonnummer
+                <input name="telefonnummer" required />
               </label>
-              {!isStueck ? (
+              <label>
+                Strasse + Nr.
+                <input name="strasse" required />
+              </label>
+              <div className="fieldRow">
                 <label>
-                  Laengeneinheit
-                  <select name="laengenEinheit" defaultValue="m">
-                    <option value="mm">mm</option>
-                    <option value="cm">cm</option>
-                    <option value="m">m</option>
-                  </select>
+                  PLZ
+                  <input
+                    autoComplete="postal-code"
+                    inputMode="numeric"
+                    maxLength={5}
+                    minLength={5}
+                    name="plz"
+                    pattern="[0-9]{5}"
+                    required
+                  />
                 </label>
-              ) : null}
+                <label>
+                  Ort
+                  <input autoComplete="address-level2" name="ort" required />
+                </label>
+              </div>
               <label>
-                Lagerbestand
-                <input
-                  name="lagerbestand"
-                  type="number"
-                  step={isStueck ? "1" : "0.01"}
-                  min="0"
-                  defaultValue="0"
-                  required
-                />
-              </label>
-              <label>
-                Lagerort
-                <input name="lagerort" required />
+                Kundentyp
+                <select name="kundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
+                  {kundentypOptionen.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </label>
               <div className="drawerFooter">
                 <button
@@ -122,8 +129,8 @@ export function MaterialForm() {
                 >
                   Abbrechen
                 </button>
-                <SubmitButton pendingLabel="Material wird gespeichert...">
-                  Material speichern
+                <SubmitButton pendingLabel="Kunde wird gespeichert...">
+                  Kunde speichern
                 </SubmitButton>
               </div>
             </ActionForm>

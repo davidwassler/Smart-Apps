@@ -68,6 +68,7 @@ npm run db:reset-demo
 - Bezahlte Auftraege sind in der Liste hellgruen als abgeschlossen markiert; bei ehemaligen Notdiensten ersetzt der Abschlusszustand die rote Randmarkierung.
 - Die Auftragsliste kann nach Nummer, Kunde und Beschreibung durchsucht sowie nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert werden.
 - Sortierungen nach letzter Aenderung, naechstem Einsatz und Prioritaet sind verfuegbar; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
+- Kunden, Mitarbeiter und Material zeigen jeweils eine kompakte Liste mit Zaehler und Hinzufuegen-Button oben rechts; die Erfassung oeffnet sich in einem Seitenfenster.
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
 - Kundenadressen werden mit getrennten Feldern fuer Strasse und Hausnummer, PLZ und Ort erfasst.
 - Kunden, Mitarbeiter, Material und Werkzeuge lassen sich durch Klick auf den jeweiligen Listeneintrag bearbeiten.

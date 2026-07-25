@@ -37,6 +37,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Kundenadressen werden in den Formularen als `Strasse + Nr.`, fuenfstellige `PLZ` und `Ort` erfasst und weiterhin kompatibel im vorhandenen Adressfeld gespeichert.
 - Kunden, Mitarbeiter, Material und Werkzeuge koennen durch Klick auf ihre Listenzeile in einem fokussierten Seitenfenster bearbeitet werden.
 - Das doppelte Werkzeugformular `Standort wechseln` wurde entfernt; Erfassung und spaetere Pflege sind klar in Hinzufuegen-Button und klickbare Werkzeugzeile getrennt.
+- Kunden, Mitarbeiter und Material verwenden nun ebenfalls eine kompakte, volle Listenansicht; die Erfassung wird einheitlich ueber einen Hinzufuegen-Button oben rechts in einem Seitenfenster geoeffnet.
 
 ## Phase 0: Projektfundament
 
@@ -46,7 +47,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0002 | Prisma/SQLite-Datenmodell anlegen | fertig | Prisma-Schema bildet Kunden, Auftraege, Einsaetze, Mitarbeiter, Material, Materialverbrauch, Zusatzarbeiten, Werkzeuge und Rechnungen ab; Beziehungen aus der Spec sind modelliert. |
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt alle Auftraege als kompakte Liste sowie kleine Kennzahlen fuer offene, geplante, laufende und wartende Auftraege; ein Auftrag kann aus der Liste geoeffnet werden. |
-| F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen, Listen und direkter Bearbeitung per Klick auf einen Eintrag. |
+| F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit kompakter Liste, Zaehler und Hinzufuegen-Button oben rechts; die Erfassung erfolgt in einem fokussierten Seitenfenster und vorhandene Eintraege koennen direkt per Klick bearbeitet werden. |
 | F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit kompakter Liste, einem Button zum Hinzufuegen und direkter Stammdatenbearbeitung per Klick. |
 | F-0007 | Demo-Daten bereitstellen | fertig | Ein Seed-Script legt realistische Demo-Daten fuer die vorhandenen Kernfunktionen an und kann wiederholt ausgefuehrt werden. |
 

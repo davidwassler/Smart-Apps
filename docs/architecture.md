@@ -51,8 +51,11 @@ Wichtige Beziehungen:
 |-- app/                  # Next.js App Router UI
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
 |   |-- action-form.tsx   # Einheitliche Fehler- und Erfolgsausgabe
+|   |-- customer-create-panel.tsx # Kundenerfassung im Seitenfenster
+|   |-- employee-create-panel.tsx # Mitarbeitererfassung im Seitenfenster
 |   |-- form-actions.ts   # Rueckmeldende Wrapper um fachliche Server Actions
 |   |-- master-data-edit-drawer.tsx # Gemeinsames Bearbeitungsfenster
+|   |-- material-form.tsx # Materialerfassung im Seitenfenster
 |   |-- submit-button.tsx # Ladezustand und Schutz vor Mehrfachabsenden
 |   |-- tool-create-panel.tsx # Werkzeugerfassung im Seitenfenster
 |   |-- additional-work-approval-panel.tsx

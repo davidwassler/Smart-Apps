@@ -1,16 +1,26 @@
 "use client";
 
+import { MitarbeiterRolle } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ActionForm } from "./action-form";
-import { createMaterialFormAction } from "./form-actions";
+import { createMitarbeiterFormAction } from "./form-actions";
 import { SubmitButton } from "./submit-button";
 import { useDialogFocus } from "./use-dialog-focus";
 
-export function MaterialForm() {
-  const [einheitTyp, setEinheitTyp] = useState("Stueck");
+type Option = {
+  value: string;
+  label: string;
+};
+
+type EmployeeCreatePanelProps = {
+  rolleOptionen: Option[];
+};
+
+export function EmployeeCreatePanel({
+  rolleOptionen,
+}: EmployeeCreatePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dialogRef = useDialogFocus(isOpen);
-  const isStueck = einheitTyp === "Stueck";
 
   useEffect(() => {
     if (!isOpen) {
@@ -34,7 +44,7 @@ export function MaterialForm() {
         type="button"
         onClick={() => setIsOpen(true)}
       >
-        Material hinzufuegen
+        Mitarbeiter hinzufuegen
       </button>
 
       {isOpen ? (
@@ -48,7 +58,7 @@ export function MaterialForm() {
           }}
         >
           <aside
-            aria-labelledby="create-material-heading"
+            aria-labelledby="create-employee-heading"
             aria-modal="true"
             className="drawer"
             ref={dialogRef}
@@ -56,8 +66,8 @@ export function MaterialForm() {
           >
             <div className="drawerHeader">
               <div>
-                <p className="eyebrow">Neues Material</p>
-                <h2 id="create-material-heading">Material erfassen</h2>
+                <p className="eyebrow">Neuer Mitarbeiter</p>
+                <h2 id="create-employee-heading">Mitarbeiter erfassen</h2>
               </div>
               <button
                 aria-label="Fenster schliessen"
@@ -71,7 +81,7 @@ export function MaterialForm() {
             </div>
 
             <ActionForm
-              action={createMaterialFormAction}
+              action={createMitarbeiterFormAction}
               className="drawerForm"
             >
               <label>
@@ -79,40 +89,25 @@ export function MaterialForm() {
                 <input name="name" required />
               </label>
               <label>
-                Einheit
+                Rolle
                 <select
-                  name="einheitTyp"
-                  value={einheitTyp}
-                  onChange={(event) => setEinheitTyp(event.target.value)}
+                  name="rolle"
+                  defaultValue={MitarbeiterRolle.GESELLE}
                 >
-                  <option value="Stueck">Stueck</option>
-                  <option value="Laenge">Laenge</option>
+                  {rolleOptionen.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </label>
-              {!isStueck ? (
-                <label>
-                  Laengeneinheit
-                  <select name="laengenEinheit" defaultValue="m">
-                    <option value="mm">mm</option>
-                    <option value="cm">cm</option>
-                    <option value="m">m</option>
-                  </select>
-                </label>
-              ) : null}
               <label>
-                Lagerbestand
-                <input
-                  name="lagerbestand"
-                  type="number"
-                  step={isStueck ? "1" : "0.01"}
-                  min="0"
-                  defaultValue="0"
-                  required
-                />
+                Telefonnummer
+                <input name="telefonnummer" required />
               </label>
-              <label>
-                Lagerort
-                <input name="lagerort" required />
+              <label className="checkline">
+                <input name="aktiv" type="checkbox" defaultChecked />
+                Aktiv verfuegbar
               </label>
               <div className="drawerFooter">
                 <button
@@ -122,8 +117,8 @@ export function MaterialForm() {
                 >
                   Abbrechen
                 </button>
-                <SubmitButton pendingLabel="Material wird gespeichert...">
-                  Material speichern
+                <SubmitButton pendingLabel="Mitarbeiter wird gespeichert...">
+                  Mitarbeiter speichern
                 </SubmitButton>
               </div>
             </ActionForm>

@@ -199,10 +199,22 @@ test("Auftragsdialog bleibt auf kleinem Bildschirm bedienbar", async ({
 
 test("Stammdaten lassen sich aus den Listen bearbeiten", async ({ page }) => {
   await page.goto("/kunden");
+  let createButton = page.getByRole("button", {
+    name: "Kunde hinzufuegen",
+  });
+  await expect(
+    page.getByRole("heading", { name: "Kunde erfassen" }),
+  ).toHaveCount(0);
+  await createButton.click();
+  let dialog = page.getByRole("dialog", { name: "Kunde erfassen" });
+  await expect(dialog.getByLabel("Name")).toBeFocused();
+  await dialog.getByRole("button", { name: "Fenster schliessen" }).click();
+  await expect(createButton).toBeFocused();
+
   await page
     .getByRole("button", { name: "Familie Neumann bearbeiten" })
     .click();
-  let dialog = page.getByRole("dialog", { name: "Kunde bearbeiten" });
+  dialog = page.getByRole("dialog", { name: "Kunde bearbeiten" });
   await expect(dialog.getByLabel("Strasse + Nr.")).toHaveValue("Ahornweg 12");
   await expect(dialog.getByLabel("PLZ")).toHaveValue("33609");
   await expect(dialog.getByLabel("Ort")).toHaveValue("Bielefeld");
@@ -217,6 +229,18 @@ test("Stammdaten lassen sich aus den Listen bearbeiten", async ({ page }) => {
   await expect(page.getByText("Ahornweg 14, 33609 Bielefeld")).toBeVisible();
 
   await page.goto("/mitarbeiter");
+  createButton = page.getByRole("button", {
+    name: "Mitarbeiter hinzufuegen",
+  });
+  await expect(
+    page.getByRole("heading", { name: "Mitarbeiter erfassen" }),
+  ).toHaveCount(0);
+  await createButton.click();
+  dialog = page.getByRole("dialog", { name: "Mitarbeiter erfassen" });
+  await expect(dialog.getByLabel("Name")).toBeFocused();
+  await dialog.getByRole("button", { name: "Fenster schliessen" }).click();
+  await expect(createButton).toBeFocused();
+
   await page
     .getByRole("button", { name: "Jana Keller bearbeiten" })
     .click();
@@ -232,6 +256,18 @@ test("Stammdaten lassen sich aus den Listen bearbeiten", async ({ page }) => {
   await expect(page.getByText("0171 1000099")).toBeVisible();
 
   await page.goto("/material");
+  createButton = page.getByRole("button", {
+    name: "Material hinzufuegen",
+  });
+  await expect(
+    page.getByRole("heading", { name: "Material erfassen" }),
+  ).toHaveCount(0);
+  await createButton.click();
+  dialog = page.getByRole("dialog", { name: "Material erfassen" });
+  await expect(dialog.getByLabel("Name")).toBeFocused();
+  await dialog.getByRole("button", { name: "Fenster schliessen" }).click();
+  await expect(createButton).toBeFocused();
+
   await page
     .getByRole("button", { name: "Steckdose reinweiss bearbeiten" })
     .click();

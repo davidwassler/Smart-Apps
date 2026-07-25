@@ -14,15 +14,16 @@ export default async function MaterialPage() {
           <p className="eyebrow">Stammdaten</p>
           <h1>Material</h1>
         </div>
-        <div className="counters">
-          <span>{materialien.length} Materialien</span>
+        <div className="topbarActions">
+          <div className="counters">
+            <span>{materialien.length} Materialien</span>
+          </div>
+          <MaterialForm />
         </div>
       </header>
 
-      <section className="formsGrid">
-        <MaterialForm />
-
-        <div className="listPanel wide">
+      <section className="listSection">
+        <div className="listPanel">
           <h2>Materialliste</h2>
           {materialien.length === 0 ? (
             <p className="emptyText">Noch kein Material erfasst.</p>

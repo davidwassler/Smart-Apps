@@ -1,9 +1,6 @@
-import { Kundentyp } from "@prisma/client";
-import { ActionForm } from "../action-form";
-import { createKundeFormAction } from "../form-actions";
+import { CustomerCreatePanel } from "../customer-create-panel";
 import { CustomerEditPanel } from "../customer-edit-panel";
 import { kundentypLabels } from "../labels";
-import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -18,60 +15,20 @@ export default async function KundenPage() {
           <p className="eyebrow">Stammdaten</p>
           <h1>Kunden</h1>
         </div>
-        <div className="counters">
-          <span>{kunden.length} Kunden</span>
+        <div className="topbarActions">
+          <div className="counters">
+            <span>{kunden.length} Kunden</span>
+          </div>
+          <CustomerCreatePanel
+            kundentypOptionen={Object.entries(kundentypLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+          />
         </div>
       </header>
 
-      <section className="formsGrid">
-        <ActionForm action={createKundeFormAction} className="panel">
-          <h2>Kunde erfassen</h2>
-          <label>
-            Name
-            <input name="name" required />
-          </label>
-          <label>
-            Telefonnummer
-            <input name="telefonnummer" required />
-          </label>
-          <label>
-            Strasse + Nr.
-            <input name="strasse" required />
-          </label>
-          <div className="fieldRow">
-            <label>
-              PLZ
-              <input
-                autoComplete="postal-code"
-                inputMode="numeric"
-                maxLength={5}
-                minLength={5}
-                name="plz"
-                pattern="[0-9]{5}"
-                required
-              />
-            </label>
-            <label>
-              Ort
-              <input autoComplete="address-level2" name="ort" required />
-            </label>
-          </div>
-          <label>
-            Kundentyp
-            <select name="kundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
-              {Object.entries(kundentypLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <SubmitButton pendingLabel="Kunde wird gespeichert...">
-            Kunde speichern
-          </SubmitButton>
-        </ActionForm>
-
-        <div className="listPanel wide">
+      <section className="listSection">
+        <div className="listPanel">
           <h2>Kundenliste</h2>
           {kunden.length === 0 ? (
             <p className="emptyText">Noch keine Kunden erfasst.</p>

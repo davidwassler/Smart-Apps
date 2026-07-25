@@ -209,3 +209,9 @@ Der hellgruene Hintergrund mit gruenem Rand kennzeichnet den aktuellen Abschluss
 Status: entschieden
 
 Die Werkzeugseite zeigt primaer die kompakte Werkzeugliste. Neue Werkzeuge werden ueber `Werkzeug hinzufuegen` in einem Seitenfenster erfasst. Das bisher parallele Formular `Standort wechseln` wird entfernt, weil Status, Ort und Besitzer bereits direkt am angeklickten Werkzeug gepflegt werden koennen. Aenderungen dieser Standortdaten erzeugen weiterhin automatisch einen `WerkzeugUebergabe`-Eintrag, sodass die vereinfachte Oberflaeche keine Historie verliert.
+
+## ADR-0036: Stammdaten-Seiten einheitlich aufbauen
+
+Status: entschieden
+
+Die Seiten fuer Kunden, Mitarbeiter, Material und Werkzeuge zeigen als primaere Arbeitsflaeche jeweils eine kompakte, volle Liste. Neue Stammdaten werden ueber einen eindeutig benannten Hinzufuegen-Button im rechten Kopfbereich in einem Seitenfenster erfasst; vorhandene Datensaetze werden weiterhin direkt aus der Listenzeile bearbeitet. Dadurch bleiben Erfassung und Pflege getrennt, die Listen sind ohne dauerhaft sichtbare Formulare leichter zu ueberblicken und alle vier Reiter folgen demselben Interaktionsmuster.
