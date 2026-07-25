@@ -20,6 +20,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen nachtraeglich im Auftragsdetail gepflegt werden; die zugehoerigen Kundendaten lassen sich dort direkt vervollstaendigen.
 - Die Auftragsdetailseite zeigt zuerst Status, naechsten Einsatz, Team und Kontakt; Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in getrennten Seitenfenstern verborgen.
 - Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind visuell getrennt; der letzte Rueckmeldungsstand ist hervorgehoben und Einsaetze bilden eine Zeitleiste vom neuesten Eintrag bis zur Auftragserfassung.
+- Die Auftragsuebersicht kann nach Nummer, Kunde und Beschreibung durchsucht, nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert sowie nach Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
 
 ## Phase 0: Projektfundament
 
@@ -85,7 +86,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0401 | Rechnung erfassen | offen | Eine Rechnung kann mit Auftrag, Erstellungsdatum, Betrag und Status gespeichert werden. |
 | F-0402 | Mahnstatus anzeigen | offen | Offene Rechnungen koennen als offen, bezahlt, Mahnung 1, Mahnung 2 oder Anwalt markiert werden. |
 | F-0403 | Eskalation bei Zahlungsausfall abbilden | offen | Nach ausbleibender Zahlung kann der Weg von erster Mahnung bis Anwalt nachvollzogen werden. |
-| F-0404 | Einfache Suche und Filter anbieten | offen | Auftraege koennen nach Status, Prioritaet und Kunde gefiltert werden. |
+| F-0404 | Einfache Suche und Filter anbieten | fertig | Auftraege koennen nach Nummer, Kunde und Beschreibung durchsucht, nach offen oder abgeschlossen, Status, Prioritaet und Mitarbeiter gefiltert sowie nach letzter Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; Such- und Filterauswahl stehen in der URL und bleiben beim Ruecksprung aus dem Auftragsdetail erhalten. |
 
 ## Phase 5: Nichtfunktionale Anforderungen
 

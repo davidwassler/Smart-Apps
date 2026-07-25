@@ -119,3 +119,9 @@ Die Auftragsdetailseite priorisiert zuerst die Informationen, die fuer die naech
 Status: entschieden
 
 Die Auftragsdetailseite trennt Auftragsdaten, letzten Stand, Aktionen, Auftragsverlauf und Materialverlauf durch eigenstaendige, klar gerahmte Bereiche ohne Schatten oder dekorative Verschachtelung. Der letzte vorhandene Rueckmeldungstext wird unabhaengig von der Einsatzliste als aktueller Arbeitsstand hervorgehoben. Einsaetze bilden eine Zeitleiste, die mit der Auftragserfassung endet. Offene Rueckmeldungsformulare werden erst in einem Seitenfenster geoeffnet, damit der Verlauf lesbar bleibt.
+
+## ADR-0021: Auftragsfilter als URL-Zustand
+
+Status: entschieden
+
+Suche, Bereich, Status, Prioritaet, Mitarbeiter und Sortierung werden als Query-Parameter der Auftragsuebersicht gefuehrt. Die lokale Datenmenge wird nach dem Prisma-Lesen im Server Component gefiltert und fachlich sortiert; dadurch lassen sich auch Prioritaetsreihenfolge und naechster geplanter Einsatz ohne zusaetzliche Datenbankfelder abbilden. Auftragslinks tragen die aktuelle Uebersichts-URL als validierten Ruecksprung mit, damit Filter nach der Detailansicht erhalten bleiben.

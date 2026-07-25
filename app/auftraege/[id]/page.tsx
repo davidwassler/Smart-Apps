@@ -19,11 +19,21 @@ export const dynamic = "force-dynamic";
 
 type OrderDetailPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 };
 
-export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
-  const { id } = await params;
+export default async function OrderDetailPage({
+  params,
+  searchParams,
+}: OrderDetailPageProps) {
+  const [{ id }, detailParams] = await Promise.all([params, searchParams]);
   const auftragId = Number(id);
+  const returnToValue =
+    typeof detailParams.returnTo === "string" ? detailParams.returnTo : "/";
+  const returnTo =
+    returnToValue === "/" || returnToValue.startsWith("/?")
+      ? returnToValue
+      : "/";
 
   if (!Number.isInteger(auftragId) || auftragId <= 0) {
     notFound();
@@ -91,7 +101,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   return (
     <main className="page">
-      <Link className="backLink" href="/">
+      <Link className="backLink" href={returnTo}>
         Zurueck zur Auftragsuebersicht
       </Link>
 

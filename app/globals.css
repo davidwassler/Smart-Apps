@@ -329,6 +329,43 @@ button:disabled {
   margin-top: 28px;
 }
 
+.filterBar {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+}
+
+.filterFields {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(5, minmax(130px, 1fr));
+}
+
+.filterActions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.filterActions button {
+  min-width: 110px;
+}
+
+.filterReset {
+  color: var(--accent);
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 8px 4px;
+}
+
+.filterReset:hover {
+  text-decoration: underline;
+}
+
 .sectionHeading,
 .blockHeading,
 .recordHeader,
@@ -990,6 +1027,14 @@ button:disabled {
     flex-direction: column;
   }
 
+  .filterFields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .searchField {
+    grid-column: span 2;
+  }
+
   .orderTableHeader {
     display: none;
   }
@@ -1054,6 +1099,29 @@ button:disabled {
 
   .primaryAction {
     width: 100%;
+  }
+
+  .filterFields {
+    grid-template-columns: 1fr;
+  }
+
+  .searchField {
+    grid-column: span 1;
+  }
+
+  .filterActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filterActions button,
+  .filterReset {
+    text-align: center;
+    width: 100%;
+  }
+
+  .filterActions button:only-child {
+    grid-column: 1 / -1;
   }
 
   .orderRow {

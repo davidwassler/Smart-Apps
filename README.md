@@ -54,6 +54,8 @@ npm run db:reset-demo
 - SQLite und Prisma sind vorbereitet.
 - Das Prisma-Datenmodell bildet die Entitaeten und Beziehungen aus der Spec ab.
 - Die Startseite zeigt alle Auftraege als kompakte Liste und fasst offene, geplante, laufende und wartende Auftraege in kleinen KPIs zusammen.
+- Die Auftragsliste kann nach Nummer, Kunde und Beschreibung durchsucht sowie nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert werden.
+- Sortierungen nach letzter Aenderung, naechstem Einsatz und Prioritaet sind verfuegbar; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
 - Ein neuer Auftrag wird ueber ein seitliches Panel angelegt und danach direkt geoeffnet.
 - Jeder Auftrag hat eine eigene Detailseite mit Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch.

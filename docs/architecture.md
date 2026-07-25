@@ -110,6 +110,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Material mit Einheit, Lagerbestand und Lagerort anlegen und anzeigen
 - Auftraege aus einem Seitenpanel mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen
 - Alle Auftraege mit kompaktem Status und kleinen KPIs auf der Startseite anzeigen
+- Auftraege ueber URL-Parameter nach Nummer, Kunde oder Beschreibung suchen, filtern und fachlich sortieren
+- Den naechsten geplanten Einsatz in der Auftragsliste anzeigen und die gefilterte Ruecknavigation erhalten
 - Einen Auftrag mit Stammdaten, Einsaetzen, Rueckmeldungen und Materialverbrauch als eigene Detailseite anzeigen
 - Auftragsbeschreibung, Prioritaet, Status und Team im Auftragsdetail bearbeiten
 - Die zum Auftrag gehoerenden Kundendaten im selben Panel getrennt vervollstaendigen
@@ -126,7 +128,7 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 
 ## Screens
 
-- `/`: Auftragsuebersicht mit Status-KPIs, kompakter Auftragsliste und Seitenpanel zur Auftragserfassung
+- `/`: Auftragsuebersicht mit Status-KPIs, Suche, Filtern, Sortierung, kompakter Auftragsliste und Seitenpanel zur Auftragserfassung
 - `/auftraege/[id]`: Auftragsdetail mit Einsatzplanung, Rueckmeldungen und Materialverbrauch
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
