@@ -18,6 +18,8 @@ import { prisma } from "@/lib/prisma";
 import {
   assertAuftragStatusPasstZurRechnung,
   assertRechnungVorbereitbar,
+  assertRechnungStatuswechselErlaubt,
+  getAuftragStatusFuerRechnung,
 } from "@/lib/rechnung";
 
 function requireText(formData: FormData, name: string) {
@@ -749,6 +751,90 @@ export async function createRechnung(formData: FormData) {
   ]);
 
   revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function updateRechnungStatus(formData: FormData) {
+  const rechnungId = Number(requireText(formData, "rechnungId"));
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const zuStatusText = requireText(formData, "zuStatus");
+  const notiz = requireText(formData, "notiz");
+
+  if (
+    !Number.isInteger(rechnungId) ||
+    rechnungId <= 0 ||
+    !Number.isInteger(auftragId) ||
+    auftragId <= 0
+  ) {
+    throw new Error("Ungueltige Rechnung oder ungueltiger Auftrag.");
+  }
+
+  if (
+    !Object.values(RechnungStatus).includes(
+      zuStatusText as RechnungStatus,
+    )
+  ) {
+    throw new Error("Ungueltiger Rechnungsstatus.");
+  }
+
+  const zuStatus = zuStatusText as RechnungStatus;
+  const rechnung = await prisma.rechnung.findFirst({
+    where: {
+      id: rechnungId,
+      auftragId,
+    },
+    select: {
+      status: true,
+    },
+  });
+
+  if (!rechnung) {
+    throw new Error("Rechnung wurde nicht gefunden.");
+  }
+
+  assertRechnungStatuswechselErlaubt(rechnung.status, zuStatus);
+  const auftragStatus = getAuftragStatusFuerRechnung(zuStatus);
+
+  await prisma.$transaction(async (tx) => {
+    const aktualisiert = await tx.rechnung.updateMany({
+      where: {
+        id: rechnungId,
+        auftragId,
+        status: rechnung.status,
+      },
+      data: {
+        status: zuStatus,
+      },
+    });
+
+    if (aktualisiert.count !== 1) {
+      throw new Error(
+        "Der Rechnungsstatus wurde zwischenzeitlich geaendert. Bitte neu laden.",
+      );
+    }
+
+    await tx.rechnungStatuswechsel.create({
+      data: {
+        rechnungId,
+        vonStatus: rechnung.status,
+        zuStatus,
+        notiz,
+      },
+    });
+
+    await tx.auftrag.update({
+      where: {
+        id: auftragId,
+      },
+      data: {
+        status: auftragStatus,
+        nichtFertigGrund: null,
+      },
+    });
+  });
+
+  revalidatePath("/");
+  revalidatePath("/rechnungen");
   revalidatePath(`/auftraege/${auftragId}`);
 }
 

@@ -149,3 +149,9 @@ Ein geplanter Einsatz behaelt beim Verschieben seine Identitaet und sein Team; n
 Status: entschieden
 
 Die Rechnungsvorbereitung nutzt das bereits in der Spec definierte 1:1-Modell `Rechnung`. Sie ist nur fuer Auftraege im Status `TECHNISCH_FERTIG` ohne vorhandene Rechnung zulaessig; unfreigegebene Zusatzarbeiten ab 1.500 Euro blockieren den Vorgang. Rechnung mit Startstatus `OFFEN` und Auftragsstatus `RECHNUNG_ERSTELLT` werden in derselben Transaktion gespeichert. Kaufmaennische Auftragsstatus sind im allgemeinen Auftragsformular nicht frei waehlbar, damit sie nicht an der Rechnung vorbei geaendert werden. Materialpreise und Arbeitsstunden sind in der Spec nicht als Datenfelder modelliert, deshalb werden vorhandene Rueckmeldungen, Mengen und Zusatzarbeiten als Grundlage angezeigt, der endgueltige Rechnungsbetrag aber bewusst manuell erfasst.
+
+## ADR-0026: Rechnungsstatus als gepruefte Historie
+
+Status: entschieden
+
+Rechnungsstatus werden nicht frei ueberschrieben, sondern folgen erlaubten Uebergaengen: `OFFEN` zu `BEZAHLT` oder `MAHNUNG_1`, danach schrittweise zu `MAHNUNG_2` und `ANWALT`; eine Zahlung bleibt aus jedem nicht bezahlten Zustand moeglich. Jeder Wechsel braucht eine Notiz und erzeugt einen unveraenderlichen `RechnungStatuswechsel`-Datensatz. Rechnung, Historie und der abgeleitete Auftragsstatus werden in derselben Transaktion gespeichert. Dadurch bleiben kaufmaennischer Zustand und Auftragsuebersicht konsistent und der Eskalationsweg ist nachvollziehbar.

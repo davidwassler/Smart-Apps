@@ -1,4 +1,4 @@
-import { AuftragStatus } from "@prisma/client";
+import { AuftragStatus, RechnungStatus } from "@prisma/client";
 
 export function assertRechnungVorbereitbar(
   auftragStatus: AuftragStatus,
@@ -48,4 +48,51 @@ export function assertAuftragStatusPasstZurRechnung(
       "Der Status Rechnung erstellt setzt eine gespeicherte Rechnung voraus.",
     );
   }
+}
+
+const erlaubteRechnungStatuswechsel: Record<
+  RechnungStatus,
+  RechnungStatus[]
+> = {
+  OFFEN: [RechnungStatus.BEZAHLT, RechnungStatus.MAHNUNG_1],
+  MAHNUNG_1: [RechnungStatus.BEZAHLT, RechnungStatus.MAHNUNG_2],
+  MAHNUNG_2: [RechnungStatus.BEZAHLT, RechnungStatus.ANWALT],
+  ANWALT: [RechnungStatus.BEZAHLT],
+  BEZAHLT: [],
+};
+
+export function getErlaubteRechnungStatuswechsel(status: RechnungStatus) {
+  return erlaubteRechnungStatuswechsel[status];
+}
+
+export function assertRechnungStatuswechselErlaubt(
+  vonStatus: RechnungStatus,
+  zuStatus: RechnungStatus,
+) {
+  if (!getErlaubteRechnungStatuswechsel(vonStatus).includes(zuStatus)) {
+    throw new Error(
+      `Ungueltiger Rechnungsstatuswechsel von ${vonStatus} zu ${zuStatus}.`,
+    );
+  }
+}
+
+export function getAuftragStatusFuerRechnung(
+  rechnungStatus: RechnungStatus,
+) {
+  if (rechnungStatus === RechnungStatus.BEZAHLT) {
+    return AuftragStatus.BEZAHLT;
+  }
+
+  if (
+    rechnungStatus === RechnungStatus.MAHNUNG_1 ||
+    rechnungStatus === RechnungStatus.MAHNUNG_2
+  ) {
+    return AuftragStatus.GEMAHNT;
+  }
+
+  if (rechnungStatus === RechnungStatus.ANWALT) {
+    return AuftragStatus.ESKALIERT;
+  }
+
+  return AuftragStatus.RECHNUNG_ERSTELLT;
 }

@@ -17,6 +17,7 @@ export default function RootLayout({
       <body>
         <nav className="appNav" aria-label="Hauptnavigation">
           <Link href="/">Auftraege</Link>
+          <Link href="/rechnungen">Rechnungen</Link>
           <Link href="/kunden">Kunden</Link>
           <Link href="/mitarbeiter">Mitarbeiter</Link>
           <Link href="/material">Material</Link>

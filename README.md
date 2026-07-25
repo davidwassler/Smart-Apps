@@ -85,7 +85,10 @@ npm run db:reset-demo
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Technisch fertige Auftraege koennen aus der Detailseite heraus als offene Rechnung mit Datum und Betrag gespeichert werden.
 - Der Rechnungsdialog buendelt Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten; die fertige Rechnung erscheint als eigener Block und im Auftragsverlauf.
-- Die Demo-Daten enthalten einen rechnungsbereiten Auftrag und einen Auftrag mit bereits offener Rechnung.
+- Rechnungen haben eine eigene Uebersicht mit Statusfilter und direktem Ruecksprung aus dem zugehoerigen Auftrag.
+- Zahlung, Mahnung 1, Mahnung 2 und Anwalt werden ueber fachlich erlaubte Statusfolgen gepflegt; jeder Schritt braucht eine Notiz und erscheint im Verlauf.
+- Rechnungs- und Auftragsstatus werden gemeinsam aktualisiert; bezahlte Rechnungen sind abgeschlossen.
+- Die Demo-Daten enthalten einen rechnungsbereiten Auftrag sowie offene, bezahlte und gemahnte Rechnungen.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.

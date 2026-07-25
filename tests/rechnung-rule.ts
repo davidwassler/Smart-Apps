@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
-import { AuftragStatus } from "@prisma/client";
+import { AuftragStatus, RechnungStatus } from "@prisma/client";
 import {
   assertAuftragStatusPasstZurRechnung,
   assertRechnungVorbereitbar,
+  assertRechnungStatuswechselErlaubt,
+  getAuftragStatusFuerRechnung,
+  getErlaubteRechnungStatuswechsel,
 } from "../lib/rechnung";
 
 assert.doesNotThrow(() =>
@@ -51,6 +54,50 @@ assert.throws(
 assert.throws(
   () => assertRechnungVorbereitbar(AuftragStatus.TECHNISCH_FERTIG, false, 1),
   /schriftlich freigegeben/,
+);
+assert.deepEqual(getErlaubteRechnungStatuswechsel(RechnungStatus.OFFEN), [
+  RechnungStatus.BEZAHLT,
+  RechnungStatus.MAHNUNG_1,
+]);
+assert.doesNotThrow(() =>
+  assertRechnungStatuswechselErlaubt(
+    RechnungStatus.MAHNUNG_2,
+    RechnungStatus.ANWALT,
+  ),
+);
+assert.doesNotThrow(() =>
+  assertRechnungStatuswechselErlaubt(
+    RechnungStatus.ANWALT,
+    RechnungStatus.BEZAHLT,
+  ),
+);
+assert.throws(
+  () =>
+    assertRechnungStatuswechselErlaubt(
+      RechnungStatus.OFFEN,
+      RechnungStatus.MAHNUNG_2,
+    ),
+  /Ungueltiger Rechnungsstatuswechsel/,
+);
+assert.throws(
+  () =>
+    assertRechnungStatuswechselErlaubt(
+      RechnungStatus.BEZAHLT,
+      RechnungStatus.OFFEN,
+    ),
+  /Ungueltiger Rechnungsstatuswechsel/,
+);
+assert.equal(
+  getAuftragStatusFuerRechnung(RechnungStatus.MAHNUNG_1),
+  AuftragStatus.GEMAHNT,
+);
+assert.equal(
+  getAuftragStatusFuerRechnung(RechnungStatus.ANWALT),
+  AuftragStatus.ESKALIERT,
+);
+assert.equal(
+  getAuftragStatusFuerRechnung(RechnungStatus.BEZAHLT),
+  AuftragStatus.BEZAHLT,
 );
 
 console.log("Rechnungsregel erfolgreich geprueft.");

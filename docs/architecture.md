@@ -28,6 +28,7 @@ Kernmodelle:
 - `Werkzeug`: wiederverwendbares Werkzeug mit aktuellem Ort und Besitzer
 - `WerkzeugUebergabe`: Historie fuer Werkzeugbewegungen
 - `Rechnung`: kaufmaennischer Abschluss eines Auftrags
+- `RechnungStatuswechsel`: unveraenderliche Historie eines Zahlungs-, Mahn- oder Eskalationsschritts mit Notiz
 
 Wichtige Beziehungen:
 
@@ -35,6 +36,7 @@ Wichtige Beziehungen:
 - Auftrag zu Einsatz: 1:n
 - Einsatz zu EinsatzVerschiebung: 1:n
 - Auftrag zu Rechnung: 1:1
+- Rechnung zu RechnungStatuswechsel: 1:n
 - Auftrag zu Mitarbeiter: n:m ueber `AuftragMitarbeiter`
 - Einsatz zu Mitarbeiter: n:m ueber `EinsatzMitarbeiter`
 - Auftrag zu Material: n:m ueber `Materialverbrauch`
@@ -52,6 +54,7 @@ Wichtige Beziehungen:
 |   |-- assignment-feedback-panel.tsx
 |   |-- assignment-reschedule-panel.tsx
 |   |-- invoice-preparation-panel.tsx
+|   |-- invoice-status-panel.tsx
 |   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
@@ -61,6 +64,7 @@ Wichtige Beziehungen:
 |   |-- order-action-panels.tsx
 |   |-- order-create-panel.tsx
 |   |-- order-edit-panel.tsx
+|   |-- rechnungen/       # Rechnungsuebersicht mit Statusfilter
 |   `-- werkzeuge/        # Werkzeugseite
 |-- docs/                 # Fachliche und technische Dokumentation
 |   |-- architecture.md
@@ -118,6 +122,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Rechnungen koennen nur fuer technisch fertige Auftraege ohne vorhandene Rechnung und ohne blockierende Zusatzarbeit vorbereitet werden.
 - Rechnung und Auftragsstatus werden gemeinsam in einer Datenbanktransaktion gespeichert.
 - Kaufmaennische Auftragsstatus koennen nicht am allgemeinen Auftragsformular an einer fehlenden oder vorhandenen Rechnung vorbei geaendert werden.
+- Rechnungsstatus folgen einer festen Reihenfolge; unzulaessige Spruenge und Aenderungen an bezahlten Rechnungen werden serverseitig abgelehnt.
+- Jeder Rechnungsstatuswechsel braucht eine Notiz und aktualisiert Rechnung, Historie und Auftrag in einer Transaktion.
 - Technische Fertigstellung, Rechnung und Zahlung sind getrennte Status.
 
 ## Aktuelle UI-Flows
@@ -142,6 +148,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Zusatzarbeiten als eigene Ereignisse in den Auftragsverlauf aufnehmen
 - Rechnungsgrundlagen aus Rueckmeldungen, Materialverbrauch und Zusatzarbeiten zusammenfassen
 - Eine offene Rechnung mit Datum und Betrag anlegen, den Auftrag auf `Rechnung erstellt` setzen und die Rechnung im Verlauf anzeigen
+- Rechnungen in einer eigenen Uebersicht nach Status filtern und aus der Liste zum zugehoerigen Auftrag wechseln
+- Zahlung, Mahnungen und Anwalt ueber erlaubte Statusfolgen pflegen und jeden Schritt im Auftragsverlauf dokumentieren
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern
@@ -152,6 +160,7 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 
 - `/`: Auftragsuebersicht mit Status-KPIs, Suche, Filtern, Sortierung, kompakter Auftragsliste und Seitenpanel zur Auftragserfassung
 - `/auftraege/[id]`: Auftragsdetail mit Einsatzplanung, Rueckmeldungen, Materialverbrauch, Zusatzarbeiten und Rechnungsvorbereitung
+- `/rechnungen`: Rechnungsuebersicht mit Kennzahlen, Statusfilter und Ruecksprung aus dem Auftragsdetail
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen

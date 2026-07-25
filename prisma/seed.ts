@@ -135,6 +135,19 @@ async function clearDemoData() {
       },
     },
   });
+  await prisma.rechnungStatuswechsel.deleteMany({
+    where: {
+      rechnung: {
+        auftrag: {
+          kunde: {
+            name: {
+              in: demoNames.kunden,
+            },
+          },
+        },
+      },
+    },
+  });
   await prisma.rechnung.deleteMany({
     where: {
       auftrag: {
@@ -432,6 +445,90 @@ async function main() {
           erstelltAm: new Date("2026-07-24T00:00:00"),
           status: RechnungStatus.OFFEN,
           betrag: 642.5,
+          createdAt: new Date("2026-07-24T09:00:00"),
+          updatedAt: new Date("2026-07-24T09:00:00"),
+        },
+      },
+    },
+  });
+
+  await prisma.auftrag.create({
+    data: {
+      kundeId: neumann.id,
+      beschreibung:
+        "Fehlerstromschutzschalter im Gartenhaus geprueft.",
+      prioritaet: Prioritaet.NORMAL,
+      status: AuftragStatus.BEZAHLT,
+      mitarbeiter: {
+        create: [{ mitarbeiterId: martin.id }],
+      },
+      einsaetze: {
+        create: {
+          datum: new Date("2026-07-17T09:30:00"),
+          status: EinsatzStatus.DURCHGEFUEHRT,
+          rueckmeldung:
+            "Schutzschalter und Ausloesezeiten geprueft, keine Maengel festgestellt.",
+          mitarbeiter: {
+            create: [{ mitarbeiterId: martin.id }],
+          },
+        },
+      },
+      rechnung: {
+        create: {
+          erstelltAm: new Date("2026-07-18T00:00:00"),
+          status: RechnungStatus.BEZAHLT,
+          betrag: 318,
+          createdAt: new Date("2026-07-18T09:00:00"),
+          updatedAt: new Date("2026-07-23T11:15:00"),
+          statuswechsel: {
+            create: {
+              vonStatus: RechnungStatus.OFFEN,
+              zuStatus: RechnungStatus.BEZAHLT,
+              notiz: "Zahlung per Ueberweisung vollstaendig eingegangen.",
+              createdAt: new Date("2026-07-23T11:15:00"),
+            },
+          },
+        },
+      },
+    },
+  });
+
+  await prisma.auftrag.create({
+    data: {
+      kundeId: baeckerei.id,
+      beschreibung:
+        "Beleuchtung im Verkaufsraum instand gesetzt.",
+      prioritaet: Prioritaet.NORMAL,
+      status: AuftragStatus.GEMAHNT,
+      mitarbeiter: {
+        create: [{ mitarbeiterId: jana.id }],
+      },
+      einsaetze: {
+        create: {
+          datum: new Date("2026-07-08T14:00:00"),
+          status: EinsatzStatus.DURCHGEFUEHRT,
+          rueckmeldung:
+            "Defektes Vorschaltgeraet getauscht und Beleuchtung geprueft.",
+          mitarbeiter: {
+            create: [{ mitarbeiterId: jana.id }],
+          },
+        },
+      },
+      rechnung: {
+        create: {
+          erstelltAm: new Date("2026-07-10T00:00:00"),
+          status: RechnungStatus.MAHNUNG_1,
+          betrag: 784.2,
+          createdAt: new Date("2026-07-10T09:00:00"),
+          updatedAt: new Date("2026-07-24T09:00:00"),
+          statuswechsel: {
+            create: {
+              vonStatus: RechnungStatus.OFFEN,
+              zuStatus: RechnungStatus.MAHNUNG_1,
+              notiz: "Erste Zahlungserinnerung per Brief versendet.",
+              createdAt: new Date("2026-07-24T09:00:00"),
+            },
+          },
         },
       },
     },

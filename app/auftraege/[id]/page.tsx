@@ -16,9 +16,11 @@ import { AdditionalWorkApprovalPanel } from "../../additional-work-approval-pane
 import { AssignmentFeedbackPanel } from "../../assignment-feedback-panel";
 import { AssignmentReschedulePanel } from "../../assignment-reschedule-panel";
 import { InvoicePreparationPanel } from "../../invoice-preparation-panel";
+import { InvoiceStatusPanel } from "../../invoice-status-panel";
 import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
+import { getErlaubteRechnungStatuswechsel } from "@/lib/rechnung";
 
 export const dynamic = "force-dynamic";
 
@@ -35,10 +37,13 @@ export default async function OrderDetailPage({
   const auftragId = Number(id);
   const returnToValue =
     typeof detailParams.returnTo === "string" ? detailParams.returnTo : "/";
+  const istAuftragsRuecksprung =
+    returnToValue === "/" || returnToValue.startsWith("/?");
+  const istRechnungsRuecksprung =
+    returnToValue === "/rechnungen" ||
+    returnToValue.startsWith("/rechnungen?");
   const returnTo =
-    returnToValue === "/" || returnToValue.startsWith("/?")
-      ? returnToValue
-      : "/";
+    istAuftragsRuecksprung || istRechnungsRuecksprung ? returnToValue : "/";
 
   if (!Number.isInteger(auftragId) || auftragId <= 0) {
     notFound();
@@ -79,7 +84,15 @@ export default async function OrderDetailPage({
         zusatzarbeiten: {
           orderBy: { createdAt: "desc" },
         },
-        rechnung: true,
+        rechnung: {
+          include: {
+            statuswechsel: {
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
+          },
+        },
       },
     }),
     prisma.mitarbeiter.findMany({
@@ -129,6 +142,9 @@ export default async function OrderDetailPage({
     auftrag.status === AuftragStatus.TECHNISCH_FERTIG &&
     !auftrag.rechnung &&
     nichtFreigegebeneZusatzarbeiten.length === 0;
+  const erlaubteRechnungStatus = auftrag.rechnung
+    ? getErlaubteRechnungStatuswechsel(auftrag.rechnung.status)
+    : [];
   const verlaufEintraege = [
     ...auftrag.einsaetze.map((einsatz) => ({
       typ: "einsatz" as const,
@@ -161,6 +177,14 @@ export default async function OrderDetailPage({
           },
         ]
       : []),
+    ...(auftrag.rechnung
+      ? auftrag.rechnung.statuswechsel.map((statuswechsel) => ({
+          typ: "rechnungsstatus" as const,
+          id: `rechnungsstatus-${statuswechsel.id}`,
+          zeitpunkt: statuswechsel.createdAt,
+          statuswechsel,
+        }))
+      : []),
   ].sort(
     (links, rechts) =>
       rechts.zeitpunkt.getTime() - links.zeitpunkt.getTime(),
@@ -169,7 +193,9 @@ export default async function OrderDetailPage({
   return (
     <main className="page">
       <Link className="backLink" href={returnTo}>
-        Zurueck zur Auftragsuebersicht
+        {istRechnungsRuecksprung
+          ? "Zurueck zur Rechnungsuebersicht"
+          : "Zurueck zur Auftragsuebersicht"}
       </Link>
 
       <header className="detailHeader">
@@ -481,6 +507,19 @@ export default async function OrderDetailPage({
                 freigabe: freigabeStatusLabels[zusatzarbeit.freigabeStatus],
               }))}
             />
+          ) : auftrag.rechnung && erlaubteRechnungStatus.length > 0 ? (
+            <InvoiceStatusPanel
+              key={`${auftrag.rechnung.id}-${auftrag.rechnung.updatedAt.toISOString()}`}
+              rechnungId={auftrag.rechnung.id}
+              auftragId={auftrag.id}
+              aktuellerStatus={
+                rechnungStatusLabels[auftrag.rechnung.status]
+              }
+              statusOptionen={erlaubteRechnungStatus.map((status) => ({
+                value: status,
+                label: rechnungStatusLabels[status],
+              }))}
+            />
           ) : null}
         </div>
 
@@ -505,7 +544,11 @@ export default async function OrderDetailPage({
             </div>
             <div>
               <span>Rechnungsstatus</span>
-              <strong>{rechnungStatusLabels[auftrag.rechnung.status]}</strong>
+              <span
+                className={`invoiceBadge invoice-${auftrag.rechnung.status.toLowerCase()}`}
+              >
+                {rechnungStatusLabels[auftrag.rechnung.status]}
+              </span>
             </div>
           </div>
         ) : auftrag.status === AuftragStatus.TECHNISCH_FERTIG &&
@@ -544,6 +587,9 @@ export default async function OrderDetailPage({
               )}{" "}
               Verschiebungen, {auftrag.zusatzarbeiten.length} Zusatzarbeiten
               {auftrag.rechnung ? ", 1 Rechnung" : ""}
+              {auftrag.rechnung?.statuswechsel.length
+                ? `, ${auftrag.rechnung.statuswechsel.length} Statuswechsel`
+                : ""}
             </p>
           </div>
         </div>
@@ -665,7 +711,9 @@ export default async function OrderDetailPage({
                         )}
                       </p>
                     </div>
-                    <span className="statusBadge">
+                    <span
+                      className={`invoiceBadge invoice-${eintrag.rechnung.status.toLowerCase()}`}
+                    >
                       {rechnungStatusLabels[eintrag.rechnung.status]}
                     </span>
                   </div>
@@ -677,6 +725,46 @@ export default async function OrderDetailPage({
                         currency: "EUR",
                       }).format(eintrag.rechnung.betrag.toNumber())}
                     </p>
+                  </div>
+                </div>
+              </li>
+            ) : eintrag.typ === "rechnungsstatus" ? (
+              <li
+                className="timelineItem timelineInvoiceStatus"
+                key={eintrag.id}
+              >
+                <span className="timelineMarker" aria-hidden="true" />
+                <div className="timelineContent">
+                  <div className="recordHeader">
+                    <div>
+                      <strong>Rechnungsstatus aktualisiert</strong>
+                      <p>
+                        {new Intl.DateTimeFormat("de-DE").format(
+                          eintrag.statuswechsel.createdAt,
+                        )}
+                      </p>
+                    </div>
+                    <span
+                      className={`invoiceBadge invoice-${eintrag.statuswechsel.zuStatus.toLowerCase()}`}
+                    >
+                      {rechnungStatusLabels[eintrag.statuswechsel.zuStatus]}
+                    </span>
+                  </div>
+                  <div className="timelineFeedback invoiceTimelineDetails">
+                    <span>
+                      {
+                        rechnungStatusLabels[
+                          eintrag.statuswechsel.vonStatus
+                        ]
+                      }{" "}
+                      zu{" "}
+                      {
+                        rechnungStatusLabels[
+                          eintrag.statuswechsel.zuStatus
+                        ]
+                      }
+                    </span>
+                    <p>{eintrag.statuswechsel.notiz}</p>
                   </div>
                 </div>
               </li>

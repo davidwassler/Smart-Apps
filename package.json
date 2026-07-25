@@ -12,7 +12,7 @@
     "test": "npm run lint && npm run test:rules",
     "test:rules": "tsx tests/notdienst-rule.ts && tsx tests/rechnung-rule.ts",
     "prisma:generate": "prisma generate",
-    "db:migrate": "prisma db execute --file prisma/migrations/20260725000100_init/migration.sql && prisma db execute --file prisma/migrations/20260725000200_add_zusatzarbeit/migration.sql && prisma db execute --file prisma/migrations/20260725000300_add_einsatz_verschiebung/migration.sql && prisma generate",
+    "db:migrate": "prisma db execute --file prisma/migrations/20260725000100_init/migration.sql && prisma db execute --file prisma/migrations/20260725000200_add_zusatzarbeit/migration.sql && prisma db execute --file prisma/migrations/20260725000300_add_einsatz_verschiebung/migration.sql && prisma db execute --file prisma/migrations/20260725000400_add_rechnung_statuswechsel/migration.sql && prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset-demo": "npm run db:migrate && npm run db:seed",
     "db:studio": "prisma studio"

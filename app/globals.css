@@ -366,6 +366,25 @@ button:disabled {
   text-decoration: underline;
 }
 
+.filterPanel {
+  margin-top: 20px;
+}
+
+.invoiceFilter {
+  align-items: end;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  padding: 14px;
+}
+
+.listSection {
+  margin-top: 28px;
+}
+
 .sectionHeading,
 .blockHeading,
 .recordHeader,
@@ -493,6 +512,117 @@ button:disabled {
 .orderRow .warningText,
 .warningText {
   color: var(--danger);
+}
+
+.invoiceTable {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.invoiceTableHeader,
+.invoiceRow {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns:
+    minmax(220px, 1.5fr)
+    minmax(150px, 1fr)
+    minmax(120px, 0.75fr)
+    minmax(110px, 0.7fr)
+    minmax(110px, 0.7fr)
+    minmax(120px, 0.75fr);
+}
+
+.invoiceTableHeader {
+  background: var(--panel-soft);
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 9px 14px;
+  text-transform: uppercase;
+}
+
+.invoiceRows {
+  display: grid;
+}
+
+.invoiceRow {
+  border-bottom: 1px solid var(--line);
+  min-height: 72px;
+  padding: 12px 14px;
+}
+
+.invoiceRow:last-child {
+  border-bottom: 0;
+}
+
+.invoiceRow:hover {
+  background: #f8faf7;
+}
+
+.invoiceRow:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.invoiceRow > span {
+  color: var(--muted);
+  display: grid;
+  font-size: 0.86rem;
+  gap: 4px;
+  min-width: 0;
+}
+
+.invoiceOrder strong {
+  color: var(--foreground);
+}
+
+.invoiceOrder small {
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.invoiceBadge {
+  background: #eef2ec;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--foreground);
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 700;
+  justify-self: start;
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+
+.invoice-offen {
+  background: #edf3f8;
+  border-color: #bfd0de;
+  color: #295b78;
+}
+
+.invoice-bezahlt {
+  background: #e9f2e5;
+  border-color: #b8d0ae;
+  color: #38672f;
+}
+
+.invoice-mahnung_1,
+.invoice-mahnung_2 {
+  background: #fff7e8;
+  border-color: #e0c58f;
+  color: #70531f;
+}
+
+.invoice-anwalt {
+  background: #f8e9e7;
+  border-color: #dfb2ac;
+  color: #8a3128;
 }
 
 .statusBadge {
@@ -1000,6 +1130,11 @@ button:disabled {
   box-shadow: 0 0 0 1px #3269a0;
 }
 
+.timelineInvoiceStatus .timelineMarker {
+  background: #6b4e92;
+  box-shadow: 0 0 0 1px #6b4e92;
+}
+
 .invoiceTimelineDetails {
   border-left-color: #3269a0;
 }
@@ -1313,6 +1448,10 @@ button:disabled {
     display: none;
   }
 
+  .invoiceTableHeader {
+    display: none;
+  }
+
   .orderRow {
     align-items: start;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1322,7 +1461,17 @@ button:disabled {
     grid-column: 1 / -1;
   }
 
-  .orderRow > span:not(.orderDescription)::before {
+  .invoiceRow {
+    align-items: start;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .invoiceOrder {
+    grid-column: 1 / -1;
+  }
+
+  .orderRow > span:not(.orderDescription)::before,
+  .invoiceRow > span:not(.invoiceOrder)::before {
     color: var(--muted);
     content: attr(data-label);
     font-size: 0.7rem;
@@ -1380,6 +1529,10 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 
+  .invoiceFilter {
+    grid-template-columns: 1fr;
+  }
+
   .searchField {
     grid-column: span 1;
   }
@@ -1400,6 +1553,10 @@ button:disabled {
   }
 
   .orderRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .invoiceRow {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
