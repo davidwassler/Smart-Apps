@@ -21,6 +21,15 @@ function requireText(formData: FormData, name: string) {
   return value.trim();
 }
 
+function optionalText(formData: FormData, name: string) {
+  const value = formData.get(name);
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value.trim();
+}
+
 function selectedIds(formData: FormData, name: string) {
   return formData
     .getAll(name)
@@ -152,26 +161,53 @@ export async function createMaterial(formData: FormData) {
 }
 
 export async function createAuftrag(formData: FormData) {
-  const kundeId = Number(requireText(formData, "kundeId"));
+  const kundeIdValue = optionalText(formData, "kundeId");
+  const kundeId = kundeIdValue === "" ? null : Number(kundeIdValue);
   const mitarbeiterIds = selectedIds(formData, "mitarbeiterIds");
+  const beschreibung = requireText(formData, "beschreibung");
+  const prioritaet = requireText(formData, "prioritaet") as Prioritaet;
+  const mitarbeiter =
+    mitarbeiterIds.length > 0
+      ? {
+          create: mitarbeiterIds.map((mitarbeiterId) => ({
+            mitarbeiterId,
+          })),
+        }
+      : undefined;
 
-  await prisma.auftrag.create({
-    data: {
-      kundeId,
-      beschreibung: requireText(formData, "beschreibung"),
-      prioritaet: requireText(formData, "prioritaet") as Prioritaet,
-      mitarbeiter:
-        mitarbeiterIds.length > 0
-          ? {
-              create: mitarbeiterIds.map((mitarbeiterId) => ({
-                mitarbeiterId,
-              })),
-            }
-          : undefined,
-    },
-  });
+  if (kundeId) {
+    await prisma.auftrag.create({
+      data: {
+        kundeId,
+        beschreibung,
+        prioritaet,
+        mitarbeiter,
+      },
+    });
+  } else {
+    await prisma.$transaction(async (tx) => {
+      const kunde = await tx.kunde.create({
+        data: {
+          name: requireText(formData, "neuerKundeName"),
+          telefonnummer: requireText(formData, "neuerKundeTelefonnummer"),
+          adresse: optionalText(formData, "neuerKundeAdresse"),
+          kundentyp: requireText(formData, "neuerKundeKundentyp") as Kundentyp,
+        },
+      });
+
+      await tx.auftrag.create({
+        data: {
+          kundeId: kunde.id,
+          beschreibung,
+          prioritaet,
+          mitarbeiter,
+        },
+      });
+    });
+  }
 
   revalidatePath("/");
+  revalidatePath("/kunden");
   revalidatePath("/material");
 }
 

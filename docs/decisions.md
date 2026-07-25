@@ -89,3 +89,9 @@ Ein Standortwechsel aktualisiert immer den aktuellen Werkzeugdatensatz und legt 
 Status: entschieden
 
 Demo-Daten werden ueber ein TypeScript-Seed-Script angelegt. Das Script entfernt nur Datensaetze mit festen Demo-Namen und legt sie neu an, damit es wiederholbar ist, ohne beliebige lokale Testdaten zu loeschen.
+
+## ADR-0016: Auftragserfassung als Einstieg mit Schnellkunde
+
+Status: entschieden
+
+Der Alltag beginnt meistens mit einer Anfrage oder einem Anruf. Deshalb kann ein Auftrag direkt mit einem bestehenden Kunden oder mit einem neuen Schnellkunden angelegt werden. Fuer Schnellkunden reichen Name und Telefonnummer; eine fehlende Adresse wird am Auftrag sichtbar, damit die Stammdaten spaeter auf der Kundenseite vervollstaendigt werden koennen.

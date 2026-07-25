@@ -1,4 +1,4 @@
-import { AuftragStatus, EinsatzStatus, Prioritaet } from "@prisma/client";
+import { AuftragStatus, EinsatzStatus, Kundentyp, Prioritaet } from "@prisma/client";
 import {
   createAuftrag,
   createEinsatz,
@@ -8,6 +8,7 @@ import {
 import {
   auftragStatusLabels,
   einsatzStatusLabels,
+  kundentypLabels,
   nichtFertigGrundLabels,
   prioritaetLabels,
   rollenLabels,
@@ -84,19 +85,52 @@ export default async function Home() {
       <section className="formsGrid" aria-label="Auftragsarbeit">
         <form action={createAuftrag} className="panel wide">
           <h2>Auftrag erfassen</h2>
-          <label>
-            Kunde
-            <select name="kundeId" required defaultValue="">
-              <option value="" disabled>
-                Kunde auswaehlen
-              </option>
-              {kunden.map((kunde) => (
-                <option key={kunde.id} value={kunde.id}>
-                  {kunde.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <fieldset className="formSection">
+            <legend>Kunde</legend>
+            <label>
+              Bestehender Kunde
+              <select name="kundeId" defaultValue="">
+                <option value="">Neuen Schnellkunden anlegen</option>
+                {kunden.map((kunde) => (
+                  <option key={kunde.id} value={kunde.id}>
+                    {kunde.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="quickCustomer">
+              <p className="helpText">
+                Wenn kein bestehender Kunde ausgewaehlt ist, wird mit diesen Angaben direkt ein
+                neuer Kunde angelegt.
+              </p>
+              <div className="fieldRow">
+                <label>
+                  Neuer Kunde
+                  <input name="neuerKundeName" placeholder="Name oder Firma" />
+                </label>
+                <label>
+                  Telefonnummer
+                  <input name="neuerKundeTelefonnummer" placeholder="Rueckrufnummer" />
+                </label>
+              </div>
+              <div className="fieldRow">
+                <label>
+                  Adresse
+                  <input name="neuerKundeAdresse" placeholder="Kann spaeter ergaenzt werden" />
+                </label>
+                <label>
+                  Kundentyp
+                  <select name="neuerKundeKundentyp" defaultValue={Kundentyp.PRIVATKUNDE}>
+                    {Object.entries(kundentypLabels).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+          </fieldset>
           <label>
             Beschreibung
             <textarea name="beschreibung" required rows={4} />
@@ -126,9 +160,7 @@ export default async function Home() {
               )}
             </div>
           </fieldset>
-          <button type="submit" disabled={kunden.length === 0}>
-            Auftrag speichern
-          </button>
+          <button type="submit">Auftrag speichern</button>
         </form>
 
         <form action={createEinsatz} className="panel wide">
@@ -326,6 +358,10 @@ export default async function Home() {
                 <div className="metaRow">
                   <span>{prioritaetLabels[auftrag.prioritaet]}</span>
                   <span>{auftragStatusLabels[auftrag.status]}</span>
+                  {auftrag.kunde.telefonnummer.trim() === "" ||
+                  auftrag.kunde.adresse.trim() === "" ? (
+                    <span className="warningBadge">Kundendaten ergaenzen</span>
+                  ) : null}
                   {auftrag.nichtFertigGrund ? (
                     <span>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</span>
                   ) : null}
