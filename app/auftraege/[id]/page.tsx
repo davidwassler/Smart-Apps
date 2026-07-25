@@ -8,12 +8,14 @@ import {
 import {
   auftragStatusLabels,
   einsatzStatusLabels,
+  kundentypLabels,
   nichtFertigGrundLabels,
   prioritaetLabels,
   rollenLabels,
   rueckmeldeStatus,
 } from "../../labels";
 import { MaterialUsageForm } from "../../material-usage-form";
+import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -60,8 +62,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       },
     }),
     prisma.mitarbeiter.findMany({
-      where: { aktiv: true },
-      orderBy: { name: "asc" },
+      orderBy: [{ aktiv: "desc" }, { name: "asc" }],
     }),
     prisma.material.findMany({ orderBy: { name: "asc" } }),
   ]);
@@ -76,6 +77,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   const kundenDatenUnvollstaendig =
     auftrag.kunde.telefonnummer.trim() === "" ||
     auftrag.kunde.adresse.trim() === "";
+  const aktiveMitarbeiter = mitarbeiter.filter((person) => person.aktiv);
 
   return (
     <main className="page">
@@ -89,9 +91,48 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           <h1>{auftrag.kunde.name}</h1>
           <p className="pageIntro">{auftrag.beschreibung}</p>
         </div>
-        <span className={`statusBadge status-${auftrag.status.toLowerCase()}`}>
-          {auftragStatusLabels[auftrag.status]}
-        </span>
+        <div className="detailHeaderActions">
+          <span className={`statusBadge status-${auftrag.status.toLowerCase()}`}>
+            {auftragStatusLabels[auftrag.status]}
+          </span>
+          <OrderEditPanel
+            key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
+            auftrag={{
+              id: auftrag.id,
+              beschreibung: auftrag.beschreibung,
+              status: auftrag.status,
+              prioritaet: auftrag.prioritaet,
+              nichtFertigGrund: auftrag.nichtFertigGrund,
+              mitarbeiterIds: auftrag.mitarbeiter.map(
+                (entry) => entry.mitarbeiterId,
+              ),
+            }}
+            kunde={{
+              id: auftrag.kunde.id,
+              name: auftrag.kunde.name,
+              telefonnummer: auftrag.kunde.telefonnummer,
+              adresse: auftrag.kunde.adresse,
+              kundentyp: auftrag.kunde.kundentyp,
+            }}
+            mitarbeiter={mitarbeiter.map((person) => ({
+              id: person.id,
+              name: person.name,
+              aktiv: person.aktiv,
+            }))}
+            statusOptionen={Object.entries(auftragStatusLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+            prioritaetOptionen={Object.entries(prioritaetLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+            grundOptionen={Object.entries(nichtFertigGrundLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+            kundentypOptionen={Object.entries(kundentypLabels).map(
+              ([value, label]) => ({ value, label }),
+            )}
+          />
+        </div>
       </header>
 
       <section className="detailFacts" aria-label="Auftragsdaten">
@@ -164,12 +205,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <fieldset>
                 <legend>Mitarbeiter fuer Einsatz</legend>
                 <div className="checkboxGrid">
-                  {mitarbeiter.length === 0 ? (
+                  {aktiveMitarbeiter.length === 0 ? (
                     <p className="emptyText">
                       Noch keine aktiven Mitarbeiter erfasst.
                     </p>
                   ) : (
-                    mitarbeiter.map((person) => (
+                    aktiveMitarbeiter.map((person) => (
                       <label className="checkline" key={person.id}>
                         <input
                           name="mitarbeiterIds"
@@ -182,7 +223,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                   )}
                 </div>
               </fieldset>
-              <button type="submit" disabled={mitarbeiter.length === 0}>
+              <button type="submit" disabled={aktiveMitarbeiter.length === 0}>
                 Einsatz speichern
               </button>
             </form>
@@ -203,7 +244,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 einheit: material.einheit,
                 lagerbestand: material.lagerbestand.toString(),
               }))}
-              mitarbeiter={mitarbeiter.map((person) => ({
+              mitarbeiter={aktiveMitarbeiter.map((person) => ({
                 id: person.id,
                 name: person.name,
               }))}

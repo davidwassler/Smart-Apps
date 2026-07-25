@@ -32,10 +32,14 @@ function optionalText(formData: FormData, name: string) {
 }
 
 function selectedIds(formData: FormData, name: string) {
-  return formData
-    .getAll(name)
-    .map((value) => Number(value))
-    .filter((value) => Number.isInteger(value) && value > 0);
+  return Array.from(
+    new Set(
+      formData
+        .getAll(name)
+        .map((value) => Number(value))
+        .filter((value) => Number.isInteger(value) && value > 0),
+    ),
+  );
 }
 
 function requirePositiveNumber(formData: FormData, name: string) {
@@ -216,6 +220,88 @@ export async function createAuftrag(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/kunden");
   redirect(`/auftraege/${auftragId}`);
+}
+
+export async function updateAuftrag(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const status = requireText(formData, "status") as AuftragStatus;
+  const mitarbeiterIds = selectedIds(formData, "mitarbeiterIds");
+  const nichtFertigGrundValue = optionalText(formData, "nichtFertigGrund");
+  const nichtFertigGrund =
+    nichtFertigGrundValue === ""
+      ? null
+      : (nichtFertigGrundValue as NichtFertigGrund);
+  const statusBrauchtGrund =
+    status === AuftragStatus.PAUSIERT ||
+    status === AuftragStatus.WARTET_AUF_MATERIAL ||
+    status === AuftragStatus.WARTET_AUF_KUNDENENTSCHEIDUNG;
+
+  if (statusBrauchtGrund && !nichtFertigGrund) {
+    throw new Error("Wartende oder pausierte Auftraege brauchen einen Grund.");
+  }
+
+  await prisma.$transaction([
+    prisma.auftragMitarbeiter.deleteMany({
+      where: {
+        auftragId,
+      },
+    }),
+    prisma.auftrag.update({
+      where: {
+        id: auftragId,
+      },
+      data: {
+        beschreibung: requireText(formData, "beschreibung"),
+        prioritaet: requireText(formData, "prioritaet") as Prioritaet,
+        status,
+        nichtFertigGrund: statusBrauchtGrund ? nichtFertigGrund : null,
+        mitarbeiter:
+          mitarbeiterIds.length > 0
+            ? {
+                create: mitarbeiterIds.map((mitarbeiterId) => ({
+                  mitarbeiterId,
+                })),
+              }
+            : undefined,
+      },
+    }),
+  ]);
+
+  revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function updateAuftragKunde(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const kundeId = Number(requireText(formData, "kundeId"));
+  const auftrag = await prisma.auftrag.findUnique({
+    where: {
+      id: auftragId,
+    },
+    select: {
+      kundeId: true,
+    },
+  });
+
+  if (!auftrag || auftrag.kundeId !== kundeId) {
+    throw new Error("Kunde gehoert nicht zu diesem Auftrag.");
+  }
+
+  await prisma.kunde.update({
+    where: {
+      id: kundeId,
+    },
+    data: {
+      name: requireText(formData, "name"),
+      telefonnummer: requireText(formData, "telefonnummer"),
+      adresse: requireText(formData, "adresse"),
+      kundentyp: requireText(formData, "kundentyp") as Kundentyp,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/kunden");
+  revalidatePath(`/auftraege/${auftragId}`);
 }
 
 export async function createEinsatz(formData: FormData) {

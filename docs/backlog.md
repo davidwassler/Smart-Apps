@@ -17,6 +17,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Demo-Daten fuer Kunden, Mitarbeiter, Material, Auftraege, Einsaetze, Rueckmeldungen, Materialverbrauch und Werkzeuge koennen per Seed geladen werden.
 - Auftraege koennen direkt aus einem neuen Schnellkunden heraus angelegt werden; unvollstaendige Kundendaten werden am Auftrag sichtbar.
 - Die Startseite ist auf eine kompakte Auftragsliste mit Status-KPIs reduziert; Auftragserfassung liegt in einem Seitenpanel, Einsatzplanung, Rueckmeldung und Materialverbrauch in der jeweiligen Auftragsdetailseite.
+- Auftragsbeschreibung, Prioritaet, Status und Team koennen nachtraeglich im Auftragsdetail gepflegt werden; die zugehoerigen Kundendaten lassen sich dort direkt vervollstaendigen.
 
 ## Phase 0: Projektfundament
 
@@ -36,7 +37,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 |---|---|---|---|
 | F-0101 | Kunde erfassen | fertig | Name, Telefonnummer, Adresse und Kundentyp koennen gespeichert werden; Kundentyp ist Privatkunde oder Firmenkunde. |
 | F-0102 | Auftrag erfassen | fertig | Ein Auftrag kann mit Kunde, Beschreibung, Prioritaet und Startstatus `aufgenommen` gespeichert werden. |
-| F-0103 | Auftragsstatus pflegen | fertig | Alle Statuswerte aus der Spec sind verfuegbar: aufgenommen, geplant, in Bearbeitung, pausiert, wartet auf Material, wartet auf Kundenentscheidung, technisch fertig, Rechnung erstellt, bezahlt, gemahnt, eskaliert. |
+| F-0103 | Auftragsstatus pflegen | fertig | Alle Statuswerte aus der Spec sind verfuegbar und koennen am Auftrag gepflegt werden: aufgenommen, geplant, in Bearbeitung, pausiert, wartet auf Material, wartet auf Kundenentscheidung, technisch fertig, Rechnung erstellt, bezahlt, gemahnt, eskaliert. |
 | F-0104 | Prioritaet setzen | fertig | Ein Auftrag kann als normal, dringend oder Notdienst markiert werden. |
 | F-0105 | Mitarbeiter erfassen | fertig | Name, Rolle, Telefonnummer und Aktivstatus koennen gespeichert werden. |
 | F-0106 | Mitarbeiter zu Auftrag zuordnen | fertig | Ein Auftrag kann einem oder mehreren aktiven Mitarbeitern zugeordnet werden; Thomas sieht, wer zu welchem Auftrag faehrt. |
@@ -51,6 +52,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0115 | Materialverbrauch am Auftrag anzeigen | fertig | Am Auftrag ist sichtbar, welches Material in welcher Menge verbaut wurde. |
 | F-0116 | Schnellkunde beim Auftrag anlegen | fertig | Ein Auftrag kann entweder mit einem bestehenden Kunden oder mit Name, Telefonnummer, optionaler Adresse und Kundentyp fuer einen neuen Schnellkunden gespeichert werden; fehlende Kundendaten sind am Auftrag sichtbar. |
 | F-0117 | Auftragsarbeit in einer Detailseite buendeln | fertig | Auftragserfassung wird aus der Uebersicht ueber ein Seitenpanel gestartet; nach dem Speichern oder beim Klick auf einen Auftrag oeffnet sich dessen Detailseite; dort sind Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch gebuendelt. |
+| F-0118 | Auftrag und zugehoerige Kundendaten bearbeiten | fertig | Beschreibung, Prioritaet, Status und Auftragsteam koennen im Auftragsdetail geaendert werden; pausierte und wartende Status brauchen einen Hinderungsgrund; Name, Telefonnummer, Adresse und Kundentyp des verknuepften Kunden koennen dort getrennt gespeichert werden. |
 
 ## Phase 2: Regeln und einfache Absicherung
 

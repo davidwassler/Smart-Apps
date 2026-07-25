@@ -101,3 +101,9 @@ Der Alltag beginnt meistens mit einer Anfrage oder einem Anruf. Deshalb kann ein
 Status: entschieden
 
 Die Startseite dient als ruhige Uebersicht mit wenigen Status-Kennzahlen und einer kompakten Liste aller Auftraege. Ein neuer Auftrag wird in einem seitlichen Panel erfasst und danach direkt geoeffnet. Einsatzplanung, Rueckmeldungen und Materialverbrauch gehoeren fachlich zu einem konkreten Auftrag und liegen deshalb ausschliesslich in dessen Detailseite unter `/auftraege/[id]`. So bleibt die Uebersicht schnell erfassbar und auftragsbezogene Arbeit hat einen eindeutigen Kontext.
+
+## ADR-0018: Auftrag und Kunde getrennt im selben Panel speichern
+
+Status: entschieden
+
+Die Auftragsdetailseite bietet ein gemeinsames Bearbeiten-Panel, darin werden Auftragsdaten und Kundendaten jedoch ueber getrennte Formulare gespeichert. Dadurch kann das Buero Status, Prioritaet oder Team aendern, obwohl eine Kundenadresse noch fehlt. Teamzuordnungen werden beim Speichern des Auftrags in einer Transaktion ersetzt. Eine Kundenaenderung prueft serverseitig, dass der Kunde tatsaechlich mit dem geoeffneten Auftrag verknuepft ist.

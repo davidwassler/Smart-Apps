@@ -57,6 +57,8 @@ npm run db:reset-demo
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
 - Ein neuer Auftrag wird ueber ein seitliches Panel angelegt und danach direkt geoeffnet.
 - Jeder Auftrag hat eine eigene Detailseite mit Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch.
+- Auftragsbeschreibung, Prioritaet, Status und Team koennen im Auftragsdetail bearbeitet werden.
+- Fehlende Kundendaten koennen direkt am Auftrag vervollstaendigt und getrennt gespeichert werden.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.

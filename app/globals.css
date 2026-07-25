@@ -90,6 +90,7 @@ textarea {
 
 h1,
 h2,
+h3,
 p {
   margin-top: 0;
 }
@@ -103,6 +104,11 @@ h1 {
 h2 {
   font-size: 1rem;
   margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 0.92rem;
+  margin-bottom: 0;
 }
 
 .counters {
@@ -544,6 +550,32 @@ button:disabled {
   padding-top: 6px;
 }
 
+.drawerSection {
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0 22px;
+}
+
+.drawerSection + .drawerSection {
+  padding-top: 22px;
+}
+
+.drawerSectionHeading {
+  margin-bottom: 14px;
+}
+
+.drawerSectionHeading p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 5px 0 0;
+}
+
+.drawerFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 18px;
+}
+
 .backLink {
   color: var(--accent);
   display: inline-block;
@@ -564,7 +596,14 @@ button:disabled {
 }
 
 .detailHeader .statusBadge {
-  margin-top: 3px;
+  margin-top: 0;
+}
+
+.detailHeaderActions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
 }
 
 .detailFacts {
@@ -878,6 +917,16 @@ button:disabled {
   .detailHeader {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .detailHeaderActions {
+    align-items: stretch;
+    display: grid;
+    width: 100%;
+  }
+
+  .detailHeaderActions .statusBadge {
+    justify-self: start;
   }
 
   .materialRecords li {
