@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Kunde {
+  id            Int       @id @default(autoincrement())
+  name          String
+  telefonnummer String
+  adresse       String
+  kundentyp     Kundentyp
+  auftraege     Auftrag[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Auftrag {
+  id                  Int                 @id @default(autoincrement())
+  kundeId             Int
+  beschreibung        String
+  status              AuftragStatus       @default(AUFGENOMMEN)
+  prioritaet          Prioritaet          @default(NORMAL)
+  nichtFertigGrund    NichtFertigGrund?
+  zusatzarbeitBetrag  Decimal?
+  freigabeStatus      FreigabeStatus?
+  kunde               Kunde               @relation(fields: [kundeId], references: [id])
+  einsaetze           Einsatz[]
+  materialverbraeuche Materialverbrauch[]
+  rechnung            Rechnung?
+  mitarbeiter         AuftragMitarbeiter[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model Einsatz {
+  id            Int                 @id @default(autoincrement())
+  auftragId     Int
+  datum         DateTime
+  status        EinsatzStatus       @default(GEPLANT)
+  rueckmeldung  String?
+  auftrag       Auftrag             @relation(fields: [auftragId], references: [id])
+  mitarbeiter   EinsatzMitarbeiter[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model Mitarbeiter {
+  id                       Int                 @id @default(autoincrement())
+  name                     String
+  rolle                    MitarbeiterRolle
+  telefonnummer            String
+  aktiv                    Boolean             @default(true)
+  auftraege                AuftragMitarbeiter[]
+  einsaetze                EinsatzMitarbeiter[]
+  erfassteMaterialien      Materialverbrauch[] @relation("MaterialverbrauchErfasser")
+  aktuelleWerkzeuge        Werkzeug[]
+  werkzeugHistorie         WerkzeugUebergabe[]
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+}
+
+model AuftragMitarbeiter {
+  auftragId      Int
+  mitarbeiterId  Int
+  auftrag        Auftrag      @relation(fields: [auftragId], references: [id])
+  mitarbeiter    Mitarbeiter  @relation(fields: [mitarbeiterId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@id([auftragId, mitarbeiterId])
+}
+
+model EinsatzMitarbeiter {
+  einsatzId      Int
+  mitarbeiterId  Int
+  einsatz        Einsatz      @relation(fields: [einsatzId], references: [id])
+  mitarbeiter    Mitarbeiter  @relation(fields: [mitarbeiterId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@id([einsatzId, mitarbeiterId])
+}
+
+model Material {
+  id                  Int                 @id @default(autoincrement())
+  name                String
+  einheit             String
+  lagerbestand        Decimal             @default(0)
+  lagerort            String
+  materialverbraeuche Materialverbrauch[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model Materialverbrauch {
+  id            Int         @id @default(autoincrement())
+  auftragId     Int
+  materialId    Int
+  menge         Decimal
+  erfasstVonId  Int
+  auftrag       Auftrag     @relation(fields: [auftragId], references: [id])
+  material      Material    @relation(fields: [materialId], references: [id])
+  erfasstVon    Mitarbeiter @relation("MaterialverbrauchErfasser", fields: [erfasstVonId], references: [id])
+  createdAt     DateTime    @default(now())
+}
+
+model Werkzeug {
+  id                   Int                 @id @default(autoincrement())
+  name                 String
+  status               WerkzeugStatus      @default(VERFUEGBAR)
+  aktuellerOrt         String
+  aktuellerBesitzerId  Int?
+  aktuellerBesitzer    Mitarbeiter?        @relation(fields: [aktuellerBesitzerId], references: [id])
+  uebergaben           WerkzeugUebergabe[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model WerkzeugUebergabe {
+  id             Int          @id @default(autoincrement())
+  werkzeugId      Int
+  mitarbeiterId   Int?
+  ort             String
+  notiz           String?
+  uebergebenAm    DateTime     @default(now())
+  werkzeug        Werkzeug     @relation(fields: [werkzeugId], references: [id])
+  mitarbeiter     Mitarbeiter? @relation(fields: [mitarbeiterId], references: [id])
+}
+
+model Rechnung {
+  id          Int             @id @default(autoincrement())
+  auftragId   Int             @unique
+  erstelltAm  DateTime
+  status      RechnungStatus  @default(OFFEN)
+  betrag      Decimal
+  auftrag     Auftrag         @relation(fields: [auftragId], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+enum Kundentyp {
+  PRIVATKUNDE
+  FIRMENKUNDE
+}
+
+enum AuftragStatus {
+  AUFGENOMMEN
+  GEPLANT
+  IN_BEARBEITUNG
+  PAUSIERT
+  WARTET_AUF_MATERIAL
+  WARTET_AUF_KUNDENENTSCHEIDUNG
+  TECHNISCH_FERTIG
+  RECHNUNG_ERSTELLT
+  BEZAHLT
+  GEMAHNT
+  ESKALIERT
+}
+
+enum Prioritaet {
+  NORMAL
+  DRINGEND
+  NOTDIENST
+}
+
+enum EinsatzStatus {
+  GEPLANT
+  DURCHGEFUEHRT
+  VERSCHOBEN
+}
+
+enum MitarbeiterRolle {
+  GESCHAEFTSFUEHRER
+  BUERO
+  MEISTER
+  GESELLE
+  LEHRLING
+}
+
+enum NichtFertigGrund {
+  FEHLENDES_MATERIAL
+  FEHLENDES_ERSATZTEIL
+  OFFENE_KUNDENENTSCHEIDUNG
+  FOLGEEINSATZ_NOETIG
+}
+
+enum FreigabeStatus {
+  NICHT_ERFORDERLICH
+  ANGEFRAGT
+  SCHRIFTLICH_FREIGEGEBEN
+  ABGELEHNT
+}
+
+enum WerkzeugStatus {
+  VERFUEGBAR
+  BEI_MITARBEITER
+  WERKSTATT
+  UNBEKANNT
+}
+
+enum RechnungStatus {
+  OFFEN
+  BEZAHLT
+  MAHNUNG_1
+  MAHNUNG_2
+  ANWALT
+}
