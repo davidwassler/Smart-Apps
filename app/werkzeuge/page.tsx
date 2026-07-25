@@ -1,6 +1,11 @@
 import { WerkzeugStatus } from "@prisma/client";
-import { createWerkzeug, updateWerkzeugStandort } from "../actions";
+import { ActionForm } from "../action-form";
+import {
+  createWerkzeugFormAction,
+  updateWerkzeugStandortFormAction,
+} from "../form-actions";
 import { werkzeugStatusLabels } from "../labels";
+import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +49,7 @@ export default async function WerkzeugePage() {
       </header>
 
       <section className="formsGrid">
-        <form action={createWerkzeug} className="panel">
+        <ActionForm action={createWerkzeugFormAction} className="panel">
           <h2>Werkzeug erfassen</h2>
           <label>
             Name
@@ -75,10 +80,12 @@ export default async function WerkzeugePage() {
               ))}
             </select>
           </label>
-          <button type="submit">Werkzeug speichern</button>
-        </form>
+          <SubmitButton pendingLabel="Werkzeug wird gespeichert...">
+            Werkzeug speichern
+          </SubmitButton>
+        </ActionForm>
 
-        <form action={updateWerkzeugStandort} className="panel">
+        <ActionForm action={updateWerkzeugStandortFormAction} className="panel">
           <h2>Standort wechseln</h2>
           <label>
             Werkzeug
@@ -122,10 +129,13 @@ export default async function WerkzeugePage() {
             Notiz
             <textarea name="notiz" rows={3} />
           </label>
-          <button type="submit" disabled={werkzeuge.length === 0}>
+          <SubmitButton
+            disabled={werkzeuge.length === 0}
+            pendingLabel="Standort wird gespeichert..."
+          >
             Standort speichern
-          </button>
-        </form>
+          </SubmitButton>
+        </ActionForm>
 
         <div className="listPanel wide">
           <h2>Werkzeugliste</h2>

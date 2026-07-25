@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "npm run lint && npm run test:rules",
+    "test:e2e": "npm run db:reset-demo && playwright test",
     "test:rules": "tsx tests/notdienst-rule.ts && tsx tests/rechnung-rule.ts",
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma db execute --file prisma/migrations/20260725000100_init/migration.sql && prisma db execute --file prisma/migrations/20260725000200_add_zusatzarbeit/migration.sql && prisma db execute --file prisma/migrations/20260725000300_add_einsatz_verschiebung/migration.sql && prisma db execute --file prisma/migrations/20260725000400_add_rechnung_statuswechsel/migration.sql && prisma generate",
@@ -42,6 +43,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

@@ -212,7 +212,6 @@ export default async function OrderDetailPage({
             {auftragStatusLabels[auftrag.status]}
           </span>
           <OrderEditPanel
-            key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
             auftrag={{
               id: auftrag.id,
               beschreibung: auftrag.beschreibung,
@@ -367,7 +366,6 @@ export default async function OrderDetailPage({
 
       {!istOperativGesperrt ? (
         <OrderActionPanels
-          key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
           auftragId={auftrag.id}
           mitarbeiter={aktiveMitarbeiter.map((person) => ({
             id: person.id,
@@ -441,7 +439,6 @@ export default async function OrderDetailPage({
                     ) : null}
                   </div>
                   <AdditionalWorkApprovalPanel
-                    key={`${zusatzarbeit.id}-${zusatzarbeit.updatedAt.toISOString()}`}
                     auftragId={auftrag.id}
                     zusatzarbeitId={zusatzarbeit.id}
                     beschreibung={zusatzarbeit.beschreibung}
@@ -471,7 +468,6 @@ export default async function OrderDetailPage({
           </div>
           {kannRechnungVorbereiten ? (
             <InvoicePreparationPanel
-              key={`${auftrag.id}-${auftrag.updatedAt.toISOString()}`}
               auftragId={auftrag.id}
               kundeName={auftrag.kunde.name}
               beschreibung={auftrag.beschreibung}
@@ -509,7 +505,6 @@ export default async function OrderDetailPage({
             />
           ) : auftrag.rechnung && erlaubteRechnungStatus.length > 0 ? (
             <InvoiceStatusPanel
-              key={`${auftrag.rechnung.id}-${auftrag.rechnung.updatedAt.toISOString()}`}
               rechnungId={auftrag.rechnung.id}
               auftragId={auftrag.id}
               aktuellerStatus={
@@ -630,7 +625,6 @@ export default async function OrderDetailPage({
                       <div className="timelineActions">
                         {eintrag.einsatz.status === EinsatzStatus.GEPLANT ? (
                           <AssignmentReschedulePanel
-                            key={`${eintrag.einsatz.id}-${eintrag.einsatz.updatedAt.toISOString()}`}
                             einsatzId={eintrag.einsatz.id}
                             einsatzDatum={new Intl.DateTimeFormat(
                               "de-DE",

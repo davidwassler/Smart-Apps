@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createAuftrag } from "./actions";
+import { ActionForm } from "./action-form";
 import { CustomerPicker } from "./customer-picker";
+import { createAuftragFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -27,6 +30,7 @@ export function OrderCreatePanel({
   defaultPrioritaet,
 }: OrderCreatePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -63,6 +67,7 @@ export function OrderCreatePanel({
             aria-labelledby="create-order-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -81,7 +86,7 @@ export function OrderCreatePanel({
               </button>
             </div>
 
-            <form action={createAuftrag} className="drawerForm">
+            <ActionForm action={createAuftragFormAction} className="drawerForm">
               <CustomerPicker
                 kunden={kunden}
                 kundentypen={kundentypen}
@@ -135,9 +140,11 @@ export function OrderCreatePanel({
                 >
                   Abbrechen
                 </button>
-                <button type="submit">Auftrag speichern</button>
+                <SubmitButton pendingLabel="Auftrag wird gespeichert...">
+                  Auftrag speichern
+                </SubmitButton>
               </div>
-            </form>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

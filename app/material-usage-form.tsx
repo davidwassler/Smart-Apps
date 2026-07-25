@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createMaterialverbrauch } from "./actions";
+import { ActionForm } from "./action-form";
+import { createMaterialverbrauchFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
 
 type MaterialOption = {
   id: number;
@@ -28,7 +30,7 @@ export function MaterialUsageForm({
   const usesWholeNumbers = selectedMaterial?.einheit === "Stueck";
 
   return (
-    <form action={createMaterialverbrauch}>
+    <ActionForm action={createMaterialverbrauchFormAction}>
       <input name="auftragId" type="hidden" value={auftragId} />
       <label>
         Material
@@ -74,12 +76,12 @@ export function MaterialUsageForm({
           </select>
         </label>
       </div>
-      <button
-        type="submit"
+      <SubmitButton
         disabled={materialien.length === 0 || mitarbeiter.length === 0}
+        pendingLabel="Verbrauch wird gespeichert..."
       >
         Verbrauch speichern
-      </button>
-    </form>
+      </SubmitButton>
+    </ActionForm>
   );
 }

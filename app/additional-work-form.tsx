@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createZusatzarbeit } from "./actions";
+import { ActionForm } from "./action-form";
+import { createZusatzarbeitFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
 
 type Option = {
   value: string;
@@ -31,7 +33,7 @@ export function AdditionalWorkForm({
   }
 
   return (
-    <form action={createZusatzarbeit} className="drawerForm">
+    <ActionForm action={createZusatzarbeitFormAction} className="drawerForm">
       <input name="auftragId" type="hidden" value={auftragId} />
       <label>
         Beschreibung
@@ -81,7 +83,9 @@ export function AdditionalWorkForm({
           erforderlich.
         </p>
       ) : null}
-      <button type="submit">Zusatzarbeit speichern</button>
-    </form>
+      <SubmitButton pendingLabel="Zusatzarbeit wird gespeichert...">
+        Zusatzarbeit speichern
+      </SubmitButton>
+    </ActionForm>
   );
 }

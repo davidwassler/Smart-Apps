@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { verschiebeEinsatz } from "./actions";
+import { ActionForm } from "./action-form";
+import { verschiebeEinsatzFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type AssignmentReschedulePanelProps = {
   einsatzId: number;
@@ -15,6 +18,7 @@ export function AssignmentReschedulePanel({
   istNotdienst,
 }: AssignmentReschedulePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -55,6 +59,7 @@ export function AssignmentReschedulePanel({
             aria-labelledby={`reschedule-heading-${einsatzId}`}
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -75,7 +80,10 @@ export function AssignmentReschedulePanel({
               </button>
             </div>
 
-            <form action={verschiebeEinsatz} className="drawerForm">
+            <ActionForm
+              action={verschiebeEinsatzFormAction}
+              className="drawerForm"
+            >
               <input name="einsatzId" type="hidden" value={einsatzId} />
               {istNotdienst ? (
                 <div className="emergencyNotice">
@@ -110,8 +118,10 @@ export function AssignmentReschedulePanel({
                   geklaert.
                 </label>
               ) : null}
-              <button type="submit">Verschiebung speichern</button>
-            </form>
+              <SubmitButton pendingLabel="Verschiebung wird gespeichert...">
+                Verschiebung speichern
+              </SubmitButton>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

@@ -1,6 +1,8 @@
 import { Kundentyp } from "@prisma/client";
-import { createKunde } from "../actions";
+import { ActionForm } from "../action-form";
+import { createKundeFormAction } from "../form-actions";
 import { kundentypLabels } from "../labels";
+import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +23,7 @@ export default async function KundenPage() {
       </header>
 
       <section className="formsGrid">
-        <form action={createKunde} className="panel">
+        <ActionForm action={createKundeFormAction} className="panel">
           <h2>Kunde erfassen</h2>
           <label>
             Name
@@ -45,8 +47,10 @@ export default async function KundenPage() {
               ))}
             </select>
           </label>
-          <button type="submit">Kunde speichern</button>
-        </form>
+          <SubmitButton pendingLabel="Kunde wird gespeichert...">
+            Kunde speichern
+          </SubmitButton>
+        </ActionForm>
 
         <div className="listPanel wide">
           <h2>Kundenliste</h2>

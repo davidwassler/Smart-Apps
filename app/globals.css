@@ -218,6 +218,30 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.formMessage {
+  border: 1px solid;
+  border-radius: 6px;
+  line-height: 1.4;
+  padding: 10px 12px;
+}
+
+.formMessage:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.formMessage-error {
+  background: #fff0eb;
+  border-color: #d69a86;
+  color: var(--danger);
+}
+
+.formMessage-success {
+  background: #e9f2e5;
+  border-color: #b8d0ae;
+  color: #38672f;
+}
+
 .pageIntro {
   color: var(--muted);
   line-height: 1.45;

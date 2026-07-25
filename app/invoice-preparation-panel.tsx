@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createRechnung } from "./actions";
+import { ActionForm } from "./action-form";
+import { createRechnungFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type InvoicePreparationPanelProps = {
   auftragId: number;
@@ -38,6 +41,7 @@ export function InvoicePreparationPanel({
   zusatzarbeiten,
 }: InvoicePreparationPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -74,6 +78,7 @@ export function InvoicePreparationPanel({
             aria-labelledby="invoice-preparation-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -94,7 +99,10 @@ export function InvoicePreparationPanel({
               </button>
             </div>
 
-            <form action={createRechnung} className="drawerForm">
+            <ActionForm
+              action={createRechnungFormAction}
+              className="drawerForm"
+            >
               <input name="auftragId" type="hidden" value={auftragId} />
 
               <section className="drawerSection invoiceOrderSummary">
@@ -203,9 +211,11 @@ export function InvoicePreparationPanel({
                 >
                   Abbrechen
                 </button>
-                <button type="submit">Rechnung speichern</button>
+                <SubmitButton pendingLabel="Rechnung wird gespeichert...">
+                  Rechnung speichern
+                </SubmitButton>
               </div>
-            </form>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createEinsatz } from "./actions";
+import { ActionForm } from "./action-form";
 import { AdditionalWorkForm } from "./additional-work-form";
+import { createEinsatzFormAction } from "./form-actions";
 import { MaterialUsageForm } from "./material-usage-form";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -41,6 +44,7 @@ export function OrderActionPanels({
   istNotdienst,
 }: OrderActionPanelsProps) {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+  const dialogRef = useDialogFocus(activePanel !== null);
 
   useEffect(() => {
     if (!activePanel) {
@@ -102,6 +106,7 @@ export function OrderActionPanels({
             aria-labelledby="order-action-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -127,7 +132,10 @@ export function OrderActionPanels({
             </div>
 
             {activePanel === "einsatz" ? (
-              <form action={createEinsatz} className="drawerForm">
+              <ActionForm
+                action={createEinsatzFormAction}
+                className="drawerForm"
+              >
                 <input name="auftragId" type="hidden" value={auftragId} />
                 <div className="fieldRow">
                   <label>
@@ -171,10 +179,13 @@ export function OrderActionPanels({
                     )}
                   </div>
                 </fieldset>
-                <button type="submit" disabled={mitarbeiter.length === 0}>
+                <SubmitButton
+                  disabled={mitarbeiter.length === 0}
+                  pendingLabel="Einsatz wird gespeichert..."
+                >
                   Einsatz speichern
-                </button>
-              </form>
+                </SubmitButton>
+              </ActionForm>
             ) : activePanel === "material" ? (
               <MaterialUsageForm
                 auftragId={auftragId}

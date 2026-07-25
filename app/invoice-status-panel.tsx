@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { updateRechnungStatus } from "./actions";
+import { ActionForm } from "./action-form";
+import { updateRechnungStatusFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -22,6 +25,7 @@ export function InvoiceStatusPanel({
   statusOptionen,
 }: InvoiceStatusPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -62,6 +66,7 @@ export function InvoiceStatusPanel({
             aria-labelledby="invoice-status-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -82,7 +87,10 @@ export function InvoiceStatusPanel({
               </button>
             </div>
 
-            <form action={updateRechnungStatus} className="drawerForm">
+            <ActionForm
+              action={updateRechnungStatusFormAction}
+              className="drawerForm"
+            >
               <input name="rechnungId" type="hidden" value={rechnungId} />
               <input name="auftragId" type="hidden" value={auftragId} />
               <label>
@@ -112,9 +120,11 @@ export function InvoiceStatusPanel({
                 >
                   Abbrechen
                 </button>
-                <button type="submit">Status speichern</button>
+                <SubmitButton pendingLabel="Status wird gespeichert...">
+                  Status speichern
+                </SubmitButton>
               </div>
-            </form>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

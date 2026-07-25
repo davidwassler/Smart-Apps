@@ -43,10 +43,12 @@ Beide lokalen Adressen werden im Entwicklungsmodus unterstuetzt, damit clientsei
 ```bash
 npm run lint
 npm test
+npm run test:e2e
 npm run build
 ```
 
 `npm test` fuehrt den Linter und die isolierten Business-Rule-Tests aus.
+`npm run test:e2e` setzt die Demo-Daten zurueck und prueft die Kernablaeufe automatisiert in Chromium.
 
 ## Demo-Daten
 
@@ -96,6 +98,9 @@ npm run db:reset-demo
 - Werkzeuge haben eine eigene Seite mit Status, aktuellem Ort und optionalem Besitzer.
 - Werkzeugstandortwechsel werden mit Historie gespeichert.
 - Demo-Daten koennen per `npm run db:seed` neu angelegt werden.
+- Schreibformulare zeigen Erfolg oder verstaendliche Serverfehler direkt am Formular, behalten Eingaben bei Fehlern und verhindern Mehrfachabsenden waehrend des Speicherns.
+- Seitenfenster unterstuetzen Tastaturfokus, Escape und die Rueckkehr zum ausloesenden Button; das Verhalten wird auch in einer mobilen Viewportgroesse geprueft.
+- Playwright deckt Auftragserfassung, Einsatzplanung und Rueckmeldung, Materialverbrauch, Notdienst-Verschiebung sowie Rechnung und Zahlung als echte Browserablaeufe ab.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:
@@ -105,4 +110,4 @@ Bekannt:
 - Prisma 7 nutzt fuer den lokalen SQLite-Zugriff den libSQL Driver Adapter.
 - Arbeitsstunden und Materialpreise sind in der fachlichen Spec nicht modelliert; der Rechnungsbetrag wird daher manuell erfasst.
 - npm meldet aktuell Vulnerabilities im Dependency-Baum. Vor produktiver Nutzung sollte `npm audit` bewertet werden.
-- Fachliche Formulare und Persistenz-Workflows sind noch Backlog-Arbeit.
+- Fuer F-0501 steht noch ein kurzer Praxistest mit einem Mitarbeiter aus; die technischen Bedienhilfen und automatisierten Kernablauftests sind umgesetzt.

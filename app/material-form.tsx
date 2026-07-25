@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { createMaterial } from "./actions";
+import { ActionForm } from "./action-form";
+import { createMaterialFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
 
 export function MaterialForm() {
   const [einheitTyp, setEinheitTyp] = useState("Stueck");
   const isStueck = einheitTyp === "Stueck";
 
   return (
-    <form action={createMaterial} className="panel">
+    <ActionForm action={createMaterialFormAction} className="panel">
       <h2>Material erfassen</h2>
       <label>
         Name
@@ -50,7 +52,9 @@ export function MaterialForm() {
         Lagerort
         <input name="lagerort" required />
       </label>
-      <button type="submit">Material speichern</button>
-    </form>
+      <SubmitButton pendingLabel="Material wird gespeichert...">
+        Material speichern
+      </SubmitButton>
+    </ActionForm>
   );
 }

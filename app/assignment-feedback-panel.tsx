@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { saveEinsatzRueckmeldung } from "./actions";
+import { ActionForm } from "./action-form";
+import { saveEinsatzRueckmeldungFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -26,6 +29,7 @@ export function AssignmentFeedbackPanel({
   defaultStatus,
 }: AssignmentFeedbackPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
   const [status, setStatus] = useState(defaultStatus);
   const brauchtGrund = status !== "TECHNISCH_FERTIG";
 
@@ -68,6 +72,7 @@ export function AssignmentFeedbackPanel({
             aria-labelledby="feedback-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -86,7 +91,10 @@ export function AssignmentFeedbackPanel({
               </button>
             </div>
 
-            <form action={saveEinsatzRueckmeldung} className="drawerForm">
+            <ActionForm
+              action={saveEinsatzRueckmeldungFormAction}
+              className="drawerForm"
+            >
               <input name="einsatzId" type="hidden" value={einsatzId} />
               <input name="auftragId" type="hidden" value={auftragId} />
               <label>
@@ -124,8 +132,10 @@ export function AssignmentFeedbackPanel({
               ) : (
                 <input name="nichtFertigGrund" type="hidden" value="" />
               )}
-              <button type="submit">Rueckmeldung speichern</button>
-            </form>
+              <SubmitButton pendingLabel="Rueckmeldung wird gespeichert...">
+                Rueckmeldung speichern
+              </SubmitButton>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

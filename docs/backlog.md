@@ -26,6 +26,9 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Notdienst-Auftraege sind in Uebersicht und Detail hervorgehoben; Terminverschiebungen brauchen eine Begruendung und eine bestaetigte Ersatzbesetzung oder sofortige Neuplanung und erscheinen im Auftragsverlauf.
 - Technisch fertige Auftraege koennen aus ihren Einsatzrueckmeldungen, Materialverbraeuchen und Zusatzarbeiten heraus als offene Rechnung mit Datum und Betrag gespeichert werden; Auftrag und Verlauf werden dabei gemeinsam aktualisiert.
 - Rechnungen haben eine eigene Uebersicht mit Statusfilter; erlaubte Zahlungs-, Mahn- und Eskalationsschritte aktualisieren Rechnung und Auftrag gemeinsam und bleiben mit Notiz im Auftragsverlauf nachvollziehbar.
+- Alle fachlichen Schreibformulare zeigen verstaendliche Fehler und sichtbare Erfolgsmeldungen, sperren Mehrfachklicks waehrend des Speicherns und erhalten Eingaben nach serverseitigen Fehlern.
+- Seitenfenster fokussieren beim Oeffnen das erste Eingabefeld, lassen sich per Escape schliessen und geben den Fokus danach an den Ausloeser zurueck.
+- Playwright prueft die Kernablaeufe Auftrag, Einsatz, Rueckmeldung, Materialverbrauch, Notdienst-Verschiebung, Rechnung und Zahlung sowie das mobile Dialogverhalten automatisiert.
 
 ## Phase 0: Projektfundament
 
@@ -97,8 +100,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
-| F-0501 | Bedienung einfach halten | offen | Ein Mitarbeiter kann die Kernfunktionen nach ungefaehr zehn Minuten verstehen. |
-| F-0502 | Schnelle Alltagserfassung priorisieren | offen | Auftrag, Einsatzrueckmeldung und Materialverbrauch sind mit wenigen klaren Eingaben erfassbar. |
+| F-0501 | Bedienung einfach halten | in arbeit | Ein Mitarbeiter kann die Kernfunktionen nach ungefaehr zehn Minuten verstehen. Einheitliche Formularrueckmeldungen, Ladeanzeige und Tastaturfokus sind umgesetzt; ein kurzer Praxistest mit einem Mitarbeiter steht noch aus. |
+| F-0502 | Schnelle Alltagserfassung priorisieren | fertig | Auftrag, Einsatzrueckmeldung und Materialverbrauch sind mit wenigen klaren Eingaben erfassbar; der zusammenhaengende Ablauf wird automatisiert im Browser geprueft. |
 | F-0503 | Keine unnoetigen Auswertungen einbauen | offen | Statistiken und Diagramme werden nicht als Kernnavigation oder Hauptnutzen eingebaut. |
 | F-0504 | Lokalen Betrieb sicherstellen | fertig | Die App nutzt lokale Installation und SQLite; keine Cloud-Datenbank, kein Docker und kein Deployment sind erforderlich. |
 

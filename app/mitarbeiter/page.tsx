@@ -1,6 +1,8 @@
 import { MitarbeiterRolle } from "@prisma/client";
-import { createMitarbeiter } from "../actions";
+import { ActionForm } from "../action-form";
+import { createMitarbeiterFormAction } from "../form-actions";
 import { rollenLabels } from "../labels";
+import { SubmitButton } from "../submit-button";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +27,7 @@ export default async function MitarbeiterPage() {
       </header>
 
       <section className="formsGrid">
-        <form action={createMitarbeiter} className="panel">
+        <ActionForm action={createMitarbeiterFormAction} className="panel">
           <h2>Mitarbeiter erfassen</h2>
           <label>
             Name
@@ -49,8 +51,10 @@ export default async function MitarbeiterPage() {
             <input name="aktiv" type="checkbox" defaultChecked />
             Aktiv verfuegbar
           </label>
-          <button type="submit">Mitarbeiter speichern</button>
-        </form>
+          <SubmitButton pendingLabel="Mitarbeiter wird gespeichert...">
+            Mitarbeiter speichern
+          </SubmitButton>
+        </ActionForm>
 
         <div className="listPanel wide">
           <h2>Mitarbeiterliste</h2>

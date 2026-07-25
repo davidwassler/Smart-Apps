@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { updateZusatzarbeitFreigabe } from "./actions";
+import { ActionForm } from "./action-form";
+import { updateZusatzarbeitFreigabeFormAction } from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -26,6 +29,7 @@ export function AdditionalWorkApprovalPanel({
   freigabeStatusOptionen,
 }: AdditionalWorkApprovalPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
   const [status, setStatus] = useState(freigabeStatus);
   const brauchtSchriftlicheFreigabe = geschaetzterBetrag >= 1500;
 
@@ -68,6 +72,7 @@ export function AdditionalWorkApprovalPanel({
             aria-labelledby="approval-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -96,7 +101,10 @@ export function AdditionalWorkApprovalPanel({
               </span>
             </div>
 
-            <form action={updateZusatzarbeitFreigabe} className="drawerForm">
+            <ActionForm
+              action={updateZusatzarbeitFreigabeFormAction}
+              className="drawerForm"
+            >
               <input name="auftragId" type="hidden" value={auftragId} />
               <input
                 name="zusatzarbeitId"
@@ -131,8 +139,10 @@ export function AdditionalWorkApprovalPanel({
                   ausgefuehrt werden.
                 </p>
               ) : null}
-              <button type="submit">Freigabestatus speichern</button>
-            </form>
+              <SubmitButton pendingLabel="Freigabe wird gespeichert...">
+                Freigabestatus speichern
+              </SubmitButton>
+            </ActionForm>
           </aside>
         </div>
       ) : null}

@@ -8,6 +8,7 @@
 - Prisma als ORM und Migrationswerkzeug
 - `@prisma/adapter-libsql` und `@libsql/client` fuer den Prisma-7-Zugriff auf die lokale SQLite-Datei
 - ESLint fuer statische Pruefung
+- Playwright fuer automatisierte Browserpruefungen der Kernablaeufe
 
 Kein Deployment, keine Cloud-Datenbank und kein Docker.
 
@@ -49,6 +50,9 @@ Wichtige Beziehungen:
 .
 |-- app/                  # Next.js App Router UI
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
+|   |-- action-form.tsx   # Einheitliche Fehler- und Erfolgsausgabe
+|   |-- form-actions.ts   # Rueckmeldende Wrapper um fachliche Server Actions
+|   |-- submit-button.tsx # Ladezustand und Schutz vor Mehrfachabsenden
 |   |-- additional-work-approval-panel.tsx
 |   |-- additional-work-form.tsx
 |   |-- assignment-feedback-panel.tsx
@@ -76,7 +80,7 @@ Wichtige Beziehungen:
 |   |-- prisma.ts         # Prisma Client mit libSQL Adapter
 |   `-- rechnung.ts       # Isolierte Rechnungsvorbereitungs-Regel
 |-- prisma/               # Prisma Schema und Migrationen
-|-- tests/                # Kleine isolierte Business-Rule-Tests
+|-- tests/                # Business-Rule- und Playwright-Browsertests
 |-- AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
 |-- README.md             # Einstieg fuer Menschen
 |-- package.json
@@ -100,6 +104,8 @@ Weitere Befehle:
 
 ```bash
 npm run lint
+npm test
+npm run test:e2e
 npm run build
 npm run db:seed
 npm run db:reset-demo
@@ -109,6 +115,15 @@ npm run db:studio
 `npm run db:migrate` wendet die eingecheckten SQLite-Migrationen nacheinander per `prisma db execute` an und generiert danach den Prisma Client. Der klassische Prisma-Migrationsbefehl `prisma migrate dev` zeigte in dieser lokalen Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei einer frischen SQLite-Datei.
 
 `npm run db:seed` entfernt die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
+
+`npm run test:e2e` setzt die festen Demo-Daten zurueck und prueft die zusammenhaengenden Kernablaeufe in Chromium. Ein bereits laufender lokaler Entwicklungsserver auf Port 3000 wird wiederverwendet; andernfalls startet Playwright ihn fuer den Test.
+
+## Formular- und Dialogverhalten
+
+- Fachliche Server Actions werden fuer die UI durch einheitliche Form Actions mit strukturiertem Erfolgs- oder Fehlerzustand aufgerufen.
+- Serverfehler bleiben am Formular sichtbar; die zuletzt abgesendeten Eingaben werden nach einem Fehler wiederhergestellt.
+- Absende-Buttons zeigen waehrend der Verarbeitung einen Ladehinweis und sind gegen Mehrfachabsenden gesperrt.
+- Seitenfenster setzen den Fokus auf das erste Formularfeld, unterstuetzen Escape und stellen den Fokus beim Schliessen wieder her.
 
 ## Validierungslogik
 

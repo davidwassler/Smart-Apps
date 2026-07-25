@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { updateAuftrag, updateAuftragKunde } from "./actions";
+import { ActionForm } from "./action-form";
+import {
+  updateAuftragFormAction,
+  updateAuftragKundeFormAction,
+} from "./form-actions";
+import { SubmitButton } from "./submit-button";
+import { useDialogFocus } from "./use-dialog-focus";
 
 type Option = {
   value: string;
@@ -51,6 +57,7 @@ export function OrderEditPanel({
   kundentypOptionen,
 }: OrderEditPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dialogRef = useDialogFocus(isOpen);
   const [status, setStatus] = useState(auftrag.status);
   const brauchtGrund = statusMitGrund.has(status);
 
@@ -93,6 +100,7 @@ export function OrderEditPanel({
             aria-labelledby="edit-order-heading"
             aria-modal="true"
             className="drawer"
+            ref={dialogRef}
             role="dialog"
           >
             <div className="drawerHeader">
@@ -116,7 +124,10 @@ export function OrderEditPanel({
                 <h3 id="order-data-heading">Auftragsdaten</h3>
                 <p>Beschreibung, Arbeitsstand und Team pflegen.</p>
               </div>
-              <form action={updateAuftrag} className="drawerForm">
+              <ActionForm
+                action={updateAuftragFormAction}
+                className="drawerForm"
+              >
                 <input name="auftragId" type="hidden" value={auftrag.id} />
                 <label>
                   Beschreibung
@@ -199,8 +210,10 @@ export function OrderEditPanel({
                     )}
                   </div>
                 </fieldset>
-                <button type="submit">Auftragsdaten speichern</button>
-              </form>
+                <SubmitButton pendingLabel="Auftragsdaten werden gespeichert...">
+                  Auftragsdaten speichern
+                </SubmitButton>
+              </ActionForm>
             </section>
 
             <section
@@ -211,7 +224,10 @@ export function OrderEditPanel({
                 <h3 id="customer-data-heading">Kundendaten</h3>
                 <p>Fehlende Stammdaten direkt am Auftrag vervollstaendigen.</p>
               </div>
-              <form action={updateAuftragKunde} className="drawerForm">
+              <ActionForm
+                action={updateAuftragKundeFormAction}
+                className="drawerForm"
+              >
                 <input name="auftragId" type="hidden" value={auftrag.id} />
                 <input name="kundeId" type="hidden" value={kunde.id} />
                 <label>
@@ -242,8 +258,10 @@ export function OrderEditPanel({
                   Adresse
                   <input name="adresse" defaultValue={kunde.adresse} required />
                 </label>
-                <button type="submit">Kundendaten speichern</button>
-              </form>
+                <SubmitButton pendingLabel="Kundendaten werden gespeichert...">
+                  Kundendaten speichern
+                </SubmitButton>
+              </ActionForm>
             </section>
 
             <div className="drawerFooter">

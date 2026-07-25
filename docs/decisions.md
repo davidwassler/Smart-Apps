@@ -155,3 +155,9 @@ Die Rechnungsvorbereitung nutzt das bereits in der Spec definierte 1:1-Modell `R
 Status: entschieden
 
 Rechnungsstatus werden nicht frei ueberschrieben, sondern folgen erlaubten Uebergaengen: `OFFEN` zu `BEZAHLT` oder `MAHNUNG_1`, danach schrittweise zu `MAHNUNG_2` und `ANWALT`; eine Zahlung bleibt aus jedem nicht bezahlten Zustand moeglich. Jeder Wechsel braucht eine Notiz und erzeugt einen unveraenderlichen `RechnungStatuswechsel`-Datensatz. Rechnung, Historie und der abgeleitete Auftragsstatus werden in derselben Transaktion gespeichert. Dadurch bleiben kaufmaennischer Zustand und Auftragsuebersicht konsistent und der Eskalationsweg ist nachvollziehbar.
+
+## ADR-0027: Einheitliche Formularzustaende und Browserpruefungen
+
+Status: entschieden
+
+Fachliche Server Actions bleiben die zentrale Schreiblogik und werden fuer die Oberflaeche durch gemeinsame Form-Action-Wrapper ergaenzt. Diese liefern strukturierte Erfolgs- und Fehlerzustaende; das gemeinsame `ActionForm` zeigt sie barrierearm an und stellt Eingaben nach einem Serverfehler wieder her. `SubmitButton` sperrt Mehrfachabsenden und zeigt den laufenden Vorgang. Dialoge verwalten ihren Tastaturfokus gemeinsam. Die wichtigsten zusammenhaengenden Arbeitsablaeufe werden mit Playwright gegen die lokale Anwendung und reproduzierbare Demo-Daten geprueft, waehrend isolierte Business Rules weiterhin schnelle TypeScript-Tests behalten.
