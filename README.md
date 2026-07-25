@@ -53,11 +53,13 @@ npm run db:reset-demo
 - Repo ist als kleines Next.js/TypeScript-Projekt eingerichtet.
 - SQLite und Prisma sind vorbereitet.
 - Das Prisma-Datenmodell bildet die Entitaeten und Beziehungen aus der Spec ab.
-- Die Startseite ist jetzt eine lokale Arbeitsoberflaeche fuer Kunden, Mitarbeiter, Material und Auftraege.
+- Die Startseite zeigt alle Auftraege als kompakte Liste und fasst offene, geplante, laufende und wartende Auftraege in kleinen KPIs zusammen.
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
-- Einsaetze koennen geplant und mit Mitarbeitern besetzt werden.
-- Rueckmeldungen aktualisieren den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
-- Materialverbrauch kann erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
+- Ein neuer Auftrag wird ueber ein seitliches Panel angelegt und danach direkt geoeffnet.
+- Jeder Auftrag hat eine eigene Detailseite mit Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch.
+- Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
+- Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
+- Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.
 - Auftraege koennen mit bestehendem Kunden oder direkt mit einem neuen Schnellkunden angelegt werden.

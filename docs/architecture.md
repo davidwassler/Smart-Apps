@@ -43,10 +43,13 @@ Wichtige Beziehungen:
 .
 |-- app/                  # Next.js App Router UI
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
+|   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
 |   |-- material/         # Materialseite
+|   |-- material-usage-form.tsx
 |   |-- mitarbeiter/      # Mitarbeiterseite
+|   |-- order-create-panel.tsx
 |   `-- werkzeuge/        # Werkzeugseite
 |-- docs/                 # Fachliche und technische Dokumentation
 |   |-- architecture.md
@@ -102,17 +105,20 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Kunden anlegen und anzeigen
 - Mitarbeiter mit Rolle und Aktivstatus anlegen und anzeigen
 - Material mit Einheit, Lagerbestand und Lagerort anlegen und anzeigen
-- Auftraege mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen und anzeigen
-- Einsaetze mit Datum, Status und Mitarbeiterzuordnung anlegen und anzeigen
-- Rueckmeldungen zu Einsaetzen speichern und den Auftragsstatus aktualisieren
+- Auftraege aus einem Seitenpanel mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen
+- Alle Auftraege mit kompaktem Status und kleinen KPIs auf der Startseite anzeigen
+- Einen Auftrag mit Stammdaten, Einsaetzen, Rueckmeldungen und Materialverbrauch als eigene Detailseite anzeigen
+- Einsaetze im Kontext des geoeffneten Auftrags mit Datum, Status und Mitarbeiterzuordnung anlegen
+- Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
-- Materialverbrauch mit Auftrag, Material, Menge und erfassendem Mitarbeiter speichern
+- Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern
 - Lagerbestand beim Materialverbrauch reduzieren und Verbrauch am Auftrag anzeigen
 - Materialeinheit als `Stueck` oder konkrete Laengeneinheit `mm`, `cm` oder `m` erfassen; ganzzahlige Mengen fuer `Stueck`, Dezimalmengen fuer Laengeneinheiten
 
 ## Screens
 
-- `/`: Auftragsuebersicht mit Auftragserfassung, Einsatzplanung, Rueckmeldung und Materialverbrauch
+- `/`: Auftragsuebersicht mit Status-KPIs, kompakter Auftragsliste und Seitenpanel zur Auftragserfassung
+- `/auftraege/[id]`: Auftragsdetail mit Einsatzplanung, Rueckmeldungen und Materialverbrauch
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen

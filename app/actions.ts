@@ -10,6 +10,7 @@ import {
   WerkzeugStatus,
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 function requireText(formData: FormData, name: string) {
@@ -176,8 +177,10 @@ export async function createAuftrag(formData: FormData) {
         }
       : undefined;
 
+  let auftragId: number;
+
   if (kundeId) {
-    await prisma.auftrag.create({
+    const auftrag = await prisma.auftrag.create({
       data: {
         kundeId,
         beschreibung,
@@ -185,8 +188,9 @@ export async function createAuftrag(formData: FormData) {
         mitarbeiter,
       },
     });
+    auftragId = auftrag.id;
   } else {
-    await prisma.$transaction(async (tx) => {
+    auftragId = await prisma.$transaction(async (tx) => {
       const kunde = await tx.kunde.create({
         data: {
           name: requireText(formData, "neuerKundeName"),
@@ -196,7 +200,7 @@ export async function createAuftrag(formData: FormData) {
         },
       });
 
-      await tx.auftrag.create({
+      const auftrag = await tx.auftrag.create({
         data: {
           kundeId: kunde.id,
           beschreibung,
@@ -204,12 +208,14 @@ export async function createAuftrag(formData: FormData) {
           mitarbeiter,
         },
       });
+
+      return auftrag.id;
     });
   }
 
   revalidatePath("/");
   revalidatePath("/kunden");
-  revalidatePath("/material");
+  redirect(`/auftraege/${auftragId}`);
 }
 
 export async function createEinsatz(formData: FormData) {
@@ -241,6 +247,7 @@ export async function createEinsatz(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
 }
 
 export async function saveEinsatzRueckmeldung(formData: FormData) {
@@ -280,6 +287,7 @@ export async function saveEinsatzRueckmeldung(formData: FormData) {
   ]);
 
   revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
 }
 
 export async function createMaterialverbrauch(formData: FormData) {
@@ -334,6 +342,7 @@ export async function createMaterialverbrauch(formData: FormData) {
   ]);
 
   revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
 }
 
 export async function createWerkzeug(formData: FormData) {

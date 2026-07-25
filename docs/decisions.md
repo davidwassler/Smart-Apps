@@ -95,3 +95,9 @@ Demo-Daten werden ueber ein TypeScript-Seed-Script angelegt. Das Script entfernt
 Status: entschieden
 
 Der Alltag beginnt meistens mit einer Anfrage oder einem Anruf. Deshalb kann ein Auftrag direkt mit einem bestehenden Kunden oder mit einem neuen Schnellkunden angelegt werden. Fuer Schnellkunden reichen Name und Telefonnummer; eine fehlende Adresse wird am Auftrag sichtbar, damit die Stammdaten spaeter auf der Kundenseite vervollstaendigt werden koennen.
+
+## ADR-0017: Auftragsuebersicht von der Auftragsarbeit trennen
+
+Status: entschieden
+
+Die Startseite dient als ruhige Uebersicht mit wenigen Status-Kennzahlen und einer kompakten Liste aller Auftraege. Ein neuer Auftrag wird in einem seitlichen Panel erfasst und danach direkt geoeffnet. Einsatzplanung, Rueckmeldungen und Materialverbrauch gehoeren fachlich zu einem konkreten Auftrag und liegen deshalb ausschliesslich in dessen Detailseite unter `/auftraege/[id]`. So bleibt die Uebersicht schnell erfassbar und auftragsbezogene Arbeit hat einen eindeutigen Kontext.

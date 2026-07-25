@@ -1,63 +1,35 @@
-import { AuftragStatus, EinsatzStatus, Kundentyp, Prioritaet } from "@prisma/client";
-import { CustomerPicker } from "./customer-picker";
-import {
-  createAuftrag,
-  createEinsatz,
-  createMaterialverbrauch,
-  saveEinsatzRueckmeldung,
-} from "./actions";
+import { AuftragStatus, Kundentyp, Prioritaet } from "@prisma/client";
+import Link from "next/link";
+import { OrderCreatePanel } from "./order-create-panel";
 import {
   auftragStatusLabels,
-  einsatzStatusLabels,
   kundentypLabels,
-  nichtFertigGrundLabels,
   prioritaetLabels,
-  rollenLabels,
-  rueckmeldeStatus,
 } from "./labels";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [kunden, mitarbeiter, materialien, auftraege, einsaetze] = await Promise.all([
-    prisma.kunde.findMany({ orderBy: { updatedAt: "desc" } }),
+  const [kunden, mitarbeiter, auftraege] = await Promise.all([
+    prisma.kunde.findMany({ orderBy: { name: "asc" } }),
     prisma.mitarbeiter.findMany({ orderBy: [{ aktiv: "desc" }, { name: "asc" }] }),
-    prisma.material.findMany({ orderBy: { name: "asc" } }),
     prisma.auftrag.findMany({
       include: {
         kunde: true,
-        materialverbraeuche: {
-          include: {
-            erfasstVon: true,
-            material: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
         mitarbeiter: {
           include: {
             mitarbeiter: true,
+          },
+        },
+        _count: {
+          select: {
+            einsaetze: true,
+            materialverbraeuche: true,
           },
         },
       },
       orderBy: { updatedAt: "desc" },
-    }),
-    prisma.einsatz.findMany({
-      include: {
-        auftrag: {
-          include: {
-            kunde: true,
-          },
-        },
-        mitarbeiter: {
-          include: {
-            mitarbeiter: true,
-          },
-        },
-      },
-      orderBy: [{ datum: "asc" }, { updatedAt: "desc" }],
     }),
   ]);
 
@@ -67,6 +39,20 @@ export default async function Home() {
       auftrag.status !== AuftragStatus.BEZAHLT &&
       auftrag.status !== AuftragStatus.ESKALIERT,
   );
+  const geplanteAuftraege = auftraege.filter(
+    (auftrag) => auftrag.status === AuftragStatus.GEPLANT,
+  );
+  const auftraegeInArbeit = auftraege.filter(
+    (auftrag) => auftrag.status === AuftragStatus.IN_BEARBEITUNG,
+  );
+  const wartendeStatus = new Set<AuftragStatus>([
+    AuftragStatus.PAUSIERT,
+    AuftragStatus.WARTET_AUF_MATERIAL,
+    AuftragStatus.WARTET_AUF_KUNDENENTSCHEIDUNG,
+  ]);
+  const wartendeAuftraege = auftraege.filter((auftrag) =>
+    wartendeStatus.has(auftrag.status),
+  );
 
   return (
     <main className="page">
@@ -74,281 +60,120 @@ export default async function Home() {
         <div>
           <p className="eyebrow">Brandt & Soehne Elektro</p>
           <h1>Auftragsuebersicht</h1>
+          <p className="pageIntro">
+            Alle Auftraege und ihr aktueller Arbeitsstand auf einen Blick.
+          </p>
         </div>
-        <div className="counters" aria-label="Aktueller Datenbestand">
-          <span>{auftraege.length} Auftraege</span>
-          <span>{einsaetze.length} Einsaetze</span>
-          <span>{kunden.length} Kunden</span>
-          <span>{aktiveMitarbeiter.length} aktiv</span>
-        </div>
+        <OrderCreatePanel
+          kunden={kunden.map((kunde) => ({ id: kunde.id, name: kunde.name }))}
+          kundentypen={Object.entries(kundentypLabels).map(([value, label]) => ({
+            value,
+            label,
+          }))}
+          defaultKundentyp={Kundentyp.PRIVATKUNDE}
+          mitarbeiter={aktiveMitarbeiter.map((person) => ({
+            id: person.id,
+            name: person.name,
+          }))}
+          prioritaeten={Object.entries(prioritaetLabels).map(([value, label]) => ({
+            value,
+            label,
+          }))}
+          defaultPrioritaet={Prioritaet.NORMAL}
+        />
       </header>
 
-      <section className="formsGrid" aria-label="Auftragsarbeit">
-        <form action={createAuftrag} className="panel wide">
-          <h2>Auftrag erfassen</h2>
-          <CustomerPicker
-            kunden={kunden.map((kunde) => ({ id: kunde.id, name: kunde.name }))}
-            kundentypen={Object.entries(kundentypLabels).map(([value, label]) => ({
-              value,
-              label,
-            }))}
-            defaultKundentyp={Kundentyp.PRIVATKUNDE}
-          />
-          <label>
-            Beschreibung
-            <textarea name="beschreibung" required rows={4} />
-          </label>
-          <label>
-            Prioritaet
-            <select name="prioritaet" defaultValue={Prioritaet.NORMAL}>
-              {Object.entries(prioritaetLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <fieldset>
-            <legend>Mitarbeiter zuordnen</legend>
-            <div className="checkboxGrid">
-              {aktiveMitarbeiter.length === 0 ? (
-                <p className="emptyText">Noch keine aktiven Mitarbeiter erfasst.</p>
-              ) : (
-                aktiveMitarbeiter.map((person) => (
-                  <label className="checkline" key={person.id}>
-                    <input name="mitarbeiterIds" type="checkbox" value={person.id} />
-                    {person.name}
-                  </label>
-                ))
-              )}
-            </div>
-          </fieldset>
-          <button type="submit">Auftrag speichern</button>
-        </form>
-
-        <form action={createEinsatz} className="panel wide">
-          <h2>Einsatz planen</h2>
-          <label>
-            Auftrag
-            <select name="auftragId" required defaultValue="">
-              <option value="" disabled>
-                Auftrag auswaehlen
-              </option>
-              {offeneAuftraege.map((auftrag) => (
-                <option key={auftrag.id} value={auftrag.id}>
-                  #{auftrag.id} - {auftrag.kunde.name}: {auftrag.beschreibung}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="fieldRow">
-            <label>
-              Datum
-              <input name="datum" type="date" required />
-            </label>
-            <label>
-              Status
-              <select name="status" defaultValue={EinsatzStatus.GEPLANT}>
-                {Object.entries(einsatzStatusLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <fieldset>
-            <legend>Mitarbeiter fuer Einsatz</legend>
-            <div className="checkboxGrid">
-              {aktiveMitarbeiter.length === 0 ? (
-                <p className="emptyText">Noch keine aktiven Mitarbeiter erfasst.</p>
-              ) : (
-                aktiveMitarbeiter.map((person) => (
-                  <label className="checkline" key={person.id}>
-                    <input name="mitarbeiterIds" type="checkbox" value={person.id} />
-                    {person.name} ({rollenLabels[person.rolle]})
-                  </label>
-                ))
-              )}
-            </div>
-          </fieldset>
-          <button
-            type="submit"
-            disabled={offeneAuftraege.length === 0 || aktiveMitarbeiter.length === 0}
-          >
-            Einsatz speichern
-          </button>
-        </form>
-
-        <form action={createMaterialverbrauch} className="panel wide">
-          <h2>Materialverbrauch erfassen</h2>
-          <label>
-            Auftrag
-            <select name="auftragId" required defaultValue="">
-              <option value="" disabled>
-                Auftrag auswaehlen
-              </option>
-              {offeneAuftraege.map((auftrag) => (
-                <option key={auftrag.id} value={auftrag.id}>
-                  #{auftrag.id} - {auftrag.kunde.name}: {auftrag.beschreibung}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="fieldRow">
-            <label>
-              Material
-              <select name="materialId" required defaultValue="">
-                <option value="" disabled>
-                  Material auswaehlen
-                </option>
-                {materialien.map((material) => (
-                  <option key={material.id} value={material.id}>
-                    {material.name} ({material.lagerbestand.toString()} {material.einheit})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Menge
-              <input name="menge" type="number" step="0.01" min="0.01" required />
-            </label>
-          </div>
-          <label>
-            Erfasst von
-            <select name="erfasstVonId" required defaultValue="">
-              <option value="" disabled>
-                Mitarbeiter auswaehlen
-              </option>
-              {aktiveMitarbeiter.map((person) => (
-                <option key={person.id} value={person.id}>
-                  {person.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="submit"
-            disabled={
-              offeneAuftraege.length === 0 ||
-              materialien.length === 0 ||
-              aktiveMitarbeiter.length === 0
-            }
-          >
-            Verbrauch speichern
-          </button>
-        </form>
+      <section className="kpiGrid" aria-label="Kurze Statusuebersicht">
+        <div className="kpi">
+          <span>Offene Auftraege</span>
+          <strong>{offeneAuftraege.length}</strong>
+        </div>
+        <div className="kpi">
+          <span>Geplant</span>
+          <strong>{geplanteAuftraege.length}</strong>
+        </div>
+        <div className="kpi">
+          <span>In Bearbeitung</span>
+          <strong>{auftraegeInArbeit.length}</strong>
+        </div>
+        <div className="kpi">
+          <span>Wartend</span>
+          <strong>{wartendeAuftraege.length}</strong>
+        </div>
       </section>
 
-      <section className="listPanel fullWidth" aria-label="Einsaetze und Rueckmeldungen">
-        <h2>Einsaetze und Rueckmeldungen</h2>
-        {einsaetze.length === 0 ? (
-          <p className="emptyText">Noch keine Einsaetze geplant.</p>
-        ) : (
-          <ul className="itemList">
-            {einsaetze.map((einsatz) => (
-              <li key={einsatz.id}>
-                <div>
-                  <strong>
-                    {new Intl.DateTimeFormat("de-DE").format(einsatz.datum)} -{" "}
-                    {einsatz.auftrag.kunde.name}
-                  </strong>
-                  <p>{einsatz.auftrag.beschreibung}</p>
-                </div>
-                <div className="metaRow">
-                  <span>{einsatzStatusLabels[einsatz.status]}</span>
-                  <span>{auftragStatusLabels[einsatz.auftrag.status]}</span>
-                  <span>
-                    {einsatz.mitarbeiter
-                      .map((entry) => entry.mitarbeiter.name)
-                      .join(", ")}
-                  </span>
-                </div>
-                {einsatz.rueckmeldung ? (
-                  <p className="noteText">{einsatz.rueckmeldung}</p>
-                ) : (
-                  <form action={saveEinsatzRueckmeldung} className="inlineForm">
-                    <input name="einsatzId" type="hidden" value={einsatz.id} />
-                    <input name="auftragId" type="hidden" value={einsatz.auftragId} />
-                    <label>
-                      Rueckmeldung
-                      <textarea name="rueckmeldung" required rows={3} />
-                    </label>
-                    <div className="fieldRow">
-                      <label>
-                        Neuer Auftragsstatus
-                        <select name="auftragStatus" defaultValue={AuftragStatus.TECHNISCH_FERTIG}>
-                          {rueckmeldeStatus.map((status) => (
-                            <option key={status} value={status}>
-                              {auftragStatusLabels[status]}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Grund wenn nicht fertig
-                        <select name="nichtFertigGrund" defaultValue="">
-                          <option value="">Kein Grund</option>
-                          {Object.entries(nichtFertigGrundLabels).map(([value, label]) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    </div>
-                    <button type="submit">Rueckmeldung speichern</button>
-                  </form>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <section className="ordersSection" aria-labelledby="orders-heading">
+        <div className="sectionHeading">
+          <div>
+            <h2 id="orders-heading">Alle Auftraege</h2>
+            <p>{auftraege.length} Auftraege insgesamt</p>
+          </div>
+        </div>
 
-      <section className="listPanel fullWidth" aria-label="Aktuelle Auftraege">
-        <h2>Aktuelle Auftraege</h2>
         {auftraege.length === 0 ? (
-          <p className="emptyText">Noch keine Auftraege erfasst.</p>
+          <div className="emptyState">
+            <strong>Noch keine Auftraege erfasst.</strong>
+            <p>Lege den ersten Auftrag ueber den Button oben rechts an.</p>
+          </div>
         ) : (
-          <ul className="itemList">
-            {auftraege.map((auftrag) => (
-              <li key={auftrag.id}>
-                <div>
-                  <strong>{auftrag.kunde.name}</strong>
-                  <p>{auftrag.beschreibung}</p>
-                </div>
-                <div className="metaRow">
-                  <span>{prioritaetLabels[auftrag.prioritaet]}</span>
-                  <span>{auftragStatusLabels[auftrag.status]}</span>
-                  {auftrag.kunde.telefonnummer.trim() === "" ||
-                  auftrag.kunde.adresse.trim() === "" ? (
-                    <span className="warningBadge">Kundendaten ergaenzen</span>
-                  ) : null}
-                  {auftrag.nichtFertigGrund ? (
-                    <span>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</span>
-                  ) : null}
-                  <span>
-                    {auftrag.mitarbeiter.length === 0
-                      ? "nicht zugeordnet"
-                      : auftrag.mitarbeiter
-                          .map((entry) => entry.mitarbeiter.name)
-                          .join(", ")}
-                  </span>
-                </div>
-                {auftrag.materialverbraeuche.length > 0 ? (
-                  <div className="subList" aria-label="Materialverbrauch">
-                    {auftrag.materialverbraeuche.map((verbrauch) => (
-                      <span key={verbrauch.id}>
-                        {verbrauch.material.name}: {verbrauch.menge.toString()}{" "}
-                        {verbrauch.material.einheit} ({verbrauch.erfasstVon.name})
+          <div className="orderTable">
+            <div className="orderTableHeader" aria-hidden="true">
+              <span>Auftrag</span>
+              <span>Kunde</span>
+              <span>Status</span>
+              <span>Prioritaet</span>
+              <span>Team</span>
+              <span>Aktualisiert</span>
+            </div>
+            <div className="orderRows">
+              {auftraege.map((auftrag) => {
+                const kundenDatenUnvollstaendig =
+                  auftrag.kunde.telefonnummer.trim() === "" ||
+                  auftrag.kunde.adresse.trim() === "";
+
+                return (
+                  <Link
+                    className="orderRow"
+                    href={`/auftraege/${auftrag.id}`}
+                    key={auftrag.id}
+                  >
+                    <span className="orderDescription">
+                      <strong>#{auftrag.id}</strong>
+                      <span>{auftrag.beschreibung}</span>
+                    </span>
+                    <span data-label="Kunde">
+                      {auftrag.kunde.name}
+                      {kundenDatenUnvollstaendig ? (
+                        <small className="warningText">Daten ergaenzen</small>
+                      ) : null}
+                    </span>
+                    <span data-label="Status">
+                      <span className={`statusBadge status-${auftrag.status.toLowerCase()}`}>
+                        {auftragStatusLabels[auftrag.status]}
                       </span>
-                    ))}
-                  </div>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+                    </span>
+                    <span data-label="Prioritaet">
+                      {prioritaetLabels[auftrag.prioritaet]}
+                    </span>
+                    <span data-label="Team">
+                      {auftrag.mitarbeiter.length === 0
+                        ? "Nicht zugeordnet"
+                        : auftrag.mitarbeiter
+                            .map((entry) => entry.mitarbeiter.name)
+                            .join(", ")}
+                    </span>
+                    <span data-label="Aktualisiert">
+                      {new Intl.DateTimeFormat("de-DE").format(auftrag.updatedAt)}
+                      <small>
+                        {auftrag._count.einsaetze} Einsaetze,{" "}
+                        {auftrag._count.materialverbraeuche} Verbraeuche
+                      </small>
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         )}
       </section>
     </main>
