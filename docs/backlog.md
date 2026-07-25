@@ -14,20 +14,21 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Materialeinheiten sind auf `Stueck` sowie Laengeneinheiten `mm`, `cm` und `m` begrenzt; Stueck-Bestaende und Stueck-Verbrauch muessen ganzzahlig sein.
 - Die App ist in mehrere Screens aufgeteilt: Auftragsuebersicht als Startseite sowie eigene Seiten fuer Kunden, Mitarbeiter und Material.
 - Werkzeuge koennen auf einer eigenen Seite mit Status, Ort und optionalem Besitzer erfasst werden; Standortwechsel werden als Historie gespeichert.
-- Demo-Daten fuer Kunden, Mitarbeiter, Material, Auftraege, Einsaetze, Rueckmeldungen, Materialverbrauch und Werkzeuge koennen per Seed geladen werden.
+- Demo-Daten fuer Kunden, Mitarbeiter, Material, Auftraege, Einsaetze, Rueckmeldungen, Materialverbrauch, Zusatzarbeiten und Werkzeuge koennen per Seed geladen werden.
 - Auftraege koennen direkt aus einem neuen Schnellkunden heraus angelegt werden; unvollstaendige Kundendaten werden am Auftrag sichtbar.
 - Die Startseite ist auf eine kompakte Auftragsliste mit Status-KPIs reduziert; Auftragserfassung liegt in einem Seitenpanel, Einsatzplanung, Rueckmeldung und Materialverbrauch in der jeweiligen Auftragsdetailseite.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen nachtraeglich im Auftragsdetail gepflegt werden; die zugehoerigen Kundendaten lassen sich dort direkt vervollstaendigen.
 - Die Auftragsdetailseite zeigt zuerst Status, naechsten Einsatz, Team und Kontakt; Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in getrennten Seitenfenstern verborgen.
 - Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind visuell getrennt; der letzte Rueckmeldungsstand ist hervorgehoben und Einsaetze bilden eine Zeitleiste vom neuesten Eintrag bis zur Auftragserfassung.
 - Die Auftragsuebersicht kann nach Nummer, Kunde und Beschreibung durchsucht, nach Bereich, Status, Prioritaet und Mitarbeiter gefiltert sowie nach Aenderung, naechstem Einsatz oder Prioritaet sortiert werden; die Auswahl bleibt beim Ruecksprung aus einem Auftrag erhalten.
+- Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst werden; ab 1.500 Euro wird eine schriftliche Freigabe serverseitig erzwungen und fehlende Freigabe sichtbar gesperrt.
 
 ## Phase 0: Projektfundament
 
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
 | F-0001 | Lokales Next.js-Projekt einrichten | fertig | Next.js mit TypeScript ist installiert; `npm run dev` startet lokal; keine Cloud-, Docker- oder Deployment-Abhaengigkeit. |
-| F-0002 | Prisma/SQLite-Datenmodell anlegen | fertig | Prisma-Schema bildet Kunden, Auftraege, Einsaetze, Mitarbeiter, Material, Materialverbrauch, Werkzeuge und Rechnungen ab; Beziehungen aus der Spec sind modelliert. |
+| F-0002 | Prisma/SQLite-Datenmodell anlegen | fertig | Prisma-Schema bildet Kunden, Auftraege, Einsaetze, Mitarbeiter, Material, Materialverbrauch, Zusatzarbeiten, Werkzeuge und Rechnungen ab; Beziehungen aus der Spec sind modelliert. |
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt alle Auftraege als kompakte Liste sowie kleine Kennzahlen fuer offene, geplante, laufende und wartende Auftraege; ein Auftrag kann aus der Liste geoeffnet werden. |
 | F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen und Listen. |
@@ -66,8 +67,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0201 | Notdienst-Vorrang beachten | offen | Notdienst-Auftraege koennen nicht beilaufig verschoben werden; eine Verschiebung braucht eine bewusste Bestaetigung oder Eskalationsnotiz. |
 | F-0202 | Lehrlinge nicht allein einplanen | fertig | Ein Lehrling kann keinem Einsatz allein zugeordnet werden; mindestens ein Geselle oder Meister muss ebenfalls zugeordnet sein. |
 | F-0203 | Technisch fertig von kaufmaennisch abgeschlossen trennen | fertig | Technisch fertig, Rechnung erstellt und bezahlt sind getrennte Zustaende und werden nicht als ein einzelnes `fertig` vermischt. |
-| F-0204 | Zusatzarbeiten erfassen | offen | Zusatzarbeiten koennen mit geschaetztem Betrag und Freigabestatus am Auftrag dokumentiert werden. |
-| F-0205 | Schriftliche Freigabe ab 1.500 Euro erzwingen | offen | Zusatzarbeiten ab 1.500 Euro koennen nur mit schriftlicher Freigabe als freigegeben markiert werden. |
+| F-0204 | Zusatzarbeiten erfassen | fertig | Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus erfasst, im eigenen Detailblock angezeigt und im Auftragsverlauf dokumentiert werden. |
+| F-0205 | Schriftliche Freigabe ab 1.500 Euro erzwingen | fertig | Zusatzarbeiten ab mindestens 1.500 Euro koennen nicht als `keine formale Freigabe erforderlich` gespeichert werden; ohne Status `schriftlich freigegeben` zeigt der Auftrag eine Ausfuehrungssperre; der Status kann als angefragt, schriftlich freigegeben oder abgelehnt gepflegt werden. |
 
 ## Phase 3: Sollte-Funktionen
 

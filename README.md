@@ -66,6 +66,9 @@ npm run db:reset-demo
 - Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind als klare visuelle Bloecke getrennt.
 - Der letzte Rueckmeldungstext ist hervorgehoben; Einsaetze erscheinen als Zeitleiste bis zur Auftragserfassung.
 - Offene Rueckmeldungen werden ueber ein eigenes Seitenfenster erfasst.
+- Mehrere Zusatzarbeiten koennen je Auftrag mit Beschreibung, Betrag und Freigabestatus erfasst werden.
+- Ab mindestens 1.500 Euro wird eine schriftliche Freigabe erzwungen; fehlende Freigaben erscheinen als Ausfuehrungssperre.
+- Zusatzarbeiten werden im Auftragsverlauf angezeigt; die Demo-Daten enthalten freigabefreie, angefragte und schriftlich freigegebene Beispiele.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.
@@ -80,7 +83,7 @@ npm run db:reset-demo
 Bekannt:
 
 - Die fachliche Spec wurde nur nach `docs/spec.md` verschoben und nicht inhaltlich korrigiert.
-- `npm run db:migrate` fuehrt aktuell die eingecheckte SQLite-SQL-Migration per Prisma aus. `prisma migrate dev` zeigte in dieser Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei frischer SQLite-Datei.
+- `npm run db:migrate` fuehrt aktuell die eingecheckten SQLite-SQL-Migrationen nacheinander per Prisma aus. `prisma migrate dev` zeigte in dieser Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei frischer SQLite-Datei.
 - Prisma 7 nutzt fuer den lokalen SQLite-Zugriff den libSQL Driver Adapter.
 - npm meldet aktuell Vulnerabilities im Dependency-Baum. Vor produktiver Nutzung sollte `npm audit` bewertet werden.
 - Fachliche Formulare und Persistenz-Workflows sind noch Backlog-Arbeit.

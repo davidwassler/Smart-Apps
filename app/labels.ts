@@ -1,6 +1,7 @@
 import {
   AuftragStatus,
   EinsatzStatus,
+  FreigabeStatus,
   Kundentyp,
   MitarbeiterRolle,
   NichtFertigGrund,
@@ -60,6 +61,13 @@ export const nichtFertigGrundLabels: Record<NichtFertigGrund, string> = {
   FEHLENDES_ERSATZTEIL: "Fehlendes Ersatzteil",
   OFFENE_KUNDENENTSCHEIDUNG: "Offene Kundenentscheidung",
   FOLGEEINSATZ_NOETIG: "Folgeeinsatz noetig",
+};
+
+export const freigabeStatusLabels: Record<FreigabeStatus, string> = {
+  NICHT_ERFORDERLICH: "Keine formale Freigabe erforderlich",
+  ANGEFRAGT: "Freigabe angefragt",
+  SCHRIFTLICH_FREIGEGEBEN: "Schriftlich freigegeben",
+  ABGELEHNT: "Abgelehnt",
 };
 
 export const werkzeugStatusLabels: Record<WerkzeugStatus, string> = {

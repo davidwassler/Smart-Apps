@@ -3,6 +3,7 @@
 import {
   AuftragStatus,
   EinsatzStatus,
+  FreigabeStatus,
   Kundentyp,
   MitarbeiterRolle,
   NichtFertigGrund,
@@ -58,6 +59,43 @@ function requireNonNegativeNumber(formData: FormData, name: string) {
   }
 
   return value;
+}
+
+function requireMoney(formData: FormData, name: string) {
+  const rawValue = requireText(formData, name);
+  if (!/^\d+(?:[.,]\d{1,2})?$/.test(rawValue)) {
+    throw new Error(`${name} muss ein positiver Betrag mit maximal zwei Nachkommastellen sein.`);
+  }
+
+  const value = Number(rawValue.replace(",", "."));
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new Error(`${name} muss groesser als 0 sein.`);
+  }
+
+  return value;
+}
+
+function requireFreigabeStatus(formData: FormData) {
+  const value = requireText(formData, "freigabeStatus");
+  if (!Object.values(FreigabeStatus).includes(value as FreigabeStatus)) {
+    throw new Error("Ungueltiger Freigabestatus.");
+  }
+
+  return value as FreigabeStatus;
+}
+
+function assertFreigabeFuerBetrag(
+  geschaetzterBetrag: number,
+  freigabeStatus: FreigabeStatus,
+) {
+  if (
+    geschaetzterBetrag >= 1500 &&
+    freigabeStatus === FreigabeStatus.NICHT_ERFORDERLICH
+  ) {
+    throw new Error(
+      "Zusatzarbeiten ab 1.500 Euro brauchen eine schriftliche Freigabe.",
+    );
+  }
 }
 
 function requireMaterialEinheit(formData: FormData) {
@@ -426,6 +464,62 @@ export async function createMaterialverbrauch(formData: FormData) {
       },
     }),
   ]);
+
+  revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function createZusatzarbeit(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const geschaetzterBetrag = requireMoney(formData, "geschaetzterBetrag");
+  const freigabeStatus = requireFreigabeStatus(formData);
+
+  assertFreigabeFuerBetrag(geschaetzterBetrag, freigabeStatus);
+
+  await prisma.zusatzarbeit.create({
+    data: {
+      auftragId,
+      beschreibung: requireText(formData, "beschreibung"),
+      geschaetzterBetrag,
+      freigabeStatus,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath(`/auftraege/${auftragId}`);
+}
+
+export async function updateZusatzarbeitFreigabe(formData: FormData) {
+  const auftragId = Number(requireText(formData, "auftragId"));
+  const zusatzarbeitId = Number(requireText(formData, "zusatzarbeitId"));
+  const freigabeStatus = requireFreigabeStatus(formData);
+  const zusatzarbeit = await prisma.zusatzarbeit.findFirst({
+    where: {
+      id: zusatzarbeitId,
+      auftragId,
+    },
+    select: {
+      geschaetzterBetrag: true,
+    },
+  });
+
+  if (!zusatzarbeit) {
+    throw new Error("Zusatzarbeit wurde nicht gefunden.");
+  }
+
+  assertFreigabeFuerBetrag(
+    zusatzarbeit.geschaetzterBetrag.toNumber(),
+    freigabeStatus,
+  );
+
+  await prisma.zusatzarbeit.update({
+    where: {
+      id: zusatzarbeitId,
+    },
+    data: {
+      freigabeStatus,
+    },
+  });
 
   revalidatePath("/");
   revalidatePath(`/auftraege/${auftragId}`);

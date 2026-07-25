@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createEinsatz } from "./actions";
+import { AdditionalWorkForm } from "./additional-work-form";
 import { MaterialUsageForm } from "./material-usage-form";
 
 type Option = {
@@ -24,9 +25,10 @@ type OrderActionPanelsProps = {
     einheit: string;
     lagerbestand: string;
   }>;
+  freigabeStatusOptionen: Option[];
 };
 
-type ActivePanel = "einsatz" | "material" | null;
+type ActivePanel = "einsatz" | "material" | "zusatzarbeit" | null;
 
 export function OrderActionPanels({
   auftragId,
@@ -34,6 +36,7 @@ export function OrderActionPanels({
   einsatzStatusOptionen,
   defaultEinsatzStatus,
   materialien,
+  freigabeStatusOptionen,
 }: OrderActionPanelsProps) {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
@@ -73,6 +76,13 @@ export function OrderActionPanels({
           >
             Materialverbrauch erfassen
           </button>
+          <button
+            className="secondaryButton"
+            type="button"
+            onClick={() => setActivePanel("zusatzarbeit")}
+          >
+            Zusatzarbeit erfassen
+          </button>
         </div>
       </section>
 
@@ -98,7 +108,9 @@ export function OrderActionPanels({
                 <h2 id="order-action-heading">
                   {activePanel === "einsatz"
                     ? "Einsatz planen"
-                    : "Materialverbrauch erfassen"}
+                    : activePanel === "material"
+                      ? "Materialverbrauch erfassen"
+                      : "Zusatzarbeit erfassen"}
                 </h2>
               </div>
               <button
@@ -156,7 +168,7 @@ export function OrderActionPanels({
                   Einsatz speichern
                 </button>
               </form>
-            ) : (
+            ) : activePanel === "material" ? (
               <MaterialUsageForm
                 auftragId={auftragId}
                 materialien={materialien}
@@ -164,6 +176,11 @@ export function OrderActionPanels({
                   id: person.id,
                   name: person.name,
                 }))}
+              />
+            ) : (
+              <AdditionalWorkForm
+                auftragId={auftragId}
+                freigabeStatusOptionen={freigabeStatusOptionen}
               />
             )}
           </aside>

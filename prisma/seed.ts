@@ -1,6 +1,7 @@
 import {
   AuftragStatus,
   EinsatzStatus,
+  FreigabeStatus,
   Kundentyp,
   MitarbeiterRolle,
   Prioritaet,
@@ -72,6 +73,17 @@ async function clearDemoData() {
           },
         },
       ],
+    },
+  });
+  await prisma.zusatzarbeit.deleteMany({
+    where: {
+      auftrag: {
+        kunde: {
+          name: {
+            in: demoNames.kunden,
+          },
+        },
+      },
     },
   });
   await prisma.einsatzMitarbeiter.deleteMany({
@@ -333,6 +345,32 @@ async function main() {
         },
       },
     },
+  });
+
+  await prisma.zusatzarbeit.createMany({
+    data: [
+      {
+        auftragId: notdienst.id,
+        beschreibung:
+          "Zusaetzliche Absicherung fuer den zweiten Backofenstromkreis.",
+        geschaetzterBetrag: 1650,
+        freigabeStatus: FreigabeStatus.SCHRIFTLICH_FREIGEGEBEN,
+      },
+      {
+        auftragId: materialWartet.id,
+        beschreibung:
+          "Zusaetzlichen Kabelkanal entlang der Sockelleiste montieren.",
+        geschaetzterBetrag: 480,
+        freigabeStatus: FreigabeStatus.NICHT_ERFORDERLICH,
+      },
+      {
+        auftragId: geplant.id,
+        beschreibung:
+          "Brandschutzgerechte Leitungsfuehrung im Treppenhaus nachruesten.",
+        geschaetzterBetrag: 1850,
+        freigabeStatus: FreigabeStatus.ANGEFRAGT,
+      },
+    ],
   });
 
   await prisma.materialverbrauch.createMany({

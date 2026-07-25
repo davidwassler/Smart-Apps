@@ -4,12 +4,14 @@ import { notFound } from "next/navigation";
 import {
   auftragStatusLabels,
   einsatzStatusLabels,
+  freigabeStatusLabels,
   kundentypLabels,
   nichtFertigGrundLabels,
   prioritaetLabels,
   rollenLabels,
   rueckmeldeStatus,
 } from "../../labels";
+import { AdditionalWorkApprovalPanel } from "../../additional-work-approval-panel";
 import { AssignmentFeedbackPanel } from "../../assignment-feedback-panel";
 import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
@@ -66,6 +68,9 @@ export default async function OrderDetailPage({
           },
           orderBy: { createdAt: "desc" },
         },
+        zusatzarbeiten: {
+          orderBy: { createdAt: "desc" },
+        },
       },
     }),
     prisma.mitarbeiter.findMany({
@@ -98,6 +103,28 @@ export default async function OrderDetailPage({
     .sort(
       (links, rechts) => rechts.updatedAt.getTime() - links.updatedAt.getTime(),
     )[0];
+  const nichtFreigegebeneZusatzarbeiten = auftrag.zusatzarbeiten.filter(
+    (zusatzarbeit) =>
+      zusatzarbeit.geschaetzterBetrag.toNumber() >= 1500 &&
+      zusatzarbeit.freigabeStatus !== "SCHRIFTLICH_FREIGEGEBEN",
+  );
+  const verlaufEintraege = [
+    ...auftrag.einsaetze.map((einsatz) => ({
+      typ: "einsatz" as const,
+      id: `einsatz-${einsatz.id}`,
+      zeitpunkt: einsatz.datum,
+      einsatz,
+    })),
+    ...auftrag.zusatzarbeiten.map((zusatzarbeit) => ({
+      typ: "zusatzarbeit" as const,
+      id: `zusatzarbeit-${zusatzarbeit.id}`,
+      zeitpunkt: zusatzarbeit.createdAt,
+      zusatzarbeit,
+    })),
+  ].sort(
+    (links, rechts) =>
+      rechts.zeitpunkt.getTime() - links.zeitpunkt.getTime(),
+  );
 
   return (
     <main className="page">
@@ -241,6 +268,16 @@ export default async function OrderDetailPage({
             <strong>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</strong>
           </div>
         ) : null}
+        {nichtFreigegebeneZusatzarbeiten.length > 0 ? (
+          <div className="blockWarning">
+            <span>Ausfuehrung gesperrt</span>
+            <strong>
+              {nichtFreigegebeneZusatzarbeiten.length} Zusatzarbeit
+              {nichtFreigegebeneZusatzarbeiten.length === 1 ? "" : "en"} ohne
+              schriftliche Freigabe
+            </strong>
+          </div>
+        ) : null}
       </section>
 
       {!istAbgeschlossen ? (
@@ -262,58 +299,128 @@ export default async function OrderDetailPage({
             einheit: material.einheit,
             lagerbestand: material.lagerbestand.toString(),
           }))}
+          freigabeStatusOptionen={Object.entries(freigabeStatusLabels).map(
+            ([value, label]) => ({ value, label }),
+          )}
         />
       ) : (
         <p className="closedNotice">
-          Dieser Auftrag ist abgeschlossen. Planung und Verbrauchserfassung sind
-          daher nicht mehr aktiv.
+          Dieser Auftrag ist abgeschlossen. Neue Planungen, Verbraeuche und
+          Zusatzarbeiten koennen daher nicht mehr erfasst werden.
         </p>
       )}
+
+      <section className="detailBlock" aria-labelledby="additional-work-heading">
+        <div className="sectionHeading">
+          <div>
+            <p className="eyebrow">Freigaben</p>
+            <h2 id="additional-work-heading">Zusatzarbeiten</h2>
+            <p>{auftrag.zusatzarbeiten.length} Eintraege</p>
+          </div>
+        </div>
+        {auftrag.zusatzarbeiten.length === 0 ? (
+          <p className="emptyText">
+            Fuer diesen Auftrag wurden noch keine Zusatzarbeiten erfasst.
+          </p>
+        ) : (
+          <ul className="additionalWorkList">
+            {auftrag.zusatzarbeiten.map((zusatzarbeit) => {
+              const betrag = zusatzarbeit.geschaetzterBetrag.toNumber();
+              const brauchtSchriftlicheFreigabe = betrag >= 1500;
+              const istGesperrt =
+                brauchtSchriftlicheFreigabe &&
+                zusatzarbeit.freigabeStatus !==
+                  "SCHRIFTLICH_FREIGEGEBEN";
+
+              return (
+                <li className={istGesperrt ? "approvalRequired" : ""} key={zusatzarbeit.id}>
+                  <div className="additionalWorkMain">
+                    <strong>{zusatzarbeit.beschreibung}</strong>
+                    <span>
+                      {new Intl.NumberFormat("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(betrag)}
+                    </span>
+                  </div>
+                  <div className="additionalWorkStatus">
+                    <span
+                      className={`approvalBadge approval-${zusatzarbeit.freigabeStatus.toLowerCase()}`}
+                    >
+                      {freigabeStatusLabels[zusatzarbeit.freigabeStatus]}
+                    </span>
+                    {istGesperrt ? (
+                      <small>Vor Ausfuehrung schriftlich freigeben</small>
+                    ) : null}
+                  </div>
+                  <AdditionalWorkApprovalPanel
+                    key={`${zusatzarbeit.id}-${zusatzarbeit.updatedAt.toISOString()}`}
+                    auftragId={auftrag.id}
+                    zusatzarbeitId={zusatzarbeit.id}
+                    beschreibung={zusatzarbeit.beschreibung}
+                    geschaetzterBetrag={betrag}
+                    freigabeStatus={zusatzarbeit.freigabeStatus}
+                    freigabeStatusOptionen={Object.entries(
+                      freigabeStatusLabels,
+                    ).map(([value, label]) => ({ value, label }))}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <section className="detailBlock" aria-labelledby="assignments-heading">
         <div className="sectionHeading">
           <div>
             <p className="eyebrow">Chronologie</p>
             <h2 id="assignments-heading">Auftragsverlauf</h2>
-            <p>{auftrag.einsaetze.length} Einsaetze</p>
+            <p>
+              {auftrag.einsaetze.length} Einsaetze,{" "}
+              {auftrag.zusatzarbeiten.length} Zusatzarbeiten
+            </p>
           </div>
         </div>
         <ul className="timelineList">
-          {auftrag.einsaetze.map((einsatz) => (
-              <li className="timelineItem" key={einsatz.id}>
+          {verlaufEintraege.map((eintrag) =>
+            eintrag.typ === "einsatz" ? (
+              <li className="timelineItem" key={eintrag.id}>
                 <span className="timelineMarker" aria-hidden="true" />
                 <div className="timelineContent">
                   <div className="recordHeader">
                     <div>
                       <strong>
                         Einsatz am{" "}
-                        {new Intl.DateTimeFormat("de-DE").format(einsatz.datum)}
+                        {new Intl.DateTimeFormat("de-DE").format(
+                          eintrag.einsatz.datum,
+                        )}
                       </strong>
                       <p>
-                        {einsatz.mitarbeiter.length === 0
+                        {eintrag.einsatz.mitarbeiter.length === 0
                           ? "Kein Einsatzteam hinterlegt"
-                          : einsatz.mitarbeiter
+                          : eintrag.einsatz.mitarbeiter
                               .map((entry) => entry.mitarbeiter.name)
                               .join(", ")}
                       </p>
                     </div>
                     <span className="statusBadge">
-                      {einsatzStatusLabels[einsatz.status]}
+                      {einsatzStatusLabels[eintrag.einsatz.status]}
                     </span>
                   </div>
-                  {einsatz.rueckmeldung ? (
+                  {eintrag.einsatz.rueckmeldung ? (
                     <div className="timelineFeedback">
                       <span>Rueckmeldung</span>
-                      <p>{einsatz.rueckmeldung}</p>
+                      <p>{eintrag.einsatz.rueckmeldung}</p>
                     </div>
                   ) : (
                     <div className="timelinePending">
                       <span>Rueckmeldung offen</span>
                       <AssignmentFeedbackPanel
                         auftragId={auftrag.id}
-                        einsatzId={einsatz.id}
+                        einsatzId={eintrag.einsatz.id}
                         einsatzDatum={new Intl.DateTimeFormat("de-DE").format(
-                          einsatz.datum,
+                          eintrag.einsatz.datum,
                         )}
                         statusOptionen={rueckmeldeStatus.map((status) => ({
                           value: status,
@@ -328,7 +435,44 @@ export default async function OrderDetailPage({
                   )}
                 </div>
               </li>
-          ))}
+            ) : (
+              <li className="timelineItem timelineAdditionalWork" key={eintrag.id}>
+                <span className="timelineMarker" aria-hidden="true" />
+                <div className="timelineContent">
+                  <div className="recordHeader">
+                    <div>
+                      <strong>Zusatzarbeit erfasst</strong>
+                      <p>
+                        {new Intl.DateTimeFormat("de-DE").format(
+                          eintrag.zusatzarbeit.createdAt,
+                        )}
+                      </p>
+                    </div>
+                    <span
+                      className={`approvalBadge approval-${eintrag.zusatzarbeit.freigabeStatus.toLowerCase()}`}
+                    >
+                      {
+                        freigabeStatusLabels[
+                          eintrag.zusatzarbeit.freigabeStatus
+                        ]
+                      }
+                    </span>
+                  </div>
+                  <div className="timelineFeedback">
+                    <span>
+                      {new Intl.NumberFormat("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(
+                        eintrag.zusatzarbeit.geschaetzterBetrag.toNumber(),
+                      )}
+                    </span>
+                    <p>{eintrag.zusatzarbeit.beschreibung}</p>
+                  </div>
+                </div>
+              </li>
+            ),
+          )}
           <li className="timelineItem timelineOrigin">
             <span className="timelineMarker" aria-hidden="true" />
             <div className="timelineContent">

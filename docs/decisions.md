@@ -125,3 +125,9 @@ Die Auftragsdetailseite trennt Auftragsdaten, letzten Stand, Aktionen, Auftragsv
 Status: entschieden
 
 Suche, Bereich, Status, Prioritaet, Mitarbeiter und Sortierung werden als Query-Parameter der Auftragsuebersicht gefuehrt. Die lokale Datenmenge wird nach dem Prisma-Lesen im Server Component gefiltert und fachlich sortiert; dadurch lassen sich auch Prioritaetsreihenfolge und naechster geplanter Einsatz ohne zusaetzliche Datenbankfelder abbilden. Auftragslinks tragen die aktuelle Uebersichts-URL als validierten Ruecksprung mit, damit Filter nach der Detailansicht erhalten bleiben.
+
+## ADR-0022: Zusatzarbeiten als eigene Entitaet mit Freigabesicherung
+
+Status: entschieden
+
+Zusatzarbeiten werden als eigene 1:n-Entitaet unterhalb eines Auftrags gespeichert, weil ein Auftrag mehrere Nachtraege mit eigener Beschreibung, eigenem Betrag und eigenem Freigabestatus haben kann. Die fruehen einzelnen Platzhalterfelder am Auftrag werden im Prisma-Modell nicht weiter verwendet. Ab mindestens 1.500 Euro lehnen Server Actions den Status `NICHT_ERFORDERLICH` ab. Als Ausfuehrungsfreigabe gilt in diesem Fall ausschliesslich `SCHRIFTLICH_FREIGEGEBEN`; angefragte oder abgelehnte Zusatzarbeiten bleiben im Auftrag sichtbar gesperrt.

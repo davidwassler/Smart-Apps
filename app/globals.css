@@ -624,6 +624,31 @@ button:disabled {
   padding-top: 18px;
 }
 
+.approvalWarning {
+  background: #fff7e8;
+  border: 1px solid #e0c58f;
+  border-radius: 6px;
+  color: #70531f;
+  line-height: 1.45;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.approvalSummary {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+}
+
+.approvalSummary span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
 .backLink {
   color: var(--accent);
   display: inline-block;
@@ -812,6 +837,11 @@ button:disabled {
   box-shadow: 0 0 0 1px var(--muted);
 }
 
+.timelineAdditionalWork .timelineMarker {
+  background: #bf8517;
+  box-shadow: 0 0 0 1px #bf8517;
+}
+
 .timelineContent {
   border-bottom: 1px solid var(--line);
   min-width: 0;
@@ -863,6 +893,74 @@ button:disabled {
 .timelineAction {
   min-height: 36px;
   padding: 7px 10px;
+}
+
+.additionalWorkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.additionalWorkList li {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(240px, 1.5fr) minmax(190px, 1fr) auto;
+  padding: 14px 10px;
+}
+
+.additionalWorkList li:last-child {
+  border-bottom: 0;
+}
+
+.additionalWorkList li.approvalRequired {
+  background: #fffaf0;
+  border-left: 3px solid #bf8517;
+}
+
+.additionalWorkMain,
+.additionalWorkStatus {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.additionalWorkMain span,
+.additionalWorkStatus small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.approvalBadge {
+  background: #eef2ec;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--foreground);
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 700;
+  justify-self: start;
+  line-height: 1.25;
+  padding: 5px 8px;
+}
+
+.approval-angefragt {
+  background: #fff7e8;
+  border-color: #e0c58f;
+  color: #70531f;
+}
+
+.approval-schriftlich_freigegeben {
+  background: #e9f2e5;
+  border-color: #b8d0ae;
+  color: #38672f;
+}
+
+.approval-abgelehnt {
+  background: #f8e9e7;
+  border-color: #dfb2ac;
+  color: #8a3128;
 }
 
 .materialRecordsHeader,
@@ -1173,6 +1271,16 @@ button:disabled {
   .timelinePending {
     align-items: stretch;
     display: grid;
+  }
+
+  .additionalWorkList li {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+    padding: 14px 0;
+  }
+
+  .additionalWorkList li.approvalRequired {
+    padding-left: 10px;
   }
 
   .materialRecordsHeader {

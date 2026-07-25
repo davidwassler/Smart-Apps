@@ -18,7 +18,8 @@ Die fachliche Quelle ist `docs/spec.md`. Das Prisma-Schema liegt in `prisma/sche
 Kernmodelle:
 
 - `Kunde`: Auftraggeber mit Kundentyp, Adresse und Telefonnummer
-- `Auftrag`: zentrale Arbeitseinheit mit Status, Prioritaet, Grund bei offenem Ergebnis und optionaler Zusatzarbeitsfreigabe
+- `Auftrag`: zentrale Arbeitseinheit mit Status, Prioritaet und Grund bei offenem Ergebnis
+- `Zusatzarbeit`: Nachtrag zu einem Auftrag mit Beschreibung, geschaetztem Betrag und Freigabestatus
 - `Einsatz`: konkreter Termin oder Arbeitstag innerhalb eines Auftrags
 - `Mitarbeiter`: Personen mit Rolle und Aktivstatus
 - `Material`: Lagerbestand und Lagerort
@@ -35,6 +36,7 @@ Wichtige Beziehungen:
 - Auftrag zu Mitarbeiter: n:m ueber `AuftragMitarbeiter`
 - Einsatz zu Mitarbeiter: n:m ueber `EinsatzMitarbeiter`
 - Auftrag zu Material: n:m ueber `Materialverbrauch`
+- Auftrag zu Zusatzarbeit: 1:n
 - Werkzeug zu Mitarbeiter: aktueller Besitzer plus Historie
 
 ## Ordnerstruktur
@@ -43,6 +45,8 @@ Wichtige Beziehungen:
 .
 |-- app/                  # Next.js App Router UI
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
+|   |-- additional-work-approval-panel.tsx
+|   |-- additional-work-form.tsx
 |   |-- assignment-feedback-panel.tsx
 |   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
@@ -89,7 +93,7 @@ npm run db:reset-demo
 npm run db:studio
 ```
 
-`npm run db:migrate` wendet die eingecheckte SQLite-Migration per `prisma db execute` an und generiert danach den Prisma Client. Der klassische Prisma-Migrationsbefehl `prisma migrate dev` zeigte in dieser lokalen Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei einer frischen SQLite-Datei.
+`npm run db:migrate` wendet die eingecheckten SQLite-Migrationen nacheinander per `prisma db execute` an und generiert danach den Prisma Client. Der klassische Prisma-Migrationsbefehl `prisma migrate dev` zeigte in dieser lokalen Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei einer frischen SQLite-Datei.
 
 `npm run db:seed` entfernt die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
 
@@ -100,7 +104,7 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Notdienst-Auftraege haben eine eigene Prioritaet.
 - Lehrlinge haben eine eigene Mitarbeiterrolle.
 - Nicht fertige Auftraege haben ein Feld fuer den Grund.
-- Zusatzarbeiten koennen Betrag und Freigabestatus speichern.
+- Zusatzarbeiten ab mindestens 1.500 Euro koennen serverseitig nicht ohne schriftliche Freigabe als freigabefrei gespeichert werden.
 - Technische Fertigstellung, Rechnung und Zahlung sind getrennte Status.
 
 ## Aktuelle UI-Flows
@@ -120,6 +124,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Einsaetze im Kontext des geoeffneten Auftrags mit Datum, Status und Mitarbeiterzuordnung anlegen
 - Den letzten Rueckmeldungsstand hervorheben und Einsaetze als Auftragszeitleiste anzeigen
 - Offene Einsatzrueckmeldungen in einem eigenen Seitenfenster erfassen
+- Mehrere Zusatzarbeiten im Auftrag erfassen, Freigaben pflegen und fehlende schriftliche Freigaben sichtbar sperren
+- Zusatzarbeiten als eigene Ereignisse in den Auftragsverlauf aufnehmen
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern

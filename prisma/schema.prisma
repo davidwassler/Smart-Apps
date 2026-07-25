@@ -24,15 +24,27 @@ model Auftrag {
   status              AuftragStatus       @default(AUFGENOMMEN)
   prioritaet          Prioritaet          @default(NORMAL)
   nichtFertigGrund    NichtFertigGrund?
-  zusatzarbeitBetrag  Decimal?
-  freigabeStatus      FreigabeStatus?
   kunde               Kunde               @relation(fields: [kundeId], references: [id])
   einsaetze           Einsatz[]
   materialverbraeuche Materialverbrauch[]
+  zusatzarbeiten      Zusatzarbeit[]
   rechnung            Rechnung?
   mitarbeiter         AuftragMitarbeiter[]
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
+}
+
+model Zusatzarbeit {
+  id                  Int             @id @default(autoincrement())
+  auftragId           Int
+  beschreibung        String
+  geschaetzterBetrag  Decimal
+  freigabeStatus      FreigabeStatus  @default(NICHT_ERFORDERLICH)
+  auftrag             Auftrag         @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([auftragId])
 }
 
 model Einsatz {
