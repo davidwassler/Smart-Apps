@@ -69,6 +69,7 @@ npm install
 cp .env.example .env
 npm run prisma:generate
 npm run db:migrate
+npm run db:seed
 npm run dev
 ```
 
@@ -77,10 +78,14 @@ Weitere Befehle:
 ```bash
 npm run lint
 npm run build
+npm run db:seed
+npm run db:reset-demo
 npm run db:studio
 ```
 
 `npm run db:migrate` wendet die eingecheckte SQLite-Migration per `prisma db execute` an und generiert danach den Prisma Client. Der klassische Prisma-Migrationsbefehl `prisma migrate dev` zeigte in dieser lokalen Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei einer frischen SQLite-Datei.
+
+`npm run db:seed` entfernt die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
 
 ## Validierungslogik
 

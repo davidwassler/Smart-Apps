@@ -83,3 +83,9 @@ Werkzeuge bekommen eine eigene Seite, weil sie nicht zum taeglichen Auftragsform
 Status: entschieden
 
 Ein Standortwechsel aktualisiert immer den aktuellen Werkzeugdatensatz und legt zugleich einen `WerkzeugUebergabe`-Eintrag an. Dadurch bleibt die Liste schnell lesbar, waehrend Bewegungen weiterhin nachvollziehbar sind.
+
+## ADR-0015: Wiederholbares Demo-Seed
+
+Status: entschieden
+
+Demo-Daten werden ueber ein TypeScript-Seed-Script angelegt. Das Script entfernt nur Datensaetze mit festen Demo-Namen und legt sie neu an, damit es wiederholbar ist, ohne beliebige lokale Testdaten zu loeschen.

@@ -14,6 +14,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Materialeinheiten sind auf `Stueck` sowie Laengeneinheiten `mm`, `cm` und `m` begrenzt; Stueck-Bestaende und Stueck-Verbrauch muessen ganzzahlig sein.
 - Die App ist in mehrere Screens aufgeteilt: Auftragsuebersicht als Startseite sowie eigene Seiten fuer Kunden, Mitarbeiter und Material.
 - Werkzeuge koennen auf einer eigenen Seite mit Status, Ort und optionalem Besitzer erfasst werden; Standortwechsel werden als Historie gespeichert.
+- Demo-Daten fuer Kunden, Mitarbeiter, Material, Auftraege, Einsaetze, Rueckmeldungen, Materialverbrauch und Werkzeuge koennen per Seed geladen werden.
 
 ## Phase 0: Projektfundament
 
@@ -25,6 +26,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt Auftraege, Einsaetze, Rueckmeldungen und Materialverbrauch als taeglichen Arbeitsbereich ohne Dashboard-Ballast. |
 | F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen und Listen. |
 | F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit Formular und Liste. |
+| F-0007 | Demo-Daten bereitstellen | fertig | Ein Seed-Script legt realistische Demo-Daten fuer die vorhandenen Kernfunktionen an und kann wiederholt ausgefuehrt werden. |
 
 ## Phase 1: Kernprozess erste Version
 

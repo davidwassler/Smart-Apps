@@ -12,6 +12,8 @@
     "test": "npm run lint",
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma db execute --file prisma/migrations/20260725000100_init/migration.sql && prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset-demo": "npm run db:migrate && npm run db:seed",
     "db:studio": "prisma studio"
   },
   "repository": {
@@ -45,6 +47,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.11",
     "prisma": "^7.9.0",
+    "tsx": "^4.23.1",
     "typescript": "^6.0.3"
   }
 }

@@ -9,6 +9,7 @@ npm install
 cp .env.example .env
 npm run prisma:generate
 npm run db:migrate
+npm run db:seed
 ```
 
 Unter Windows PowerShell kann `npm.ps1` durch die Execution Policy blockiert sein. Dann `npm.cmd` verwenden, zum Beispiel:
@@ -38,6 +39,15 @@ npm run build
 
 `npm test` fuehrt aktuell ebenfalls den Linter aus.
 
+## Demo-Daten
+
+```bash
+npm run db:seed
+npm run db:reset-demo
+```
+
+`db:seed` entfernt nur die festen Demo-Daten und legt sie neu an. Manuell erfasste Daten mit anderen Namen bleiben erhalten.
+
 ## Aktueller Stand
 
 - Repo ist als kleines Next.js/TypeScript-Projekt eingerichtet.
@@ -52,6 +62,7 @@ npm run build
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.
 - Werkzeuge haben eine eigene Seite mit Status, aktuellem Ort und optionalem Besitzer.
 - Werkzeugstandortwechsel werden mit Historie gespeichert.
+- Demo-Daten koennen per `npm run db:seed` neu angelegt werden.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:
