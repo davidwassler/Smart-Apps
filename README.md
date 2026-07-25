@@ -61,6 +61,9 @@ npm run db:reset-demo
 - Fehlende Kundendaten koennen direkt am Auftrag vervollstaendigt und getrennt gespeichert werden.
 - Die Detailseite zeigt Status, naechsten Einsatz, Team und Kontakt vor den Arbeitsverlaeufen.
 - Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in einem Seitenfenster verborgen.
+- Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind als klare visuelle Bloecke getrennt.
+- Der letzte Rueckmeldungstext ist hervorgehoben; Einsaetze erscheinen als Zeitleiste bis zur Auftragserfassung.
+- Offene Rueckmeldungen werden ueber ein eigenes Seitenfenster erfasst.
 - Einsaetze koennen im Auftragsdetail geplant und mit Mitarbeitern besetzt werden.
 - Rueckmeldungen aktualisieren dort den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Materialverbrauch kann direkt am Auftrag erfasst werden; der Lagerbestand wird reduziert und der Verbrauch am Auftrag angezeigt.

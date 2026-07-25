@@ -113,3 +113,9 @@ Die Auftragsdetailseite bietet ein gemeinsames Bearbeiten-Panel, darin werden Au
 Status: entschieden
 
 Die Auftragsdetailseite priorisiert zuerst die Informationen, die fuer die naechste Entscheidung gebraucht werden: Kunde und Status, danach Prioritaet, naechster Einsatz, Team, Kontakt und gegebenenfalls ein Hinderungsgrund. Einsatzplanung und Materialverbrauch werden als Aktionen angeboten und erst nach einem Klick in getrennten Seitenfenstern angezeigt. Der Einsatzverlauf steht vor der Materialhistorie, weil Termin und Rueckmeldung den aktuellen Arbeitsstand staerker bestimmen.
+
+## ADR-0020: Fachliche Bloecke und Zeitleiste im Auftragsdetail
+
+Status: entschieden
+
+Die Auftragsdetailseite trennt Auftragsdaten, letzten Stand, Aktionen, Auftragsverlauf und Materialverlauf durch eigenstaendige, klar gerahmte Bereiche ohne Schatten oder dekorative Verschachtelung. Der letzte vorhandene Rueckmeldungstext wird unabhaengig von der Einsatzliste als aktueller Arbeitsstand hervorgehoben. Einsaetze bilden eine Zeitleiste, die mit der Auftragserfassung endet. Offene Rueckmeldungsformulare werden erst in einem Seitenfenster geoeffnet, damit der Verlauf lesbar bleibt.

@@ -43,6 +43,7 @@ Wichtige Beziehungen:
 .
 |-- app/                  # Next.js App Router UI
 |   |-- actions.ts        # Server Actions fuer einfache Schreib-Workflows
+|   |-- assignment-feedback-panel.tsx
 |   |-- auftraege/[id]/   # Auftragsdetail mit Planung und Verbrauch
 |   |-- kunden/           # Kundenseite
 |   |-- labels.ts         # Gemeinsame fachliche Labels
@@ -115,6 +116,8 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Den naechsten geplanten Einsatz im oberen Informationsbereich des Auftrags anzeigen
 - Einsatzplanung und Materialverbrauch ueber kompakte Aktionen in getrennten Seitenfenstern oeffnen
 - Einsaetze im Kontext des geoeffneten Auftrags mit Datum, Status und Mitarbeiterzuordnung anlegen
+- Den letzten Rueckmeldungsstand hervorheben und Einsaetze als Auftragszeitleiste anzeigen
+- Offene Einsatzrueckmeldungen in einem eigenen Seitenfenster erfassen
 - Rueckmeldungen im Auftragsdetail speichern und den Auftragsstatus aktualisieren
 - Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
 - Materialverbrauch direkt im Auftragsdetail mit Material, Menge und erfassendem Mitarbeiter speichern

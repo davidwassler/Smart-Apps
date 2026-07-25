@@ -1,7 +1,6 @@
 import { AuftragStatus, EinsatzStatus } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { saveEinsatzRueckmeldung } from "../../actions";
 import {
   auftragStatusLabels,
   einsatzStatusLabels,
@@ -11,6 +10,7 @@ import {
   rollenLabels,
   rueckmeldeStatus,
 } from "../../labels";
+import { AssignmentFeedbackPanel } from "../../assignment-feedback-panel";
 import { OrderActionPanels } from "../../order-action-panels";
 import { OrderEditPanel } from "../../order-edit-panel";
 import { prisma } from "@/lib/prisma";
@@ -83,6 +83,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         einsatz.status === EinsatzStatus.GEPLANT && einsatz.datum >= heute,
     )
     .sort((links, rechts) => links.datum.getTime() - rechts.datum.getTime())[0];
+  const letzteRueckmeldung = auftrag.einsaetze
+    .filter((einsatz) => einsatz.rueckmeldung)
+    .sort(
+      (links, rechts) => rechts.updatedAt.getTime() - links.updatedAt.getTime(),
+    )[0];
 
   return (
     <main className="page">
@@ -140,47 +145,93 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
       </header>
 
-      <section className="detailFacts" aria-label="Auftragsdaten">
-        <div>
-          <span>Prioritaet</span>
-          <strong>{prioritaetLabels[auftrag.prioritaet]}</strong>
+      <section className="detailBlock" aria-labelledby="order-data-heading">
+        <div className="blockHeading">
+          <div>
+            <p className="eyebrow">Grundlagen</p>
+            <h2 id="order-data-heading">Auftragsdaten</h2>
+          </div>
         </div>
-        <div>
-          <span>Naechster Einsatz</span>
-          <strong>
-            {naechsterEinsatz
-              ? new Intl.DateTimeFormat("de-DE").format(naechsterEinsatz.datum)
-              : "Noch nicht geplant"}
-          </strong>
-        </div>
-        <div>
-          <span>Auftragsteam</span>
-          <strong>
-            {auftrag.mitarbeiter.length === 0
-              ? "Noch nicht zugeordnet"
-              : auftrag.mitarbeiter
-                  .map((entry) => entry.mitarbeiter.name)
-                  .join(", ")}
-          </strong>
-        </div>
-        <div>
-          <span>Kontakt</span>
-          <strong>
-            {auftrag.kunde.telefonnummer || "Telefonnummer fehlt"}
-          </strong>
-          <small>{auftrag.kunde.adresse || "Adresse fehlt"}</small>
-          {kundenDatenUnvollstaendig ? (
-            <small className="warningText">Kundendaten ergaenzen</small>
-          ) : null}
+        <div className="detailFacts">
+          <div>
+            <span>Prioritaet</span>
+            <strong>{prioritaetLabels[auftrag.prioritaet]}</strong>
+          </div>
+          <div>
+            <span>Naechster Einsatz</span>
+            <strong>
+              {naechsterEinsatz
+                ? new Intl.DateTimeFormat("de-DE").format(naechsterEinsatz.datum)
+                : "Noch nicht geplant"}
+            </strong>
+          </div>
+          <div>
+            <span>Auftragsteam</span>
+            <strong>
+              {auftrag.mitarbeiter.length === 0
+                ? "Noch nicht zugeordnet"
+                : auftrag.mitarbeiter
+                    .map((entry) => entry.mitarbeiter.name)
+                    .join(", ")}
+            </strong>
+          </div>
+          <div>
+            <span>Kontakt</span>
+            <strong>
+              {auftrag.kunde.telefonnummer || "Telefonnummer fehlt"}
+            </strong>
+            <small>{auftrag.kunde.adresse || "Adresse fehlt"}</small>
+            {kundenDatenUnvollstaendig ? (
+              <small className="warningText">Kundendaten ergaenzen</small>
+            ) : null}
+          </div>
         </div>
       </section>
 
-      {auftrag.nichtFertigGrund ? (
-        <p className="attentionNote">
-          Aktueller Hinderungsgrund:{" "}
-          <strong>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</strong>
-        </p>
-      ) : null}
+      <section
+        className="detailBlock currentStateBlock"
+        aria-labelledby="current-state-heading"
+      >
+        <div className="blockHeading">
+          <div>
+            <p className="eyebrow">Aktueller Arbeitsstand</p>
+            <h2 id="current-state-heading">Letzter Stand</h2>
+          </div>
+          <span className={`statusBadge status-${auftrag.status.toLowerCase()}`}>
+            {auftragStatusLabels[auftrag.status]}
+          </span>
+        </div>
+        {letzteRueckmeldung ? (
+          <div className="currentStateContent">
+            <strong>
+              Rueckmeldung vom{" "}
+              {new Intl.DateTimeFormat("de-DE").format(letzteRueckmeldung.datum)}
+            </strong>
+            <p>{letzteRueckmeldung.rueckmeldung}</p>
+            <span>
+              {letzteRueckmeldung.mitarbeiter.length === 0
+                ? "Kein Einsatzteam hinterlegt"
+                : letzteRueckmeldung.mitarbeiter
+                    .map((entry) => entry.mitarbeiter.name)
+                    .join(", ")}
+            </span>
+          </div>
+        ) : (
+          <div className="currentStateContent">
+            <strong>Noch keine Einsatzrueckmeldung</strong>
+            <p>
+              Der Auftrag befindet sich aktuell im Status{" "}
+              {auftragStatusLabels[auftrag.status]}.
+            </p>
+          </div>
+        )}
+        {auftrag.nichtFertigGrund ? (
+          <div className="blockWarning">
+            <span>Hinderungsgrund</span>
+            <strong>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</strong>
+          </div>
+        ) : null}
+      </section>
 
       {!istAbgeschlossen ? (
         <OrderActionPanels
@@ -203,91 +254,93 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           }))}
         />
       ) : (
-        <p className="attentionNote">
+        <p className="closedNotice">
           Dieser Auftrag ist abgeschlossen. Planung und Verbrauchserfassung sind
           daher nicht mehr aktiv.
         </p>
       )}
 
-      <section className="detailSection" aria-labelledby="assignments-heading">
+      <section className="detailBlock" aria-labelledby="assignments-heading">
         <div className="sectionHeading">
           <div>
-            <h2 id="assignments-heading">Einsaetze und Rueckmeldungen</h2>
-            <p>{auftrag.einsaetze.length} Eintraege</p>
+            <p className="eyebrow">Chronologie</p>
+            <h2 id="assignments-heading">Auftragsverlauf</h2>
+            <p>{auftrag.einsaetze.length} Einsaetze</p>
           </div>
         </div>
-        {auftrag.einsaetze.length === 0 ? (
-          <p className="emptyText">Fuer diesen Auftrag ist noch kein Einsatz geplant.</p>
-        ) : (
-          <ul className="recordList">
-            {auftrag.einsaetze.map((einsatz) => (
-              <li key={einsatz.id}>
-                <div className="recordHeader">
-                  <div>
-                    <strong>
-                      {new Intl.DateTimeFormat("de-DE").format(einsatz.datum)}
-                    </strong>
-                    <p>
-                      {einsatz.mitarbeiter
-                        .map((entry) => entry.mitarbeiter.name)
-                        .join(", ")}
-                    </p>
-                  </div>
-                  <span className="statusBadge">
-                    {einsatzStatusLabels[einsatz.status]}
-                  </span>
-                </div>
-                {einsatz.rueckmeldung ? (
-                  <p className="noteText">{einsatz.rueckmeldung}</p>
-                ) : (
-                  <form action={saveEinsatzRueckmeldung} className="feedbackForm">
-                    <input name="einsatzId" type="hidden" value={einsatz.id} />
-                    <input name="auftragId" type="hidden" value={auftrag.id} />
-                    <label>
-                      Rueckmeldung
-                      <textarea name="rueckmeldung" required rows={3} />
-                    </label>
-                    <div className="fieldRow">
-                      <label>
-                        Neuer Auftragsstatus
-                        <select
-                          name="auftragStatus"
-                          defaultValue={AuftragStatus.TECHNISCH_FERTIG}
-                        >
-                          {rueckmeldeStatus.map((status) => (
-                            <option key={status} value={status}>
-                              {auftragStatusLabels[status]}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Grund wenn nicht fertig
-                        <select name="nichtFertigGrund" defaultValue="">
-                          <option value="">Kein Grund</option>
-                          {Object.entries(nichtFertigGrundLabels).map(
-                            ([value, label]) => (
-                              <option key={value} value={value}>
-                                {label}
-                              </option>
-                            ),
-                          )}
-                        </select>
-                      </label>
+        <ul className="timelineList">
+          {auftrag.einsaetze.map((einsatz) => (
+              <li className="timelineItem" key={einsatz.id}>
+                <span className="timelineMarker" aria-hidden="true" />
+                <div className="timelineContent">
+                  <div className="recordHeader">
+                    <div>
+                      <strong>
+                        Einsatz am{" "}
+                        {new Intl.DateTimeFormat("de-DE").format(einsatz.datum)}
+                      </strong>
+                      <p>
+                        {einsatz.mitarbeiter.length === 0
+                          ? "Kein Einsatzteam hinterlegt"
+                          : einsatz.mitarbeiter
+                              .map((entry) => entry.mitarbeiter.name)
+                              .join(", ")}
+                      </p>
                     </div>
-                    <button type="submit">Rueckmeldung speichern</button>
-                  </form>
-                )}
+                    <span className="statusBadge">
+                      {einsatzStatusLabels[einsatz.status]}
+                    </span>
+                  </div>
+                  {einsatz.rueckmeldung ? (
+                    <div className="timelineFeedback">
+                      <span>Rueckmeldung</span>
+                      <p>{einsatz.rueckmeldung}</p>
+                    </div>
+                  ) : (
+                    <div className="timelinePending">
+                      <span>Rueckmeldung offen</span>
+                      <AssignmentFeedbackPanel
+                        auftragId={auftrag.id}
+                        einsatzId={einsatz.id}
+                        einsatzDatum={new Intl.DateTimeFormat("de-DE").format(
+                          einsatz.datum,
+                        )}
+                        statusOptionen={rueckmeldeStatus.map((status) => ({
+                          value: status,
+                          label: auftragStatusLabels[status],
+                        }))}
+                        grundOptionen={Object.entries(
+                          nichtFertigGrundLabels,
+                        ).map(([value, label]) => ({ value, label }))}
+                        defaultStatus={AuftragStatus.TECHNISCH_FERTIG}
+                      />
+                    </div>
+                  )}
+                </div>
               </li>
-            ))}
-          </ul>
-        )}
+          ))}
+          <li className="timelineItem timelineOrigin">
+            <span className="timelineMarker" aria-hidden="true" />
+            <div className="timelineContent">
+              <div className="recordHeader">
+                <div>
+                  <strong>Auftrag aufgenommen</strong>
+                  <p>
+                    {new Intl.DateTimeFormat("de-DE").format(auftrag.createdAt)}
+                  </p>
+                </div>
+                <span className="statusBadge">Aufgenommen</span>
+              </div>
+            </div>
+          </li>
+        </ul>
       </section>
 
-      <section className="detailSection" aria-labelledby="materials-heading">
+      <section className="detailBlock" aria-labelledby="materials-heading">
         <div className="sectionHeading">
           <div>
-            <h2 id="materials-heading">Verbrauchtes Material</h2>
+            <p className="eyebrow">Dokumentation</p>
+            <h2 id="materials-heading">Materialverlauf</h2>
             <p>{auftrag.materialverbraeuche.length} Eintraege</p>
           </div>
         </div>
@@ -296,20 +349,28 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             Fuer diesen Auftrag wurde noch kein Materialverbrauch erfasst.
           </p>
         ) : (
-          <ul className="materialRecords">
-            {auftrag.materialverbraeuche.map((verbrauch) => (
-              <li key={verbrauch.id}>
-                <strong>{verbrauch.material.name}</strong>
-                <span>
-                  {verbrauch.menge.toString()} {verbrauch.material.einheit}
-                </span>
-                <span>{verbrauch.erfasstVon.name}</span>
-                <span>
-                  {new Intl.DateTimeFormat("de-DE").format(verbrauch.createdAt)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <>
+            <div className="materialRecordsHeader" aria-hidden="true">
+              <span>Material</span>
+              <span>Menge</span>
+              <span>Erfasst von</span>
+              <span>Datum</span>
+            </div>
+            <ul className="materialRecords">
+              {auftrag.materialverbraeuche.map((verbrauch) => (
+                <li key={verbrauch.id}>
+                  <strong>{verbrauch.material.name}</strong>
+                  <span data-label="Menge">
+                    {verbrauch.menge.toString()} {verbrauch.material.einheit}
+                  </span>
+                  <span data-label="Erfasst von">{verbrauch.erfasstVon.name}</span>
+                  <span data-label="Datum">
+                    {new Intl.DateTimeFormat("de-DE").format(verbrauch.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
     </main>

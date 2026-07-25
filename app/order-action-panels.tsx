@@ -54,8 +54,14 @@ export function OrderActionPanels({
 
   return (
     <>
-      <section className="orderActions" aria-labelledby="order-actions-heading">
-        <h2 id="order-actions-heading">Aktionen</h2>
+      <section
+        className="detailBlock orderActions"
+        aria-labelledby="order-actions-heading"
+      >
+        <div>
+          <p className="eyebrow">Bearbeitung</p>
+          <h2 id="order-actions-heading">Aktionen</h2>
+        </div>
         <div className="actionButtons">
           <button type="button" onClick={() => setActivePanel("einsatz")}>
             Einsatz planen

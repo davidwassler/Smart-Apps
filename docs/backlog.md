@@ -19,6 +19,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Die Startseite ist auf eine kompakte Auftragsliste mit Status-KPIs reduziert; Auftragserfassung liegt in einem Seitenpanel, Einsatzplanung, Rueckmeldung und Materialverbrauch in der jeweiligen Auftragsdetailseite.
 - Auftragsbeschreibung, Prioritaet, Status und Team koennen nachtraeglich im Auftragsdetail gepflegt werden; die zugehoerigen Kundendaten lassen sich dort direkt vervollstaendigen.
 - Die Auftragsdetailseite zeigt zuerst Status, naechsten Einsatz, Team und Kontakt; Einsatzplanung und Materialverbrauch bleiben bis zum Klick auf die jeweilige Aktion in getrennten Seitenfenstern verborgen.
+- Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind visuell getrennt; der letzte Rueckmeldungsstand ist hervorgehoben und Einsaetze bilden eine Zeitleiste vom neuesten Eintrag bis zur Auftragserfassung.
 
 ## Phase 0: Projektfundament
 
@@ -55,6 +56,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0117 | Auftragsarbeit in einer Detailseite buendeln | fertig | Auftragserfassung wird aus der Uebersicht ueber ein Seitenpanel gestartet; nach dem Speichern oder beim Klick auf einen Auftrag oeffnet sich dessen Detailseite; dort sind Auftragsdaten, Einsatzplanung, Rueckmeldungen und Materialverbrauch gebuendelt. |
 | F-0118 | Auftrag und zugehoerige Kundendaten bearbeiten | fertig | Beschreibung, Prioritaet, Status und Auftragsteam koennen im Auftragsdetail geaendert werden; pausierte und wartende Status brauchen einen Hinderungsgrund; Name, Telefonnummer, Adresse und Kundentyp des verknuepften Kunden koennen dort getrennt gespeichert werden. |
 | F-0119 | Auftragsaktionen bei Bedarf oeffnen | fertig | Die Detailseite zeigt zuerst Kunde, Status, Prioritaet, naechsten Einsatz, Team, Kontakt und einen moeglichen Hinderungsgrund; Einsatzplanung und Materialverbrauch sind anfangs eingeklappt und oeffnen jeweils ein eigenes Seitenfenster; Einsatz- und Materialhistorie bleiben darunter lesbar. |
+| F-0120 | Letzten Stand und Auftragsverlauf klar darstellen | fertig | Auftragsdaten, letzter Stand, Aktionen, Auftragsverlauf und Materialverlauf sind als eigene visuelle Bloecke erkennbar; der letzte Rueckmeldungstext und ein Hinderungsgrund stehen prominent; Einsaetze und Rueckmeldungen erscheinen als Zeitleiste bis zur Auftragserfassung; offene Rueckmeldungen oeffnen ein eigenes Seitenfenster. |
 
 ## Phase 2: Regeln und einfache Absicherung
 
