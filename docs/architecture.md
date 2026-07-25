@@ -6,6 +6,7 @@
 - TypeScript
 - SQLite als lokale Datenbank
 - Prisma als ORM und Migrationswerkzeug
+- `@prisma/adapter-libsql` und `@libsql/client` fuer den Prisma-7-Zugriff auf die lokale SQLite-Datei
 - ESLint fuer statische Pruefung
 
 Kein Deployment, keine Cloud-Datenbank und kein Docker.
@@ -41,11 +42,14 @@ Wichtige Beziehungen:
 ```text
 .
 ├── app/                  # Next.js App Router UI
+│   └── actions.ts        # Server Actions fuer einfache Schreib-Workflows
 ├── docs/                 # Fachliche und technische Dokumentation
 │   ├── architecture.md
 │   ├── backlog.md
 │   ├── decisions.md
 │   └── spec.md
+├── lib/                  # Geteilte Server-Hilfen
+│   └── prisma.ts         # Prisma Client mit libSQL Adapter
 ├── prisma/               # Prisma Schema und Migrationen
 ├── AGENTS.md             # Arbeitsanweisung fuer Coding-Agenten
 ├── README.md             # Einstieg fuer Menschen
@@ -82,3 +86,10 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Nicht fertige Auftraege haben ein Feld fuer den Grund.
 - Zusatzarbeiten koennen Betrag und Freigabestatus speichern.
 - Technische Fertigstellung, Rechnung und Zahlung sind getrennte Status.
+
+## Aktuelle UI-Flows
+
+- Kunden anlegen und anzeigen
+- Mitarbeiter mit Rolle und Aktivstatus anlegen und anzeigen
+- Material mit Einheit, Lagerbestand und Lagerort anlegen und anzeigen
+- Auftraege mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen und anzeigen

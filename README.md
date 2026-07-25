@@ -43,12 +43,14 @@ npm run build
 - Repo ist als kleines Next.js/TypeScript-Projekt eingerichtet.
 - SQLite und Prisma sind vorbereitet.
 - Das Prisma-Datenmodell bildet die Entitaeten und Beziehungen aus der Spec ab.
-- Die Startseite zeigt den Kernprozess der geplanten App.
+- Die Startseite ist jetzt eine lokale Arbeitsoberflaeche fuer Kunden, Mitarbeiter, Material und Auftraege.
+- Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:
 
 - Die fachliche Spec wurde nur nach `docs/spec.md` verschoben und nicht inhaltlich korrigiert.
 - `npm run db:migrate` fuehrt aktuell die eingecheckte SQLite-SQL-Migration per Prisma aus. `prisma migrate dev` zeigte in dieser Umgebung mit Prisma 7 einen Schema-Engine-Fehler bei frischer SQLite-Datei.
+- Prisma 7 nutzt fuer den lokalen SQLite-Zugriff den libSQL Driver Adapter.
 - npm meldet aktuell Vulnerabilities im Dependency-Baum. Vor produktiver Nutzung sollte `npm audit` bewertet werden.
 - Fachliche Formulare und Persistenz-Workflows sind noch Backlog-Arbeit.
