@@ -203,3 +203,9 @@ Kunden, Mitarbeiter, Material und Werkzeuge werden ueber die gesamte jeweilige L
 Status: entschieden
 
 Der hellgruene Hintergrund mit gruenem Rand kennzeichnet den aktuellen Abschlusszustand sowohl in der Auftrags- als auch in der Rechnungsuebersicht. Dadurch wird `BEZAHLT` bereits auf Zeilenebene erkennbar und nicht nur ueber einen kleinen Status-Badge vermittelt. Offene und gemahnte Rechnungen behalten den neutralen Zeilenhintergrund und ihre jeweiligen Statusfarben.
+
+## ADR-0035: Werkzeugerfassung und Werkzeugpflege trennen
+
+Status: entschieden
+
+Die Werkzeugseite zeigt primaer die kompakte Werkzeugliste. Neue Werkzeuge werden ueber `Werkzeug hinzufuegen` in einem Seitenfenster erfasst. Das bisher parallele Formular `Standort wechseln` wird entfernt, weil Status, Ort und Besitzer bereits direkt am angeklickten Werkzeug gepflegt werden koennen. Aenderungen dieser Standortdaten erzeugen weiterhin automatisch einen `WerkzeugUebergabe`-Eintrag, sodass die vereinfachte Oberflaeche keine Historie verliert.

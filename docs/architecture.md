@@ -54,6 +54,7 @@ Wichtige Beziehungen:
 |   |-- form-actions.ts   # Rueckmeldende Wrapper um fachliche Server Actions
 |   |-- master-data-edit-drawer.tsx # Gemeinsames Bearbeitungsfenster
 |   |-- submit-button.tsx # Ladezustand und Schutz vor Mehrfachabsenden
+|   |-- tool-create-panel.tsx # Werkzeugerfassung im Seitenfenster
 |   |-- additional-work-approval-panel.tsx
 |   |-- additional-work-form.tsx
 |   |-- assignment-feedback-panel.tsx
@@ -184,5 +185,5 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - `/kunden`: Kunden erfassen und anzeigen
 - `/mitarbeiter`: Mitarbeiter erfassen und anzeigen
 - `/material`: Material erfassen und anzeigen
-- `/werkzeuge`: Werkzeuge erfassen und Standort anzeigen
-- Werkzeugstandortwechsel aktualisieren den aktuellen Standort und schreiben einen Historieneintrag.
+- `/werkzeuge`: Werkzeuge ueber einen Button erfassen, als kompakte Liste anzeigen und per Klick bearbeiten
+- Aenderungen an Werkzeugstatus, Ort oder Besitzer aktualisieren den aktuellen Zustand und schreiben einen Historieneintrag.

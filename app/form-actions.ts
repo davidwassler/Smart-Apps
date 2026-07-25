@@ -19,7 +19,6 @@ import {
   updateMitarbeiter,
   updateRechnungStatus,
   updateWerkzeug,
-  updateWerkzeugStandort,
   updateZusatzarbeitFreigabe,
   verschiebeEinsatz,
 } from "./actions";
@@ -286,18 +285,6 @@ export async function createWerkzeugFormAction(
     formData,
     "Werkzeug wurde gespeichert.",
     "Werkzeug konnte nicht gespeichert werden.",
-  );
-}
-
-export async function updateWerkzeugStandortFormAction(
-  _state: ActionState,
-  formData: FormData,
-) {
-  return runAction(
-    updateWerkzeugStandort,
-    formData,
-    "Werkzeugstandort wurde gespeichert.",
-    "Werkzeugstandort konnte nicht gespeichert werden.",
   );
 }
 

@@ -247,6 +247,24 @@ test("Stammdaten lassen sich aus den Listen bearbeiten", async ({ page }) => {
   await expect(page.getByText("Fahrzeug 3")).toBeVisible();
 
   await page.goto("/werkzeuge");
+  await expect(
+    page.getByRole("heading", { name: "Standort wechseln" }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Werkzeug hinzufuegen" })
+    .click();
+  dialog = page.getByRole("dialog", { name: "Werkzeug erfassen" });
+  await dialog.getByLabel("Name").fill("E2E-Messgeraet");
+  await dialog.getByLabel("Aktueller Ort").fill("Werkstatt");
+  await dialog.getByRole("button", { name: "Werkzeug speichern" }).click();
+  await expect(dialog.getByRole("status")).toHaveText(
+    "Werkzeug wurde gespeichert.",
+  );
+  await dialog.getByRole("button", { name: "Fenster schliessen" }).click();
+  await expect(
+    page.getByRole("button", { name: "E2E-Messgeraet bearbeiten" }),
+  ).toBeVisible();
+
   await page
     .getByRole("button", { name: "Bohrhammer Bosch GBH bearbeiten" })
     .click();

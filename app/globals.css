@@ -117,6 +117,12 @@ h3 {
   grid-template-columns: repeat(4, max-content);
 }
 
+.topbarActions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
 .counters span {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -1520,6 +1526,11 @@ button:disabled {
     flex-direction: column;
   }
 
+  .topbarActions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .filterFields {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1607,6 +1618,11 @@ button:disabled {
 
   .primaryAction {
     width: 100%;
+  }
+
+  .topbarActions {
+    align-items: stretch;
+    display: grid;
   }
 
   .filterFields {

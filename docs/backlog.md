@@ -13,7 +13,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Materialverbrauch kann erfasst werden, reduziert den Lagerbestand und ist am Auftrag sichtbar.
 - Materialeinheiten sind auf `Stueck` sowie Laengeneinheiten `mm`, `cm` und `m` begrenzt; Stueck-Bestaende und Stueck-Verbrauch muessen ganzzahlig sein.
 - Die App ist in mehrere Screens aufgeteilt: Auftragsuebersicht als Startseite sowie eigene Seiten fuer Kunden, Mitarbeiter und Material.
-- Werkzeuge koennen auf einer eigenen Seite mit Status, Ort und optionalem Besitzer erfasst werden; Standortwechsel werden als Historie gespeichert.
+- Werkzeuge koennen ueber einen Button auf ihrer eigenen Seite mit Status, Ort und optionalem Besitzer erfasst werden; Standortwechsel erfolgen direkt am Listeneintrag und werden als Historie gespeichert.
 - Demo-Daten fuer Kunden, Mitarbeiter, Material, Auftraege, Einsaetze, Rueckmeldungen, Materialverbrauch, Zusatzarbeiten und Werkzeuge koennen per Seed geladen werden.
 - Auftraege koennen direkt aus einem neuen Schnellkunden heraus angelegt werden; unvollstaendige Kundendaten werden am Auftrag sichtbar.
 - Die Startseite ist auf eine kompakte Auftragsliste mit Status-KPIs reduziert; Auftragserfassung liegt in einem Seitenpanel, Einsatzplanung, Rueckmeldung und Materialverbrauch in der jeweiligen Auftragsdetailseite.
@@ -36,6 +36,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Bezahlte Rechnungen sind in der Rechnungsuebersicht mit demselben hellgruenen Abschlusszustand markiert.
 - Kundenadressen werden in den Formularen als `Strasse + Nr.`, fuenfstellige `PLZ` und `Ort` erfasst und weiterhin kompatibel im vorhandenen Adressfeld gespeichert.
 - Kunden, Mitarbeiter, Material und Werkzeuge koennen durch Klick auf ihre Listenzeile in einem fokussierten Seitenfenster bearbeitet werden.
+- Das doppelte Werkzeugformular `Standort wechseln` wurde entfernt; Erfassung und spaetere Pflege sind klar in Hinzufuegen-Button und klickbare Werkzeugzeile getrennt.
 
 ## Phase 0: Projektfundament
 
@@ -46,7 +47,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | F-0003 | Projektdokumentation erstellen | fertig | `AGENTS.md`, `docs/backlog.md`, `docs/architecture.md`, `docs/decisions.md` und `README.md` existieren und verweisen auf `docs/spec.md`. |
 | F-0004 | Auftragsuebersicht als Startseite anzeigen | fertig | Die Startseite zeigt alle Auftraege als kompakte Liste sowie kleine Kennzahlen fuer offene, geplante, laufende und wartende Auftraege; ein Auftrag kann aus der Liste geoeffnet werden. |
 | F-0005 | Eigene Stammdaten-Seiten bereitstellen | fertig | Kunden, Mitarbeiter und Material haben eigene Seiten mit fokussierten Formularen, Listen und direkter Bearbeitung per Klick auf einen Eintrag. |
-| F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit Formular, Liste und direkter Stammdatenbearbeitung. |
+| F-0006 | Werkzeug-Seite bereitstellen | fertig | Werkzeuge haben eine eigene Seite mit kompakter Liste, einem Button zum Hinzufuegen und direkter Stammdatenbearbeitung per Klick. |
 | F-0007 | Demo-Daten bereitstellen | fertig | Ein Seed-Script legt realistische Demo-Daten fuer die vorhandenen Kernfunktionen an und kann wiederholt ausgefuehrt werden. |
 
 ## Phase 1: Kernprozess erste Version
@@ -90,7 +91,7 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 |---|---|---|---|
 | F-0301 | Werkzeug erfassen | fertig | Werkzeuge koennen mit Name, Status, aktuellem Ort und optional aktuellem Besitzer gespeichert und aus der Werkzeugliste bearbeitet werden. |
 | F-0302 | Werkzeugstandort anzeigen | fertig | Teure Werkzeuge wie Bohrhaemmer sind ueber aktuellen Ort oder Besitzer auffindbar. |
-| F-0303 | Werkzeugbewegungen nachvollziehen | fertig | Die Ersterfassung und spaetere Standortwechsel legen Historieneintraege mit Ort, optionalem Besitzer, Zeitpunkt und Notiz an. |
+| F-0303 | Werkzeugbewegungen nachvollziehen | fertig | Die Ersterfassung und Aenderungen an Status, Ort oder Besitzer im Bearbeitungsfenster legen Historieneintraege mit Ort, optionalem Besitzer, Zeitpunkt und Notiz an. |
 | F-0304 | Rechnung vorbereiten | fertig | Fuer technisch fertige Auftraege zeigt ein fokussierter Dialog Kunde, Einsatzrueckmeldungen, Materialverbrauch und Zusatzarbeiten als Rechnungsgrundlagen; Rechnungsdatum und Betrag koennen gespeichert werden; unfreigegebene Zusatzarbeiten ab 1.500 Euro blockieren den Vorgang. |
 | F-0305 | Rechnungsgrundlagen anzeigen | fertig | Materialverbrauch und Rueckmeldungen sind fuer die Rechnungsvorbereitung sichtbar. |
 

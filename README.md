@@ -99,8 +99,8 @@ npm run db:reset-demo
 - Materialeinheiten sind als `Stueck` oder `Laenge` auswaehlbar; bei `Laenge` wird `mm`, `cm` oder `m` gewaehlt; `Stueck` erzwingt ganze Zahlen.
 - Die Startseite ist die Auftragsuebersicht; Kunden, Mitarbeiter und Material haben eigene Seiten.
 - Auftraege koennen mit bestehendem Kunden oder direkt mit einem neuen Schnellkunden angelegt werden.
-- Werkzeuge haben eine eigene Seite mit Status, aktuellem Ort und optionalem Besitzer.
-- Werkzeugstandortwechsel werden mit Historie gespeichert.
+- Werkzeuge haben eine eigene kompakte Seite mit einem Button zum Hinzufuegen sowie Status, aktuellem Ort und optionalem Besitzer.
+- Standort und Besitzer werden direkt am angeklickten Werkzeug geaendert; Bewegungen bleiben in der Historie gespeichert.
 - Demo-Daten koennen per `npm run db:seed` neu angelegt werden.
 - Schreibformulare zeigen Erfolg oder verstaendliche Serverfehler direkt am Formular, behalten Eingaben bei Fehlern und verhindern Mehrfachabsenden waehrend des Speicherns.
 - Seitenfenster unterstuetzen Tastaturfokus, Escape und die Rueckkehr zum ausloesenden Button; das Verhalten wird auch in einer mobilen Viewportgroesse geprueft.
