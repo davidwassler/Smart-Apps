@@ -9,7 +9,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 - Das bisher grobe Backlog wurde in feinere Features aus `docs/spec.md` aufgebrochen.
 - Die Phasen sind nach Nutzwert sortiert: Kernprozess zuerst, danach Stammdaten, Regeln, kaufmaennische Erweiterungen, nichtfunktionale Anforderungen und Nicht-Ziele.
 - Die ersten fachlichen Formulare fuer Kunden, Mitarbeiter, Material und Auftraege wurden umgesetzt.
-- Umgesetzte Features sind als `fertig` markiert; noch fehlende Einsatz-, Rueckmeldungs- und Materialverbrauchs-Workflows bleiben `offen`.
+- Einsatzplanung, Einsatz-Mitarbeiterzuordnung und Rueckmeldungen wurden ergaenzt.
+- Umgesetzte Features sind als `fertig` markiert; der Materialverbrauchs-Workflow bleibt `offen`.
 
 ## Phase 0: Projektfundament
 
@@ -26,16 +27,16 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 |---|---|---|---|
 | F-0101 | Kunde erfassen | fertig | Name, Telefonnummer, Adresse und Kundentyp koennen gespeichert werden; Kundentyp ist Privatkunde oder Firmenkunde. |
 | F-0102 | Auftrag erfassen | fertig | Ein Auftrag kann mit Kunde, Beschreibung, Prioritaet und Startstatus `aufgenommen` gespeichert werden. |
-| F-0103 | Auftragsstatus pflegen | offen | Alle Statuswerte aus der Spec sind verfuegbar: aufgenommen, geplant, in Bearbeitung, pausiert, wartet auf Material, wartet auf Kundenentscheidung, technisch fertig, Rechnung erstellt, bezahlt, gemahnt, eskaliert. |
+| F-0103 | Auftragsstatus pflegen | fertig | Alle Statuswerte aus der Spec sind verfuegbar: aufgenommen, geplant, in Bearbeitung, pausiert, wartet auf Material, wartet auf Kundenentscheidung, technisch fertig, Rechnung erstellt, bezahlt, gemahnt, eskaliert. |
 | F-0104 | Prioritaet setzen | fertig | Ein Auftrag kann als normal, dringend oder Notdienst markiert werden. |
 | F-0105 | Mitarbeiter erfassen | fertig | Name, Rolle, Telefonnummer und Aktivstatus koennen gespeichert werden. |
 | F-0106 | Mitarbeiter zu Auftrag zuordnen | fertig | Ein Auftrag kann einem oder mehreren aktiven Mitarbeitern zugeordnet werden; Thomas sieht, wer zu welchem Auftrag faehrt. |
-| F-0107 | Einsatz anlegen | offen | Zu einem Auftrag koennen konkrete Einsaetze mit Datum und Status geplant, durchgefuehrt oder verschoben angelegt werden. |
-| F-0108 | Mitarbeiter zu Einsatz zuordnen | offen | Ein Einsatz kann einem oder mehreren Mitarbeitern zugeordnet werden; die Zuordnung ist am Einsatz sichtbar. |
-| F-0109 | Rueckmeldung nach Einsatz erfassen | offen | Nach einem Einsatz kann das Ergebnis oder Problem als Rueckmeldung gespeichert werden. |
-| F-0110 | Status nach Einsatz aktualisieren | offen | Das Buero kann nach einer Rueckmeldung sehen, ob ein Auftrag fertig ist oder erneut angefahren werden muss. |
-| F-0111 | Grund bei nicht fertigem Auftrag erfassen | offen | Wenn ein Auftrag nach einem Einsatz nicht fertig ist, muss ein Grund gespeichert werden. |
-| F-0112 | Nicht-fertig-Gruende standardisieren | offen | Fehlendes Material, fehlendes Ersatzteil, offene Kundenentscheidung und Folgeeinsatz sind als Gruende verfuegbar. |
+| F-0107 | Einsatz anlegen | fertig | Zu einem Auftrag koennen konkrete Einsaetze mit Datum und Status geplant, durchgefuehrt oder verschoben angelegt werden. |
+| F-0108 | Mitarbeiter zu Einsatz zuordnen | fertig | Ein Einsatz kann einem oder mehreren Mitarbeitern zugeordnet werden; die Zuordnung ist am Einsatz sichtbar. |
+| F-0109 | Rueckmeldung nach Einsatz erfassen | fertig | Nach einem Einsatz kann das Ergebnis oder Problem als Rueckmeldung gespeichert werden. |
+| F-0110 | Status nach Einsatz aktualisieren | fertig | Das Buero kann nach einer Rueckmeldung sehen, ob ein Auftrag fertig ist oder erneut angefahren werden muss. |
+| F-0111 | Grund bei nicht fertigem Auftrag erfassen | fertig | Wenn ein Auftrag nach einem Einsatz nicht fertig ist, muss ein Grund gespeichert werden. |
+| F-0112 | Nicht-fertig-Gruende standardisieren | fertig | Fehlendes Material, fehlendes Ersatzteil, offene Kundenentscheidung und Folgeeinsatz sind als Gruende verfuegbar. |
 | F-0113 | Material erfassen | fertig | Material kann mit Name, Einheit, Lagerbestand und Lagerort gespeichert werden. |
 | F-0114 | Materialverbrauch erfassen | offen | Material, Menge, Auftrag und erfassender Mitarbeiter koennen gespeichert werden. |
 | F-0115 | Materialverbrauch am Auftrag anzeigen | offen | Am Auftrag ist sichtbar, welches Material in welcher Menge verbaut wurde. |
@@ -45,8 +46,8 @@ Statuswerte: `offen`, `in arbeit`, `fertig`, `blockiert`, `nicht geplant`.
 | ID | Feature | Status | Akzeptanzkriterien |
 |---|---|---|---|
 | F-0201 | Notdienst-Vorrang beachten | offen | Notdienst-Auftraege koennen nicht beilaufig verschoben werden; eine Verschiebung braucht eine bewusste Bestaetigung oder Eskalationsnotiz. |
-| F-0202 | Lehrlinge nicht allein einplanen | offen | Ein Lehrling kann keinem Einsatz allein zugeordnet werden; mindestens ein Geselle oder Meister muss ebenfalls zugeordnet sein. |
-| F-0203 | Technisch fertig von kaufmaennisch abgeschlossen trennen | offen | Technisch fertig, Rechnung erstellt und bezahlt sind getrennte Zustaende und werden nicht als ein einzelnes `fertig` vermischt. |
+| F-0202 | Lehrlinge nicht allein einplanen | fertig | Ein Lehrling kann keinem Einsatz allein zugeordnet werden; mindestens ein Geselle oder Meister muss ebenfalls zugeordnet sein. |
+| F-0203 | Technisch fertig von kaufmaennisch abgeschlossen trennen | fertig | Technisch fertig, Rechnung erstellt und bezahlt sind getrennte Zustaende und werden nicht als ein einzelnes `fertig` vermischt. |
 | F-0204 | Zusatzarbeiten erfassen | offen | Zusatzarbeiten koennen mit geschaetztem Betrag und Freigabestatus am Auftrag dokumentiert werden. |
 | F-0205 | Schriftliche Freigabe ab 1.500 Euro erzwingen | offen | Zusatzarbeiten ab 1.500 Euro koennen nur mit schriftlicher Freigabe als freigegeben markiert werden. |
 

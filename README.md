@@ -45,6 +45,8 @@ npm run build
 - Das Prisma-Datenmodell bildet die Entitaeten und Beziehungen aus der Spec ab.
 - Die Startseite ist jetzt eine lokale Arbeitsoberflaeche fuer Kunden, Mitarbeiter, Material und Auftraege.
 - Kunden, Mitarbeiter, Material und Auftraege koennen per Formular in SQLite gespeichert werden.
+- Einsaetze koennen geplant und mit Mitarbeitern besetzt werden.
+- Rueckmeldungen aktualisieren den Einsatz und den Auftragsstatus; nicht fertige Auftraege brauchen einen Grund.
 - Backlog, Architekturentscheidungen und Agentenanweisungen sind dokumentiert.
 
 Bekannt:

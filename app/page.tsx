@@ -1,9 +1,18 @@
-import { Kundentyp, MitarbeiterRolle, Prioritaet } from "@prisma/client";
+import {
+  AuftragStatus,
+  EinsatzStatus,
+  Kundentyp,
+  MitarbeiterRolle,
+  NichtFertigGrund,
+  Prioritaet,
+} from "@prisma/client";
 import {
   createAuftrag,
+  createEinsatz,
   createKunde,
   createMaterial,
   createMitarbeiter,
+  saveEinsatzRueckmeldung,
 } from "./actions";
 import { prisma } from "@/lib/prisma";
 
@@ -28,8 +37,43 @@ const prioritaetLabels: Record<Prioritaet, string> = {
   NOTDIENST: "Notdienst",
 };
 
+const einsatzStatusLabels: Record<EinsatzStatus, string> = {
+  GEPLANT: "Geplant",
+  DURCHGEFUEHRT: "Durchgefuehrt",
+  VERSCHOBEN: "Verschoben",
+};
+
+const auftragStatusLabels: Record<AuftragStatus, string> = {
+  AUFGENOMMEN: "Aufgenommen",
+  GEPLANT: "Geplant",
+  IN_BEARBEITUNG: "In Bearbeitung",
+  PAUSIERT: "Pausiert",
+  WARTET_AUF_MATERIAL: "Wartet auf Material",
+  WARTET_AUF_KUNDENENTSCHEIDUNG: "Wartet auf Kundenentscheidung",
+  TECHNISCH_FERTIG: "Technisch fertig",
+  RECHNUNG_ERSTELLT: "Rechnung erstellt",
+  BEZAHLT: "Bezahlt",
+  GEMAHNT: "Gemahnt",
+  ESKALIERT: "Eskaliert",
+};
+
+const rueckmeldeStatus = [
+  AuftragStatus.IN_BEARBEITUNG,
+  AuftragStatus.PAUSIERT,
+  AuftragStatus.WARTET_AUF_MATERIAL,
+  AuftragStatus.WARTET_AUF_KUNDENENTSCHEIDUNG,
+  AuftragStatus.TECHNISCH_FERTIG,
+];
+
+const nichtFertigGrundLabels: Record<NichtFertigGrund, string> = {
+  FEHLENDES_MATERIAL: "Fehlendes Material",
+  FEHLENDES_ERSATZTEIL: "Fehlendes Ersatzteil",
+  OFFENE_KUNDENENTSCHEIDUNG: "Offene Kundenentscheidung",
+  FOLGEEINSATZ_NOETIG: "Folgeeinsatz noetig",
+};
+
 export default async function Home() {
-  const [kunden, mitarbeiter, materialien, auftraege] = await Promise.all([
+  const [kunden, mitarbeiter, materialien, auftraege, einsaetze] = await Promise.all([
     prisma.kunde.findMany({ orderBy: { updatedAt: "desc" } }),
     prisma.mitarbeiter.findMany({ orderBy: [{ aktiv: "desc" }, { name: "asc" }] }),
     prisma.material.findMany({ orderBy: { name: "asc" } }),
@@ -44,9 +88,29 @@ export default async function Home() {
       },
       orderBy: { updatedAt: "desc" },
     }),
+    prisma.einsatz.findMany({
+      include: {
+        auftrag: {
+          include: {
+            kunde: true,
+          },
+        },
+        mitarbeiter: {
+          include: {
+            mitarbeiter: true,
+          },
+        },
+      },
+      orderBy: [{ datum: "asc" }, { updatedAt: "desc" }],
+    }),
   ]);
 
   const aktiveMitarbeiter = mitarbeiter.filter((person) => person.aktiv);
+  const offeneAuftraege = auftraege.filter(
+    (auftrag) =>
+      auftrag.status !== AuftragStatus.BEZAHLT &&
+      auftrag.status !== AuftragStatus.ESKALIERT,
+  );
 
   return (
     <main className="page">
@@ -57,9 +121,9 @@ export default async function Home() {
         </div>
         <div className="counters" aria-label="Aktueller Datenbestand">
           <span>{auftraege.length} Auftraege</span>
+          <span>{einsaetze.length} Einsaetze</span>
           <span>{kunden.length} Kunden</span>
           <span>{aktiveMitarbeiter.length} aktiv</span>
-          <span>{materialien.length} Materialien</span>
         </div>
       </header>
 
@@ -187,6 +251,126 @@ export default async function Home() {
             Auftrag speichern
           </button>
         </form>
+
+        <form action={createEinsatz} className="panel wide">
+          <h2>Einsatz planen</h2>
+          <label>
+            Auftrag
+            <select name="auftragId" required defaultValue="">
+              <option value="" disabled>
+                Auftrag auswaehlen
+              </option>
+              {offeneAuftraege.map((auftrag) => (
+                <option key={auftrag.id} value={auftrag.id}>
+                  #{auftrag.id} - {auftrag.kunde.name}: {auftrag.beschreibung}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="fieldRow">
+            <label>
+              Datum
+              <input name="datum" type="date" required />
+            </label>
+            <label>
+              Status
+              <select name="status" defaultValue={EinsatzStatus.GEPLANT}>
+                {Object.entries(einsatzStatusLabels).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <fieldset>
+            <legend>Mitarbeiter fuer Einsatz</legend>
+            <div className="checkboxGrid">
+              {aktiveMitarbeiter.length === 0 ? (
+                <p className="emptyText">Noch keine aktiven Mitarbeiter erfasst.</p>
+              ) : (
+                aktiveMitarbeiter.map((person) => (
+                  <label className="checkline" key={person.id}>
+                    <input name="mitarbeiterIds" type="checkbox" value={person.id} />
+                    {person.name} ({rollenLabels[person.rolle]})
+                  </label>
+                ))
+              )}
+            </div>
+          </fieldset>
+          <button
+            type="submit"
+            disabled={offeneAuftraege.length === 0 || aktiveMitarbeiter.length === 0}
+          >
+            Einsatz speichern
+          </button>
+        </form>
+      </section>
+
+      <section className="listPanel fullWidth" aria-label="Einsaetze und Rueckmeldungen">
+        <h2>Einsaetze und Rueckmeldungen</h2>
+        {einsaetze.length === 0 ? (
+          <p className="emptyText">Noch keine Einsaetze geplant.</p>
+        ) : (
+          <ul className="itemList">
+            {einsaetze.map((einsatz) => (
+              <li key={einsatz.id}>
+                <div>
+                  <strong>
+                    {new Intl.DateTimeFormat("de-DE").format(einsatz.datum)} -{" "}
+                    {einsatz.auftrag.kunde.name}
+                  </strong>
+                  <p>{einsatz.auftrag.beschreibung}</p>
+                </div>
+                <div className="metaRow">
+                  <span>{einsatzStatusLabels[einsatz.status]}</span>
+                  <span>{auftragStatusLabels[einsatz.auftrag.status]}</span>
+                  <span>
+                    {einsatz.mitarbeiter
+                      .map((entry) => entry.mitarbeiter.name)
+                      .join(", ")}
+                  </span>
+                </div>
+                {einsatz.rueckmeldung ? (
+                  <p className="noteText">{einsatz.rueckmeldung}</p>
+                ) : (
+                  <form action={saveEinsatzRueckmeldung} className="inlineForm">
+                    <input name="einsatzId" type="hidden" value={einsatz.id} />
+                    <input name="auftragId" type="hidden" value={einsatz.auftragId} />
+                    <label>
+                      Rueckmeldung
+                      <textarea name="rueckmeldung" required rows={3} />
+                    </label>
+                    <div className="fieldRow">
+                      <label>
+                        Neuer Auftragsstatus
+                        <select name="auftragStatus" defaultValue={AuftragStatus.TECHNISCH_FERTIG}>
+                          {rueckmeldeStatus.map((status) => (
+                            <option key={status} value={status}>
+                              {auftragStatusLabels[status]}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Grund wenn nicht fertig
+                        <select name="nichtFertigGrund" defaultValue="">
+                          <option value="">Kein Grund</option>
+                          {Object.entries(nichtFertigGrundLabels).map(([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    <button type="submit">Rueckmeldung speichern</button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="dataGrid" aria-label="Uebersichten">
@@ -204,7 +388,10 @@ export default async function Home() {
                   </div>
                   <div className="metaRow">
                     <span>{prioritaetLabels[auftrag.prioritaet]}</span>
-                    <span>{auftrag.status.replaceAll("_", " ").toLowerCase()}</span>
+                    <span>{auftragStatusLabels[auftrag.status]}</span>
+                    {auftrag.nichtFertigGrund ? (
+                      <span>{nichtFertigGrundLabels[auftrag.nichtFertigGrund]}</span>
+                    ) : null}
                     <span>
                       {auftrag.mitarbeiter.length === 0
                         ? "nicht zugeordnet"
@@ -261,7 +448,7 @@ export default async function Home() {
                 <li key={material.id}>
                   <strong>{material.name}</strong>
                   <span>
-                    {material.lagerbestand.toString()} {material.einheit} · {material.lagerort}
+                    {material.lagerbestand.toString()} {material.einheit} / {material.lagerort}
                   </span>
                 </li>
               ))}

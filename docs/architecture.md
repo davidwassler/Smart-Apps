@@ -93,3 +93,6 @@ Business Rules aus der Spec werden schrittweise umgesetzt. Fuer die erste Codeba
 - Mitarbeiter mit Rolle und Aktivstatus anlegen und anzeigen
 - Material mit Einheit, Lagerbestand und Lagerort anlegen und anzeigen
 - Auftraege mit Kunde, Beschreibung, Prioritaet und optionaler Mitarbeiterzuordnung anlegen und anzeigen
+- Einsaetze mit Datum, Status und Mitarbeiterzuordnung anlegen und anzeigen
+- Rueckmeldungen zu Einsaetzen speichern und den Auftragsstatus aktualisieren
+- Nicht-fertig-Gruende bei offenen Rueckmeldungen erfassen
